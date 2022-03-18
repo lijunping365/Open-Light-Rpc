@@ -1,4 +1,4 @@
-package com.lightcode.rpc.client;
+package com.lightcode.rpc.client.remoting;
 
 import com.lightcode.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;

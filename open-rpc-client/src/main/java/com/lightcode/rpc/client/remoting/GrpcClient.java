@@ -1,5 +1,6 @@
-package com.lightcode.rpc.client;
+package com.lightcode.rpc.client.remoting;
 
+import com.lightcode.rpc.client.ClientConfiguration;
 import com.lightcode.rpc.client.handler.GRpcMessageHandler;
 import io.grpc.BindableService;
 import io.grpc.Server;
