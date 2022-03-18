@@ -1,4 +1,4 @@
-package com.lightcode.rpc.server;
+package com.lightcode.rpc.server.remoting.support;
 
 import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.information.ClientInformation;

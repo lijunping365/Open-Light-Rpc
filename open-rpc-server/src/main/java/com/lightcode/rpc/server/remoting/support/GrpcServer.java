@@ -1,5 +1,6 @@
-package com.lightcode.rpc.server;
+package com.lightcode.rpc.server.remoting.support;
 
+import com.lightcode.rpc.server.ServerConfiguration;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Component
-public class JobServer implements InitializingBean, DisposableBean {
+public class GrpcServer implements InitializingBean, DisposableBean {
 
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
 
@@ -27,7 +28,7 @@ public class JobServer implements InitializingBean, DisposableBean {
      */
     private Server rpcServer;
 
-    public JobServer(ServerConfiguration configuration){
+    public GrpcServer(ServerConfiguration configuration){
         this.configuration = configuration;
     }
 

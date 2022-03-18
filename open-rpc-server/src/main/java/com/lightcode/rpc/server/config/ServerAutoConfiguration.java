@@ -73,13 +73,13 @@ public class ServerAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("'memory'.equals('${org.open.job.server.store:memory}')")
+    @ConditionalOnExpression("'memory'.equals('${com.lightcode.rpc.server.store:memory}')")
     public InstanceStore memoryStore(){
         return new MemoryInstanceStore();
     }
 
     @Bean
-    @ConditionalOnExpression("'redisson'.equals('${org.open.job.server.store:redisson}')")
+    @ConditionalOnExpression("'redisson'.equals('${com.lightcode.rpc.server.store:redisson}')")
     public InstanceStore redissonStore(RedissonClient client){
         return new RedissonInstanceStore(client);
     }

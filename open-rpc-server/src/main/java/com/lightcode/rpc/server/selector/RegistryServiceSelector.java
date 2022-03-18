@@ -2,7 +2,7 @@ package com.lightcode.rpc.server.selector;
 
 import com.lightcode.rpc.core.enums.RegistryServiceType;
 import com.lightcode.rpc.core.exception.RpcException;
-import com.lightcode.rpc.server.annotation.EnableJobServer;
+import com.lightcode.rpc.server.annotation.EnableLightRpcServer;
 import com.lightcode.rpc.server.discovery.support.NacosRegistryService;
 import com.lightcode.rpc.server.discovery.support.ZookeeperRegistryService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +19,14 @@ import java.util.Map;
 public class RegistryServiceSelector implements ImportSelector {
 
     /**
-     * The name of {@link RegistryServiceType} attributes in {@link EnableJobServer}
+     * The name of {@link RegistryServiceType} attributes in {@link EnableLightRpcServer}
      */
     private static final String REGISTRAR_TYPE_ATTRIBUTE_NAME = "registryType";
 
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         Map<String, Object> annotationAttributes =
-                importingClassMetadata.getAnnotationAttributes(EnableJobServer.class.getName());
+                importingClassMetadata.getAnnotationAttributes(EnableLightRpcServer.class.getName());
         RegistryServiceType serverServiceType = (RegistryServiceType) annotationAttributes.get(REGISTRAR_TYPE_ATTRIBUTE_NAME);
         log.info("Use the [{}] method to register the Client service", serverServiceType);
         switch (serverServiceType) {

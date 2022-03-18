@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Related configuration items needed to build the client
  */
 @Data
-@ConfigurationProperties(prefix = "org.open.job.client")
+@ConfigurationProperties(prefix = "com.lightcode.rpc.client")
 public class ClientConfiguration {
     /**
      * client host

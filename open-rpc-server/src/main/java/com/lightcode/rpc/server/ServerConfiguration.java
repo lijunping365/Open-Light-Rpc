@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * server configuration
  */
 @Data
-@ConfigurationProperties(prefix = "org.open.job.server")
+@ConfigurationProperties(prefix = "com.lightcode.rpc.server")
 public class ServerConfiguration {
     /**
      * The server port
