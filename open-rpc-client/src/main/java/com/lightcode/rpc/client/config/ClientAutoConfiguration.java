@@ -1,7 +1,11 @@
 package com.lightcode.rpc.client.config;
 
 import com.lightcode.rpc.client.ClientConfiguration;
+import com.lightcode.rpc.client.process.DefaultMessageProcess;
+import com.lightcode.rpc.client.process.MessageProcess;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -18,5 +22,9 @@ public class ClientAutoConfiguration {
         this.configuration = configuration;
     }
 
-
+    @Bean
+    @ConditionalOnMissingBean
+    public MessageProcess messageProcess(){
+        return new DefaultMessageProcess();
+    }
 }
