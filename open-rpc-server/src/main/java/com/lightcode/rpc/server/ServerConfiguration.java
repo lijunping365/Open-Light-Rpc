@@ -35,24 +35,5 @@ public class ServerConfiguration {
      * @see java.util.concurrent.TimeUnit#MILLISECONDS
      */
     private long retryIntervalMilliSeconds = 1000;
-    /**
-     * The username of nacos
-     */
-    private String username = "nacos";
-    /**
-     * The password of nacos
-     */
-    private String password = "nacos";
-    /**
-     * The address of nacos | zookeeper
-     */
-    private String address = "127.0.0.1";
-    /**
-     * The port of nacos（8848） | zookeeper（2181）
-     */
-    private int port = 8848;
-    /**
-     * The connectionTimeout of zookeeper
-     */
-    private int connectionTimeout = 5000;
+
 }
