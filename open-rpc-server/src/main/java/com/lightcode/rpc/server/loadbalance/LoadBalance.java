@@ -4,7 +4,6 @@ package com.lightcode.rpc.server.loadbalance;
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.information.ClientInformation;
-import com.lightcode.rpc.server.enums.LoadBalanceModelEnum;
 
 import java.util.List;
 
@@ -20,14 +19,7 @@ public interface LoadBalance {
      * @param message
      * @param clients {@link ClientInformation} list
      * @return load-balanced client
-     * @throws org.open.job.core.exception.RpcException
+     * @throws RpcException
      */
     ClientInformation select(Message message, List<ClientInformation> clients) throws RpcException;
-
-    /**
-     * Is Support LoadBalance
-     * @param loadBalanceModelEnum
-     * @return true support, false is not support
-     */
-    boolean support(LoadBalanceModelEnum loadBalanceModelEnum);
 }

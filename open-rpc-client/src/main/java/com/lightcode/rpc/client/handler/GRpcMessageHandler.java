@@ -10,7 +10,7 @@ import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.grpc.MessageServiceGrpc;
 import com.lightcode.rpc.core.grpc.proto.MessageRequest;
 import com.lightcode.rpc.core.grpc.proto.MessageResponse;
-import com.lightcode.rpc.core.json.JSON;
+import com.lightcode.rpc.core.utils.json.JSON;
 import com.lightcode.rpc.core.transport.MessageRequestBody;
 import com.lightcode.rpc.core.transport.MessageResponseBody;
 import com.lightcode.rpc.core.transport.MessageResponseStatus;

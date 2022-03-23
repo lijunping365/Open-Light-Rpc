@@ -3,7 +3,6 @@ package com.lightcode.rpc.server.loadbalance.support;
 
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.information.ClientInformation;
-import com.lightcode.rpc.server.enums.LoadBalanceModelEnum;
 import com.lightcode.rpc.server.loadbalance.AbstractLoadBalance;
 
 import java.util.List;
@@ -19,10 +18,5 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
     @Override
     protected ClientInformation doSelect(Message message, List<ClientInformation> invokers) {
         return null;
-    }
-
-    @Override
-    public boolean support(LoadBalanceModelEnum loadBalanceModelEnum) {
-        return loadBalanceModelEnum == LoadBalanceModelEnum.LEAST_ACTIVE;
     }
 }

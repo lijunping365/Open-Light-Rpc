@@ -3,7 +3,6 @@ package com.lightcode.rpc.server.cluster;
 
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
-import com.lightcode.rpc.server.enums.ClusterInvokeModelEnum;
 
 /**
  * 对外提供的接口，提供给用户使用
@@ -17,11 +16,4 @@ public interface ClusterInvoker {
      * @throws RpcException
      */
     void invoke(Message message) throws RpcException;
-
-    /**
-     * 是否支持该调用模式
-     * @param clusterModel
-     * @return
-     */
-    boolean support(ClusterInvokeModelEnum clusterModel);
 }

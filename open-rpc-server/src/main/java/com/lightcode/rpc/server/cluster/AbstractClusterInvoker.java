@@ -6,7 +6,6 @@ import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.information.ClientInformation;
 import com.lightcode.rpc.server.ServerConfiguration;
 import com.lightcode.rpc.server.discovery.ServiceDiscovery;
-import com.lightcode.rpc.server.enums.LoadBalanceModelEnum;
 import com.lightcode.rpc.server.loadbalance.LoadBalance;
 import com.lightcode.rpc.server.remoting.RemotingInvoker;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +21,13 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
 
     private final ServiceDiscovery serviceDiscovery;
     protected final ServerConfiguration configuration;
-    protected final List<LoadBalance> loadBalances;
+    protected final LoadBalance loadBalance;
     protected final RemotingInvoker remotingInvoker;
 
-    public AbstractClusterInvoker(ServiceDiscovery serviceDiscovery, ServerConfiguration configuration, List<LoadBalance> loadBalances, RemotingInvoker remotingInvoker){
+    public AbstractClusterInvoker(ServiceDiscovery serviceDiscovery, ServerConfiguration configuration, LoadBalance loadBalance, RemotingInvoker remotingInvoker){
         this.serviceDiscovery = serviceDiscovery;
         this.configuration = configuration;
-        this.loadBalances = loadBalances;
+        this.loadBalance = loadBalance;
         this.remotingInvoker = remotingInvoker;
     }
 
@@ -53,8 +52,6 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
      * 通过负载均衡策略找出合适的客户端进行调用
      */
     protected ClientInformation select(Message message, List<ClientInformation> clients) throws RpcException{
-        LoadBalanceModelEnum loadBalanceModelEnum = LoadBalanceModelEnum.of(configuration.getLoadBalance());
-        LoadBalance loadBalance = loadBalances.stream().filter(e -> e.support(loadBalanceModelEnum)).findFirst().orElseThrow(()->new RpcException("No LoadBalance find" + loadBalanceModelEnum.getName()));
         return loadBalance.select(message, clients);
     }
 

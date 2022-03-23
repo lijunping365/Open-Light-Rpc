@@ -4,9 +4,8 @@ package com.lightcode.rpc.server.loadbalance.support;
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.information.ClientInformation;
-import com.lightcode.rpc.server.enums.LoadBalanceModelEnum;
 import com.lightcode.rpc.server.loadbalance.AbstractLoadBalance;
-import org.springframework.stereotype.Component;
+import com.lightcode.rpc.server.loadbalance.LoadBalance;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.TreeMap;
  *
  * @see LoadBalance
  */
-@Component
 public class RandomWeightedLoadBalance extends AbstractLoadBalance {
 
     /**
@@ -45,10 +43,5 @@ public class RandomWeightedLoadBalance extends AbstractLoadBalance {
             throw new RpcException("No load balancing node was found");
         }
         return nodes.get(tailMap.firstKey());
-    }
-
-    @Override
-    public boolean support(LoadBalanceModelEnum loadBalanceModelEnum) {
-        return loadBalanceModelEnum == LoadBalanceModelEnum.RANDOM_WEIGHT;
     }
 }

@@ -1,15 +1,18 @@
 package com.lightcode.rpc.server.config;
 
+
 import com.lightcode.rpc.server.ServerConfiguration;
-import com.lightcode.rpc.server.random.RandomGenerator;
-import com.lightcode.rpc.server.random.support.SnowflakeRandomGenerator;
+import com.lightcode.rpc.server.cluster.ClusterInvoker;
+import com.lightcode.rpc.server.cluster.support.FailoverClusterInvoker;
+import com.lightcode.rpc.server.discovery.ServiceDiscovery;
+import com.lightcode.rpc.server.loadbalance.LoadBalance;
+import com.lightcode.rpc.server.loadbalance.support.ConsistentHashLoadBalance;
+import com.lightcode.rpc.server.random.RequestIdGenerator;
+import com.lightcode.rpc.server.random.support.SequenceRequestIdGenerator;
 import com.lightcode.rpc.server.remoting.RemotingInvoker;
 import com.lightcode.rpc.server.remoting.support.GrpcRemotingInvoker;
 import com.lightcode.rpc.server.store.InstanceStore;
 import com.lightcode.rpc.server.store.support.MemoryInstanceStore;
-import com.lightcode.rpc.server.store.support.RedissonInstanceStore;
-import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,33 +28,36 @@ import java.util.concurrent.ThreadLocalRandom;
 @EnableConfigurationProperties(ServerConfiguration.class)
 public class ServerAutoConfiguration {
 
-    private final ServerConfiguration configuration;
-
-    public ServerAutoConfiguration(ServerConfiguration configuration) {
-        this.configuration = configuration;
+    @Bean
+    @ConditionalOnMissingBean
+    public ClusterInvoker clusterInvoker(ServiceDiscovery serviceDiscovery,
+                                         ServerConfiguration configuration,
+                                         LoadBalance loadBalance,
+                                         RemotingInvoker remotingInvoker){
+        return new FailoverClusterInvoker(serviceDiscovery, configuration, loadBalance, remotingInvoker);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public RemotingInvoker remotingInvoker(RandomGenerator randomGenerator){
-        return new GrpcRemotingInvoker(randomGenerator);
+    public LoadBalance loadBalance(){
+        return new ConsistentHashLoadBalance();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public RandomGenerator randomGenerator(){
-        return new SnowflakeRandomGenerator(ThreadLocalRandom.current().nextInt(1, 30), ThreadLocalRandom.current().nextInt(1, 30));
+    public RemotingInvoker remotingInvoker(RequestIdGenerator requestIdGenerator){
+        return new GrpcRemotingInvoker(requestIdGenerator);
     }
 
     @Bean
-    @ConditionalOnExpression("'memory'.equals('${com.lightcode.rpc.server.store:memory}')")
+    @ConditionalOnMissingBean
+    public RequestIdGenerator randomGenerator(){
+        return new SequenceRequestIdGenerator();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public InstanceStore memoryStore(){
         return new MemoryInstanceStore();
-    }
-
-    @Bean
-    @ConditionalOnExpression("'redisson'.equals('${com.lightcode.rpc.server.store:redisson}')")
-    public InstanceStore redissonStore(RedissonClient client){
-        return new RedissonInstanceStore(client);
     }
 }

@@ -3,9 +3,7 @@ package com.lightcode.rpc.server.loadbalance.support;
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.core.information.ClientInformation;
-import com.lightcode.rpc.server.enums.LoadBalanceModelEnum;
 import com.lightcode.rpc.server.loadbalance.AbstractLoadBalance;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -20,7 +18,6 @@ import java.util.TreeMap;
  * b、hash method replace hashCode：String 的 hashCode可能重复，需要进一步扩大 hashCode 的取值范围
  * @author lijunping on 2021/9/1
  */
-@Component
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 
     private static final int VIRTUAL_NODE_NUM = 100;
@@ -62,10 +59,5 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
                 | ((long) (digest[1] & 0xFF) << 8)
                 | (digest[0] & 0xFF))
                 & 0xFFFFFFFFL;
-    }
-
-    @Override
-    public boolean support(LoadBalanceModelEnum loadBalanceModelEnum) {
-        return loadBalanceModelEnum == LoadBalanceModelEnum.CONSISTENT_HASH;
     }
 }

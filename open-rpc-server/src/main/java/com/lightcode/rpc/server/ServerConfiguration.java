@@ -14,18 +14,6 @@ public class ServerConfiguration {
      */
     private int serverPort = 5200;
     /**
-     * The cluster model, @See BroadcastClusterInvoker，FailbackClusterInvoker, NormalClusterInvoker
-     */
-    private String clusterModel = "failover";
-    /**
-     * The loadBalance model, @See ConsistentHashLoadBalance，RandomWeightedLoadBalance
-     */
-    private String loadBalance = "consistentHash";
-    /**
-     * The store model, @See MemoryInstanceStore, RedissonInstanceStore
-     */
-    private String store;
-    /**
      * Invoke retries
      */
     private int retryTimes = 3;

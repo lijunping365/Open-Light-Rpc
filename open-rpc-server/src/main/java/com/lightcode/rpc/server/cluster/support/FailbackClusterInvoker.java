@@ -6,11 +6,9 @@ import com.lightcode.rpc.core.information.ClientInformation;
 import com.lightcode.rpc.server.ServerConfiguration;
 import com.lightcode.rpc.server.cluster.AbstractClusterInvoker;
 import com.lightcode.rpc.server.discovery.ServiceDiscovery;
-import com.lightcode.rpc.server.enums.ClusterInvokeModelEnum;
 import com.lightcode.rpc.server.loadbalance.LoadBalance;
 import com.lightcode.rpc.server.remoting.RemotingInvoker;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -20,10 +18,10 @@ import java.util.List;
  * @Date: 2022-01-31 19:29
  */
 @Slf4j
-@Component
 public class FailbackClusterInvoker extends AbstractClusterInvoker {
-    public FailbackClusterInvoker(ServiceDiscovery serviceDiscovery, ServerConfiguration configuration, List<LoadBalance> loadBalances, RemotingInvoker remotingInvoker) {
-        super(serviceDiscovery, configuration, loadBalances, remotingInvoker);
+
+    public FailbackClusterInvoker(ServiceDiscovery serviceDiscovery, ServerConfiguration configuration, LoadBalance loadBalance, RemotingInvoker remotingInvoker) {
+        super(serviceDiscovery, configuration, loadBalance, remotingInvoker);
     }
 
     @Override
@@ -52,10 +50,5 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean support(ClusterInvokeModelEnum clusterModel) {
-        return clusterModel == ClusterInvokeModelEnum.FAIL_BACK;
     }
 }

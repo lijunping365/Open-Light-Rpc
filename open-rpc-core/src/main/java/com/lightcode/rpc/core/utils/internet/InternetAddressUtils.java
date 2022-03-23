@@ -1,4 +1,4 @@
-package com.lightcode.rpc.core.internet;
+package com.lightcode.rpc.core.utils.internet;
 
 import java.net.*;
 import java.util.Enumeration;

@@ -6,11 +6,11 @@ import com.lightcode.rpc.core.grpc.MessageServiceGrpc;
 import com.lightcode.rpc.core.grpc.proto.MessageRequest;
 import com.lightcode.rpc.core.grpc.proto.MessageResponse;
 import com.lightcode.rpc.core.information.ClientInformation;
-import com.lightcode.rpc.core.json.JSON;
+import com.lightcode.rpc.core.utils.json.JSON;
 import com.lightcode.rpc.core.transport.MessageRequestBody;
 import com.lightcode.rpc.core.transport.MessageResponseBody;
 import com.lightcode.rpc.core.transport.MessageResponseStatus;
-import com.lightcode.rpc.server.random.RandomGenerator;
+import com.lightcode.rpc.server.random.RequestIdGenerator;
 import com.lightcode.rpc.server.remoting.RemotingInvoker;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
@@ -23,9 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
-    private final RandomGenerator randomGenerator;
-    public GrpcRemotingInvoker(RandomGenerator randomGenerator) {
-        this.randomGenerator = randomGenerator;
+    private final RequestIdGenerator requestIdGenerator;
+    public GrpcRemotingInvoker(RequestIdGenerator requestIdGenerator) {
+        this.requestIdGenerator = requestIdGenerator;
     }
 
 
@@ -35,7 +35,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         ManagedChannel channel = ClientChannelManager.establishChannel(clientInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
-            final String random = randomGenerator.generateUUID();
+            final String random = requestIdGenerator.generate();
             MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(random);
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());

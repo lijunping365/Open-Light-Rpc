@@ -1,4 +1,4 @@
-package com.lightcode.rpc.core.json;
+package com.lightcode.rpc.core.utils.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;

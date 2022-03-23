@@ -1,4 +1,4 @@
-package com.lightcode.rpc.core.json;
+package com.lightcode.rpc.core.utils.json;
 
 /**
  * json异常

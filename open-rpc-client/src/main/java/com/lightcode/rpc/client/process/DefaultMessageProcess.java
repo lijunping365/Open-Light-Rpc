@@ -1,7 +1,7 @@
 package com.lightcode.rpc.client.process;
 
 import com.lightcode.rpc.core.Message;
-import com.lightcode.rpc.core.json.JSON;
+import com.lightcode.rpc.core.utils.json.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 /**

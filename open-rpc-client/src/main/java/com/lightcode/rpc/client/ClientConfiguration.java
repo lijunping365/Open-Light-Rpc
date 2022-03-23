@@ -1,6 +1,6 @@
 package com.lightcode.rpc.client;
 
-import com.lightcode.rpc.core.internet.InternetAddressUtils;
+import com.lightcode.rpc.core.utils.internet.InternetAddressUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
