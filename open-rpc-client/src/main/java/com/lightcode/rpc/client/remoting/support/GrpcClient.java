@@ -1,14 +1,12 @@
-package com.lightcode.rpc.client.remoting;
+package com.lightcode.rpc.client.remoting.support;
 
 import com.lightcode.rpc.client.ClientConfiguration;
-import com.lightcode.rpc.client.handler.GRpcMessageHandler;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,16 +17,13 @@ import java.util.concurrent.Executors;
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-@Component
 public class GrpcClient implements InitializingBean, DisposableBean {
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
     /**
      * The grpc server instance
      */
     private Server rpcServer;
-
     public final ClientConfiguration configuration;
-
     private final BindableService bindableService;
 
     public GrpcClient(ClientConfiguration configuration, GRpcMessageHandler bindableService){

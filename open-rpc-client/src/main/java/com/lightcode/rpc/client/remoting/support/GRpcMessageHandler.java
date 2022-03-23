@@ -1,4 +1,4 @@
-package com.lightcode.rpc.client.handler;
+package com.lightcode.rpc.client.remoting.support;
 
 import com.lightcode.rpc.client.ClientConfiguration;
 import com.lightcode.rpc.client.process.MessageProcess;
@@ -17,24 +17,22 @@ import com.lightcode.rpc.core.transport.MessageResponseStatus;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-@Component
 public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase{
 
-    @Autowired
-    private MessageProcess messageProcess;
+    private final MessageProcess messageProcess;
+    private final ClientConfiguration configuration;
+    private final RegistryService registryService;
 
-    @Autowired
-    private ClientConfiguration configuration;
-
-    @Autowired
-    private RegistryService registryService;
+    public GRpcMessageHandler(MessageProcess messageProcess, ClientConfiguration configuration, RegistryService registryService) {
+        this.messageProcess = messageProcess;
+        this.configuration = configuration;
+        this.registryService = registryService;
+    }
 
     @Override
     public void messageProcessing(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
