@@ -1,4 +1,4 @@
-package com.lightcode.rpc.server.remoting.support;
+package com.lightcode.rpc.server.remoting;
 
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
@@ -11,7 +11,6 @@ import com.lightcode.rpc.core.transport.MessageRequestBody;
 import com.lightcode.rpc.core.transport.MessageResponseBody;
 import com.lightcode.rpc.core.transport.MessageResponseStatus;
 import com.lightcode.rpc.server.random.RequestIdGenerator;
-import com.lightcode.rpc.server.remoting.RemotingInvoker;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;

@@ -1,4 +1,4 @@
-package com.lightcode.rpc.client.remoting.support;
+package com.lightcode.rpc.client.remoting;
 
 import com.lightcode.rpc.client.ClientConfiguration;
 import com.lightcode.rpc.client.process.MessageProcess;
@@ -22,13 +22,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase{
+public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase{
 
     private final MessageProcess messageProcess;
     private final ClientConfiguration configuration;
     private final RegistryService registryService;
 
-    public GRpcMessageHandler(MessageProcess messageProcess, ClientConfiguration configuration, RegistryService registryService) {
+    public GrpcMessageHandler(MessageProcess messageProcess, ClientConfiguration configuration, RegistryService registryService) {
         this.messageProcess = messageProcess;
         this.configuration = configuration;
         this.registryService = registryService;

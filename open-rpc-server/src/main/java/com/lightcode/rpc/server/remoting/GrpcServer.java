@@ -1,4 +1,4 @@
-package com.lightcode.rpc.server.remoting.support;
+package com.lightcode.rpc.server.remoting;
 
 import com.lightcode.rpc.server.ServerConfiguration;
 import io.grpc.Server;

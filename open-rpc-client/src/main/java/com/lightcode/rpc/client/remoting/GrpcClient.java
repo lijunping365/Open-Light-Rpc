@@ -1,4 +1,4 @@
-package com.lightcode.rpc.client.remoting.support;
+package com.lightcode.rpc.client.remoting;
 
 import com.lightcode.rpc.client.ClientConfiguration;
 import io.grpc.BindableService;
@@ -26,7 +26,7 @@ public class GrpcClient implements InitializingBean, DisposableBean {
     public final ClientConfiguration configuration;
     private final BindableService bindableService;
 
-    public GrpcClient(ClientConfiguration configuration, GRpcMessageHandler bindableService){
+    public GrpcClient(ClientConfiguration configuration, GrpcMessageHandler bindableService){
         this.configuration = configuration;
         this.bindableService = bindableService;
     }
