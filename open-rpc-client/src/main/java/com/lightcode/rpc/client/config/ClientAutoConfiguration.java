@@ -6,6 +6,7 @@ import com.lightcode.rpc.client.process.DefaultMessageProcess;
 import com.lightcode.rpc.client.process.MessageProcess;
 import com.lightcode.rpc.client.registry.RegistryService;
 import com.lightcode.rpc.client.remoting.GrpcClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class ClientAutoConfiguration {
 
     @Bean
+    @ConditionalOnBean(RegistryService.class)
     public GrpcMessageHandler gRpcMessageHandler(RegistryService registryService,
                                                  MessageProcess messageProcess,
                                                  ClientConfiguration configuration){
@@ -26,6 +28,7 @@ public class ClientAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnBean(GrpcMessageHandler.class)
     public GrpcClient grpcClient(ClientConfiguration configuration,
                                  GrpcMessageHandler bindableService){
         return new GrpcClient(configuration, bindableService);

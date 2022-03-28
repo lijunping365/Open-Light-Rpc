@@ -13,6 +13,7 @@ import com.lightcode.rpc.server.remoting.GrpcRemotingInvoker;
 import com.lightcode.rpc.server.remoting.GrpcServer;
 import com.lightcode.rpc.server.store.InstanceStore;
 import com.lightcode.rpc.server.store.support.MemoryInstanceStore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnBean(ServiceDiscovery.class)
     public ClusterInvoker clusterInvoker(ServiceDiscovery serviceDiscovery,
                                          ServerConfiguration configuration,
                                          LoadBalance loadBalance,
