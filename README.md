@@ -1,6 +1,6 @@
 # Open-Light-Rpc
 
-轻量级rpc框架，客户端与服务端通信采用 Grpc 通信方式
+轻量级rpc框架，客户端与服务端通信采用 Grpc-Netty 通信方式
 
 # 服务端（open-rpc-server）
 
