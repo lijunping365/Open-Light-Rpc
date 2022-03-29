@@ -99,25 +99,25 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 }
 ```
 
-## 拓展示例
+## 扩展示例
 
-### 1. 拓展服务发现（ServiceDiscovery）
+### 1. 扩展服务发现（ServiceDiscovery）
 
 实现 ServiceDiscovery  接口
 
-### 2. 拓展负载均衡机制（LoadBalance）
+### 2. 扩展负载均衡机制（LoadBalance）
 
 实现 LoadBalance 接口
 
-### 3. 拓展容错机制（ClusterInvoker）
+### 3. 扩展容错机制（ClusterInvoker）
 
 实现 ClusterInvoker 接口
 
-### 4. 拓展生成唯一请求 ID（RequestIdGenerator）
+### 4. 扩展生成唯一请求 ID（RequestIdGenerator）
 
 实现 RequestIdGenerator 接口
 
-### 5. 拓展客户端存储方式（InstanceStore）
+### 5. 扩展客户端存储方式（InstanceStore）
 
 实现 InstanceStore 接口
 
@@ -190,9 +190,9 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
 }
 ```
 
-## 拓展示例
+## 扩展示例
 
-### 1. 拓展客户端注册方式（RegistryService）
+### 1. 扩展客户端注册方式（RegistryService）
 
 实现 RegistryService 接口
 
