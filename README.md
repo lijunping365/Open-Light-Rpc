@@ -202,8 +202,71 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
 
 ## 注意点
 
-1. 客户端与服务端使用的注册中心类型须一致
+### 1. 客户端与服务端使用的注册中心类型须一致
 
+
+### 2. 如果使用 Nacos 作为注册中心，也就是系统默认使用的注册中心.
+
+1. 需要添加如下 maven 依赖
+
+```xml
+<dependency>
+    <groupId>com.alibaba.nacos</groupId>
+    <artifactId>nacos-client</artifactId>
+    <version>2.0.4</version>
+</dependency>
+```
+
+2. 需要注入 NamingService
+
+```java
+@Configuration(proxyBeanMethods = false)
+public class SpringWebMvcConfig {
+    
+    @Bean
+    public NamingService namingService() throws NacosException {
+        Properties properties = new Properties();
+        properties.put(PropertyKeyConst.USERNAME, "nacos");
+        properties.put(PropertyKeyConst.PASSWORD, "nacos");
+        properties.put(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
+        return NacosFactory.createNamingService(properties);
+    }
+}
+```
+
+### 3. 如果使用 Zookeeper 作为注册中心
+
+1. 需要添加如下 maven 依赖
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>3.7.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.101tec</groupId>
+        <artifactId>zkclient</artifactId>
+        <version>0.11</version>
+    </dependency>
+</dependencies>
+```
+
+2. 需要注入 ZkClient
+
+```java
+@Configuration(proxyBeanMethods = false)
+public class SpringWebMvcConfig {
+
+    @Bean
+    public ZkClient zkClient(){
+        System.setProperty("zookeeper.sasl.client", "false");
+        return new ZkClient(String.format(CommonConstant.ADDRESS_PATTERN, configuration.getAddress(), configuration.getPort()), configuration.getConnectionTimeout());
+    }
+}
+```
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star
