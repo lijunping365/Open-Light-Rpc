@@ -3,16 +3,46 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.saucesubfresh</groupId>
     <artifactId>Open-Light-Rpc</artifactId>
-    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>A Light Rpc framework.</description>
+    <url>https://www.saucesubfresh.com/</url>
+
+    <inceptionYear>2022</inceptionYear>
+
     <modules>
         <module>open-rpc-core</module>
         <module>open-rpc-server</module>
         <module>open-rpc-client</module>
     </modules>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <tag>master</tag>
+        <url>https://github.com/lijunping365/Open-Light-Rpc.git</url>
+        <connection>scm:git:https://github.com/lijunping365/Open-Light-Rpc.git</connection>
+        <developerConnection>scm:git:git@github.com:lijunping365/Open-Light-Rpc.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>LJP</id>
+            <name>LiJunPing</name>
+            <email>2544054976@qq.com</email>
+            <url>https://github.com/lijunping365</url>
+        </developer>
+    </developers>
+
 
     <properties>
         <!-- 项目基础依赖版本 -->
