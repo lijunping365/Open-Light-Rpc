@@ -10,9 +10,7 @@
 
     <name>${project.artifactId}</name>
     <description>A Light Rpc framework.</description>
-    <url>https://www.saucesubfresh.com/</url>
-
-    <inceptionYear>2022</inceptionYear>
+    <url>https://github.com/lijunping365/Open-Light-Rpc</url>
 
     <modules>
         <module>open-rpc-core</module>
