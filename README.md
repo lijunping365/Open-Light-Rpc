@@ -19,7 +19,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.lightcode</groupId>
+    <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-server</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -42,7 +42,7 @@ public class JobAdminApplication {
 
 ```yaml
 com:
-  lightcode:
+  saucesubfresh:
     rpc:
       server:
         server-port: 5200
@@ -135,7 +135,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
 ```xml
 <dependency>
-    <groupId>com.lightcode</groupId>
+    <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-client</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -158,7 +158,7 @@ public class JobClientApplication {
 
 ```yaml
 com:
-  lightcode:
+  saucesubfresh:
     rpc:
       client:
         server-address: 127.0.0.1
