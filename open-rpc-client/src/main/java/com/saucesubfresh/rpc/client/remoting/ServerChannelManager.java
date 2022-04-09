@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.client.remoting;
 
-import com.lightcode.rpc.core.information.ServerInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.util.ObjectUtils;

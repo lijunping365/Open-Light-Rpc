@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.server.random.support;
 
-import com.lightcode.rpc.core.utils.sequence.Sequence;
+import com.saucesubfresh.rpc.core.utils.sequence.Sequence;
 import com.saucesubfresh.rpc.server.random.RequestIdGenerator;
 
 /**

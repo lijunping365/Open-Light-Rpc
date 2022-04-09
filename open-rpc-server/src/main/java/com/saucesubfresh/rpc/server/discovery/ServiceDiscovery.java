@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.server.discovery;
 
 
 
-import com.lightcode.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 
 import java.util.List;
 

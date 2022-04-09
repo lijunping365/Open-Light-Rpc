@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.server.selector;
 
-import com.lightcode.rpc.core.enums.RegistryServiceType;
-import com.lightcode.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.enums.RegistryServiceType;
+import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.server.annotation.EnableLightRpcServer;
 import com.saucesubfresh.rpc.server.discovery.support.NacosRegistryService;
 import com.saucesubfresh.rpc.server.discovery.support.ZookeeperRegistryService;

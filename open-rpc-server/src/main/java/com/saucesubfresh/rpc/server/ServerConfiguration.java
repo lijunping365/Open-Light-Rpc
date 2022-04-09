@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * server configuration
  */
 @Data
-@ConfigurationProperties(prefix = "com.lightcode.rpc.server")
+@ConfigurationProperties(prefix = "com.saucesubfresh.rpc.server")
 public class ServerConfiguration {
     /**
      * The server port

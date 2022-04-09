@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.registry;
 
 import com.saucesubfresh.rpc.client.ClientConfiguration;
-import com.lightcode.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.exception.RpcException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 

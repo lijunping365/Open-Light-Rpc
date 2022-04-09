@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.server.store.support;
 
-import com.lightcode.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.server.store.AbstractInstanceStore;
 import org.redisson.api.RedissonClient;
 

@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.registry.support;
 
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.registry.AbstractRegistryService;
-import com.lightcode.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.ZooDefs;

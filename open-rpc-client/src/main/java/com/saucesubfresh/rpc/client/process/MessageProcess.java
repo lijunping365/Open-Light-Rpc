@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.client.process;
 
-import com.lightcode.rpc.core.Message;
+import com.saucesubfresh.rpc.core.Message;
 
 /**
  * @author lijunping on 2022/1/19

@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.server.discovery.support;
 
-import com.lightcode.rpc.core.constants.CommonConstant;
-import com.lightcode.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;

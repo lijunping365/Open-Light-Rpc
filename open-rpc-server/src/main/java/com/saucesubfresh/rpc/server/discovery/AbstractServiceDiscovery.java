@@ -1,8 +1,8 @@
 package com.saucesubfresh.rpc.server.discovery;
 
-import com.lightcode.rpc.core.Message;
-import com.lightcode.rpc.core.enums.PacketType;
-import com.lightcode.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.enums.PacketType;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.server.annotation;
 
 
-import com.lightcode.rpc.core.enums.RegistryServiceType;
+import com.saucesubfresh.rpc.core.enums.RegistryServiceType;
 import com.saucesubfresh.rpc.server.selector.RegistryServiceSelector;
 import org.springframework.context.annotation.Import;
 

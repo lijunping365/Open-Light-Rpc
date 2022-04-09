@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.server.store;
 
-import com.lightcode.rpc.core.enums.ClientStatus;
-import com.lightcode.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.enums.ClientStatus;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
