@@ -143,9 +143,6 @@
     <profiles>
         <profile>
             <id>release</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <!-- Source -->
@@ -200,11 +197,11 @@
             </build>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>release</id>
+                    <id>oss</id>
                     <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
                 </snapshotRepository>
                 <repository>
-                    <id>release</id>
+                    <id>oss</id>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
