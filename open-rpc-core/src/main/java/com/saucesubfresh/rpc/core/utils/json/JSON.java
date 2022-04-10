@@ -2,7 +2,6 @@ package com.saucesubfresh.rpc.core.utils.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -143,35 +142,6 @@ public abstract class JSON {
       throw new JsonException(e);
     }
   }
-
-  /**
-   *
-   * @param input T类型的泛型
-   * @param <T> T类型的泛型
-   * @return 返回 Map<String, Object>
-   * @throws IOException
-   */
-  public static <T> Map<String, Object> parseMapObject(T input) throws IOException {
-    return INSTANCE.readValue(INSTANCE.writeValueAsBytes(input), new TypeReference<>() {
-    });
-  }
-
-  /**
-   *
-   * @param input T类型的泛型
-   * @param <T> T类型的泛型
-   * @return 返回 Map<String, String>
-   * @throws IOException
-   */
-  public static <T> Map<String, String> parseMapString(T input) throws IOException {
-    try {
-      return INSTANCE.readValue(INSTANCE.writeValueAsBytes(input), new TypeReference<>() {
-      });
-    }catch (JsonProcessingException e){
-      throw new JsonException(e);
-    }
-  }
-
 
   /**
    * 将json反序列化为 Map
