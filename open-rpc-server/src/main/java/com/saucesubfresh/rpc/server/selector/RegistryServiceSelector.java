@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.server.selector;
 
 import com.saucesubfresh.rpc.core.enums.RegistryServiceType;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.server.annotation.EnableLightRpcServer;
+import com.saucesubfresh.rpc.server.annotation.EnableOpenRpcServer;
 import com.saucesubfresh.rpc.server.discovery.support.NacosRegistryService;
 import com.saucesubfresh.rpc.server.discovery.support.ZookeeperRegistryService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +19,14 @@ import java.util.Map;
 public class RegistryServiceSelector implements ImportSelector {
 
     /**
-     * The name of {@link RegistryServiceType} attributes in {@link EnableLightRpcServer}
+     * The name of {@link RegistryServiceType} attributes in {@link EnableOpenRpcServer}
      */
     private static final String REGISTRAR_TYPE_ATTRIBUTE_NAME = "registryType";
 
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         Map<String, Object> annotationAttributes =
-                importingClassMetadata.getAnnotationAttributes(EnableLightRpcServer.class.getName());
+                importingClassMetadata.getAnnotationAttributes(EnableOpenRpcServer.class.getName());
         RegistryServiceType serverServiceType = (RegistryServiceType) annotationAttributes.get(REGISTRAR_TYPE_ATTRIBUTE_NAME);
         log.info("Use the [{}] method to register the Client service", serverServiceType);
         switch (serverServiceType) {

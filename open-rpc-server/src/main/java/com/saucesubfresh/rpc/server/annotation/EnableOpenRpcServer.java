@@ -13,10 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import({RegistryServiceSelector.class})
-public @interface EnableLightRpcServer {
+public @interface EnableOpenRpcServer {
 
-    /**
-     * Configure the way to pull the client
-     */
     RegistryServiceType registryType() default RegistryServiceType.NACOS;
 }
