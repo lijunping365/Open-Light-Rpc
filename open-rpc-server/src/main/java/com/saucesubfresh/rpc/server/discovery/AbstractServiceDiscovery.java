@@ -2,7 +2,9 @@ package com.saucesubfresh.rpc.server.discovery;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
+import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,15 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
     private final RemotingInvoker remotingInvoker;
     private final InstanceStore instanceStore;
+    protected final ServerConfiguration configuration;
 
-    protected AbstractServiceDiscovery(RemotingInvoker remotingInvoker, InstanceStore instanceStore) {
+    protected AbstractServiceDiscovery(RemotingInvoker remotingInvoker, InstanceStore instanceStore, ServerConfiguration configuration) {
+        if (StringUtils.isBlank(configuration.getClientName())){
+            throw new RpcException("The subscribe client name cannot be empty.");
+        }
         this.remotingInvoker = remotingInvoker;
         this.instanceStore = instanceStore;
+        this.configuration = configuration;
     }
 
     @Override

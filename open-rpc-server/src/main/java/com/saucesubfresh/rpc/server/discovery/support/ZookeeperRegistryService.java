@@ -2,6 +2,7 @@ package com.saucesubfresh.rpc.server.discovery.support;
 
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
@@ -22,8 +23,8 @@ import java.util.stream.Collectors;
 public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
     private final ZkClient zkClient;
 
-    public ZookeeperRegistryService(ZkClient zkClient, RemotingInvoker remotingInvoker, InstanceStore instanceStore){
-        super(remotingInvoker, instanceStore);
+    public ZookeeperRegistryService(ZkClient zkClient, RemotingInvoker remotingInvoker, InstanceStore instanceStore, ServerConfiguration configuration){
+        super(remotingInvoker, instanceStore, configuration);
         this.zkClient = zkClient;
     }
 
@@ -31,7 +32,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
      * 使用zk事件监听，如果服务发生宕机情况，重新读取新的节点
      */
     private void subscribe(){
-        zkClient.subscribeChildChanges(CommonConstant.CLIENT_ROOT_PATH, new IZkChildListener() {
+        zkClient.subscribeChildChanges(configuration.getClientName(), new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
@@ -47,7 +48,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
 
     @Override
     protected List<ClientInformation> doLookup() {
-        List<String> children = zkClient.getChildren(CommonConstant.CLIENT_ROOT_PATH);
+        List<String> children = zkClient.getChildren(configuration.getClientName());
         log.info("查询到的子节点有 {}", children);
         return children.stream().map(e->{
             final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);

@@ -27,6 +27,12 @@ public class ClientConfiguration {
      */
     private int serverPort = 5200;
     /**
+     * The name of the service registered by the client to nacos or zookeeper
+     * if you use nacos，You should be named like this: job-client-services
+     * if you use zookeeper, You should be named like this: /JobClient
+     */
+    private String clientName;
+    /**
      * Get local host
      *
      * @return local host

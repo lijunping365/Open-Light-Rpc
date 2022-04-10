@@ -5,7 +5,6 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.registry.AbstractRegistryService;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -46,7 +45,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
             instance.setPort(this.configuration.getClientPort());
             Map<String, String> metadata = new HashMap<>();
             instance.setMetadata(metadata);
-            this.namingService.registerInstance(CommonConstant.CLIENT_SERVICE_NAME, instance);
+            this.namingService.registerInstance(this.configuration.getClientName(), instance);
             log.info("Current client registered to nacos server successfully.");
             return true;
         } catch (Exception e) {
@@ -58,7 +57,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
     @Override
     public boolean deRegister(String clientAddress, int clientPort) {
         try {
-            this.namingService.deregisterInstance(CommonConstant.CLIENT_SERVICE_NAME, clientAddress, clientPort);
+            this.namingService.deregisterInstance(this.configuration.getClientName(), clientAddress, clientPort);
             return true;
         } catch (NacosException e) {
             log.error("deRegister instance failed {}", e.getMessage());

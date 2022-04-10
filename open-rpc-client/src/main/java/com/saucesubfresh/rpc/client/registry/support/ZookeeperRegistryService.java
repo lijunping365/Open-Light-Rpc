@@ -33,11 +33,11 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
         Map<String, String> metadata = new HashMap<>();
         metadata.put("clientIp", this.configuration.getClientAddress());
         metadata.put("clientPort", String.valueOf(this.configuration.getClientPort()));
-        if (!zkClient.exists(CommonConstant.CLIENT_ROOT_PATH)) {
-            zkClient.createPersistent(CommonConstant.CLIENT_ROOT_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+        if (!zkClient.exists(this.configuration.getClientName())) {
+            zkClient.createPersistent(this.configuration.getClientName(), null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
         String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = CommonConstant.CLIENT_ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
+        String clientPath = this.configuration.getClientName() + CommonConstant.Symbol.SLASH + clientInfo;
         if (!zkClient.exists(clientPath)) {
             zkClient.createEphemeral(clientPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
@@ -48,7 +48,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
     @Override
     public boolean deRegister(String clientAddress, int clientPort) {
         String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = CommonConstant.CLIENT_ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
+        String clientPath = this.configuration.getClientName() + CommonConstant.Symbol.SLASH + clientInfo;
         this.zkClient.delete(clientPath);
         return true;
     }

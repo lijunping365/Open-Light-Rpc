@@ -5,16 +5,6 @@ package com.saucesubfresh.rpc.core.constants;
  */
 public interface CommonConstant {
   /**
-   * The name of the service registered by the client to nacos
-   */
-  String CLIENT_SERVICE_NAME = "job-client-services";
-
-  /**
-   * The name of the service registered by the client to zookeeper
-   */
-  String CLIENT_ROOT_PATH = "/JobClient";
-
-  /**
    * ip:port pattern
    */
   String ADDRESS_PATTERN = "%s:%d";

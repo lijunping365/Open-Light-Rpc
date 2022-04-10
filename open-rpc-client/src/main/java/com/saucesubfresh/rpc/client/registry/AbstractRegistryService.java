@@ -19,6 +19,9 @@ public abstract class AbstractRegistryService implements RegistryService, Initia
         if (StringUtils.isBlank(configuration.getServerAddress())) {
             throw new RpcException("The Target server address cannot be empty.");
         }
+        if (StringUtils.isBlank(configuration.getClientName())){
+            throw new RpcException("The client register name cannot be empty.");
+        }
         this.configuration = configuration;
     }
     @Override

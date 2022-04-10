@@ -6,8 +6,8 @@ import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
     private final NamingService namingService;
 
-    public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore) {
-        super(remotingInvoker, instanceStore);
+    public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore, ServerConfiguration configuration) {
+        super(remotingInvoker, instanceStore, configuration);
         this.namingService = namingService;
     }
 
@@ -48,7 +48,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     @Override
     protected List<ClientInformation> doLookup() {
         try {
-            List<Instance> allInstances = namingService.getAllInstances(CommonConstant.CLIENT_SERVICE_NAME);
+            List<Instance> allInstances = namingService.getAllInstances(this.configuration.getClientName());
             return convertClientInformation(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
@@ -63,7 +63,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.namingService.subscribe(CommonConstant.CLIENT_SERVICE_NAME, this);
+        this.namingService.subscribe(this.configuration.getClientName(), this);
     }
 
     private List<ClientInformation> convertClientInformation(List<Instance> instances){

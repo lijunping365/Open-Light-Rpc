@@ -26,7 +26,6 @@
     </licenses>
 
     <scm>
-        <tag>master</tag>
         <url>https://github.com/lijunping365/Open-Light-Rpc.git</url>
         <connection>scm:git:https://github.com/lijunping365/Open-Light-Rpc.git</connection>
         <developerConnection>scm:git:git@github.com:lijunping365/Open-Light-Rpc.git</developerConnection>
