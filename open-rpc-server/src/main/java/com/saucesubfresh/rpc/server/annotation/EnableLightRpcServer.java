@@ -17,8 +17,6 @@ public @interface EnableLightRpcServer {
 
     /**
      * Configure the way to pull the client
-     *
-     * @return {@link RegistryServiceType} instance
      */
     RegistryServiceType registryType() default RegistryServiceType.NACOS;
 }
