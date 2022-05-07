@@ -1,5 +1,6 @@
 package com.saucesubfresh.rpc.core.transport;
 
+import com.saucesubfresh.rpc.core.Message;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,11 +15,7 @@ public class MessageResponseBody {
      */
     private String requestId;
     /**
-     * Message processing response status
-     * <p>
-     * If the response status is {@link MessageResponseStatus#SUCCESS},continue to execute downward.
-     * if it is {@link MessageResponseStatus#ERROR},
-     * need to execute message distribution again according to the retry strategy
+     * The Response body
      */
-    private MessageResponseStatus status;
+    private Message responseBody;
 }

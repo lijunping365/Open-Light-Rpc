@@ -29,7 +29,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
     }
 
     @Override
-    public boolean doRegister(String serverAddress, int serverPort) {
+    public void doRegister(String serverAddress, int serverPort) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("clientIp", this.configuration.getClientAddress());
         metadata.put("clientPort", String.valueOf(this.configuration.getClientPort()));
@@ -42,15 +42,13 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
             zkClient.createEphemeral(clientPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
         log.info("Current client registered to zookeeper server successfully.");
-        return true;
     }
 
     @Override
-    public boolean deRegister(String clientAddress, int clientPort) {
+    public void deRegister(String clientAddress, int clientPort) {
         String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
         String clientPath = this.configuration.getClientName() + CommonConstant.Symbol.SLASH + clientInfo;
         this.zkClient.delete(clientPath);
-        return true;
     }
 
     @Override

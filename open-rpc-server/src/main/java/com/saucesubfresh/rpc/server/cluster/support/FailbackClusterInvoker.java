@@ -25,14 +25,14 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected void doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
+    protected Message doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
         ClientInformation clientInformation = select(message, clients);
         boolean success = false;
         int maxTimes = configuration.getRetryTimes();
         int currentTimes = 0;
         while (!success) {
             try {
-                remotingInvoker.invoke(message, clientInformation);
+                message = remotingInvoker.invoke(message, clientInformation);
                 success = true;
             }catch (RpcException e){
                 log.error(e.getMessage(), e);
@@ -50,5 +50,6 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
                 }
             }
         }
+        return message;
     }
 }

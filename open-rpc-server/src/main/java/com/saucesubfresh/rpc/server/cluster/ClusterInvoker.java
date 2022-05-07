@@ -15,5 +15,5 @@ public interface ClusterInvoker {
      * @param message
      * @throws RpcException
      */
-    void invoke(Message message) throws RpcException;
+    Message invoke(Message message) throws RpcException;
 }

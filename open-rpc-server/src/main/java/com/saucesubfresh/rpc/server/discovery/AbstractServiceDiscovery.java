@@ -50,17 +50,18 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
         ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
-        remotingInvoker.invoke(message, clientInformation);
-        return true;
+        message = remotingInvoker.invoke(message, clientInformation);
+        return message.getSuccess();
     }
 
+    @Override
     public boolean onlineClient(String clientId){
         final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
         ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);
-        remotingInvoker.invoke(message, clientInformation);
-        return true;
+        message = remotingInvoker.invoke(message, clientInformation);
+        return message.getSuccess();
     }
 
     protected void updateCache(List<ClientInformation> instances){

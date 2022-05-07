@@ -9,7 +9,6 @@ import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
-import com.saucesubfresh.rpc.core.transport.MessageResponseStatus;
 import com.saucesubfresh.rpc.server.random.RequestIdGenerator;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
@@ -29,7 +28,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
 
     @Override
-    public void invoke(Message message, ClientInformation clientInformation) throws RpcException {
+    public Message invoke(Message message, ClientInformation clientInformation) throws RpcException {
         String clientId = clientInformation.getClientId();
         ManagedChannel channel = ClientChannelManager.establishChannel(clientInformation);
         try {
@@ -39,10 +38,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());
             MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-            if (!MessageResponseStatus.SUCCESS.equals(responseBody.getStatus())) {
-                log.error("To the client: {}, the message is sent abnormally, and the message is recovered.", clientId);
-                throw new RpcException(String.format("To the client: %s, the message is sent abnormally, and the message is recovered.", clientId));
-            }
+            return responseBody.getResponseBody();
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
             log.error("To the client: {}, exception when sending a message, Status Code: {}", clientId, code);

@@ -32,9 +32,9 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     @Override
-    public void invoke(Message messages) throws RpcException {
+    public Message invoke(Message messages) throws RpcException {
         final List<ClientInformation> clientList = lookup();
-        doInvoke(messages, clientList);
+        return doInvoke(messages, clientList);
     }
 
     /**
@@ -55,5 +55,5 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
         return loadBalance.select(message, clients);
     }
 
-    protected abstract void doInvoke(Message message, List<ClientInformation> clients) throws RpcException;
+    protected abstract Message doInvoke(Message message, List<ClientInformation> clients) throws RpcException;
 }

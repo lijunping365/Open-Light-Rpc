@@ -5,6 +5,7 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.registry.AbstractRegistryService;
+import com.saucesubfresh.rpc.core.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -38,7 +39,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
      * @param serverPort    The server port
      */
     @Override
-    public boolean doRegister(String serverAddress, int serverPort) {
+    public void doRegister(String serverAddress, int serverPort) {
         try {
             Instance instance = new Instance();
             instance.setIp(this.configuration.getClientAddress());
@@ -47,21 +48,19 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
             instance.setMetadata(metadata);
             this.namingService.registerInstance(this.configuration.getClientName(), instance);
             log.info("Current client registered to nacos server successfully.");
-            return true;
         } catch (Exception e) {
             log.error("register instance failed {}", e.getMessage());
-            return false;
+            throw new RpcException(e.getMessage());
         }
     }
 
     @Override
-    public boolean deRegister(String clientAddress, int clientPort) {
+    public void deRegister(String clientAddress, int clientPort) {
         try {
             this.namingService.deregisterInstance(this.configuration.getClientName(), clientAddress, clientPort);
-            return true;
         } catch (NacosException e) {
             log.error("deRegister instance failed {}", e.getMessage());
-            return false;
+            throw new RpcException(e.getMessage());
         }
     }
 

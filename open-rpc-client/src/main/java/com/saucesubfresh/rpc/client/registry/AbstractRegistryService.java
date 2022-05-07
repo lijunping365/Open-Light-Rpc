@@ -25,8 +25,8 @@ public abstract class AbstractRegistryService implements RegistryService, Initia
         this.configuration = configuration;
     }
     @Override
-    public boolean register(String serverAddress, int serverPort) {
-        return doRegister(serverAddress, serverPort);
+    public void register(String serverAddress, int serverPort) {
+        doRegister(serverAddress, serverPort);
     }
 
     /**
@@ -45,5 +45,5 @@ public abstract class AbstractRegistryService implements RegistryService, Initia
         registerToServer();
     }
 
-    protected abstract boolean doRegister(String serverAddress, int serverPort);
+    protected abstract void doRegister(String serverAddress, int serverPort);
 }

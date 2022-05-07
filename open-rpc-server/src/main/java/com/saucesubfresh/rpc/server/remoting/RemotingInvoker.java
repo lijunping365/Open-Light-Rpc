@@ -16,5 +16,5 @@ public interface RemotingInvoker {
      * @param clientInformation
      * @throws RpcException
      */
-    void invoke(Message message, ClientInformation clientInformation) throws RpcException;
+    Message invoke(Message message, ClientInformation clientInformation) throws RpcException;
 }

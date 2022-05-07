@@ -283,6 +283,13 @@ public class SpringWebMvcConfig {
     }
 }
 ```
+
+## 提问
+
+问：open-rpc-client 中 ServerChannelManager 做什么用的？
+
+答：这个是一个预留功能，后面如果需要客户端主动发送消息给服务端，那么这个就会被用到
+
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star
