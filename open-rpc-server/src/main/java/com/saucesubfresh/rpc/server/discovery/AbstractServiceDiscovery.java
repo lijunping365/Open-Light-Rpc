@@ -2,8 +2,10 @@ package com.saucesubfresh.rpc.server.discovery;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
+import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
@@ -50,8 +52,8 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
         ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
-        message = remotingInvoker.invoke(message, clientInformation);
-        return message.getSuccess();
+        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
+        return invoke.getStatus() == ResponseStatus.SUCCESS;
     }
 
     @Override
@@ -60,8 +62,8 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
         ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);
-        message = remotingInvoker.invoke(message, clientInformation);
-        return message.getSuccess();
+        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
+        return invoke.getStatus() == ResponseStatus.SUCCESS;
     }
 
     protected void updateCache(List<ClientInformation> instances){

@@ -4,6 +4,7 @@ package com.saucesubfresh.rpc.server.remoting;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 /**
  * @author lijunping on 2022/2/16
@@ -16,5 +17,5 @@ public interface RemotingInvoker {
      * @param clientInformation
      * @throws RpcException
      */
-    Message invoke(Message message, ClientInformation clientInformation) throws RpcException;
+    MessageResponseBody invoke(Message message, ClientInformation clientInformation) throws RpcException;
 }

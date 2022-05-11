@@ -4,6 +4,7 @@ package com.saucesubfresh.rpc.server.cluster.support;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.cluster.AbstractClusterInvoker;
 import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
@@ -27,35 +28,35 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected Message doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
         ClientInformation clientInformation = select(message, clients);
+        MessageResponseBody response;
         try {
-            message = remotingInvoker.invoke(message, clientInformation);
+            response = remotingInvoker.invoke(message, clientInformation);
         } catch (RpcException e){
             clients.remove(clientInformation);
             if (CollectionUtils.isEmpty(clients)){
                 throw new RpcException(e.getMessage());
             }
-            message = invoke(message, clients);
+            response = invoke(message, clients);
         }
-        return message;
+        return response;
     }
 
-    private Message invoke(Message message, List<ClientInformation> clients) throws RpcException{
+    private MessageResponseBody invoke(Message message, List<ClientInformation> clients) throws RpcException{
         RpcException ex = null;
+        MessageResponseBody response = null;
         for (ClientInformation clientInformation : clients) {
             try {
-                message = remotingInvoker.invoke(message, clientInformation);
-                if (ex != null){
-                    throw new RpcException(ex.getMessage());
-                }
+                response = remotingInvoker.invoke(message, clientInformation);
                 break;
             }catch (RpcException e){
                 ex = e;
-            } catch (Throwable e) {
-                ex = new RpcException(e.getMessage());
             }
         }
-        return message;
+        if (response == null && ex != null){
+            throw new RpcException(ex.getMessage());
+        }
+        return response;
     }
 }

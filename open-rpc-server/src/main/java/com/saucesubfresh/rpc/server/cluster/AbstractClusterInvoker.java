@@ -4,6 +4,7 @@ package com.saucesubfresh.rpc.server.cluster;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
 import com.saucesubfresh.rpc.server.loadbalance.LoadBalance;
@@ -32,7 +33,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     @Override
-    public Message invoke(Message messages) throws RpcException {
+    public MessageResponseBody invoke(Message messages) throws RpcException {
         final List<ClientInformation> clientList = lookup();
         return doInvoke(messages, clientList);
     }
@@ -55,5 +56,5 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
         return loadBalance.select(message, clients);
     }
 
-    protected abstract Message doInvoke(Message message, List<ClientInformation> clients) throws RpcException;
+    protected abstract MessageResponseBody doInvoke(Message message, List<ClientInformation> clients) throws RpcException;
 }

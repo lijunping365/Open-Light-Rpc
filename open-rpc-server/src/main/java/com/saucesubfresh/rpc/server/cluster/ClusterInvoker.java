@@ -3,6 +3,7 @@ package com.saucesubfresh.rpc.server.cluster;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 /**
  * 对外提供的接口，提供给用户使用
@@ -15,5 +16,5 @@ public interface ClusterInvoker {
      * @param message
      * @throws RpcException
      */
-    Message invoke(Message message) throws RpcException;
+    MessageResponseBody invoke(Message message) throws RpcException;
 }

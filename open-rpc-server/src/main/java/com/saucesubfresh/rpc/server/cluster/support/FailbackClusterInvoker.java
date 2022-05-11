@@ -3,6 +3,7 @@ package com.saucesubfresh.rpc.server.cluster.support;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.cluster.AbstractClusterInvoker;
 import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
@@ -25,14 +26,15 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected Message doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
         ClientInformation clientInformation = select(message, clients);
         boolean success = false;
         int maxTimes = configuration.getRetryTimes();
         int currentTimes = 0;
+        MessageResponseBody response = null;
         while (!success) {
             try {
-                message = remotingInvoker.invoke(message, clientInformation);
+                response = remotingInvoker.invoke(message, clientInformation);
                 success = true;
             }catch (RpcException e){
                 log.error(e.getMessage(), e);
@@ -50,6 +52,6 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
                 }
             }
         }
-        return message;
+        return response;
     }
 }

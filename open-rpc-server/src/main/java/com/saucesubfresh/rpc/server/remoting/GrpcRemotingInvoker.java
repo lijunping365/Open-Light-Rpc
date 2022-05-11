@@ -28,7 +28,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
 
     @Override
-    public Message invoke(Message message, ClientInformation clientInformation) throws RpcException {
+    public MessageResponseBody invoke(Message message, ClientInformation clientInformation) throws RpcException {
         String clientId = clientInformation.getClientId();
         ManagedChannel channel = ClientChannelManager.establishChannel(clientInformation);
         try {
@@ -37,8 +37,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(random);
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());
-            MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-            return responseBody.getResponseBody();
+            return JSON.parse(response.getBody(), MessageResponseBody.class);
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
             log.error("To the client: {}, exception when sending a message, Status Code: {}", clientId, code);

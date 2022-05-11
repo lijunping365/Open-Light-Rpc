@@ -11,5 +11,5 @@ public interface MessageProcess {
      * 处理消息
      * @param message 消息
      */
-    Message process(Message message);
+    byte[] process(Message message);
 }

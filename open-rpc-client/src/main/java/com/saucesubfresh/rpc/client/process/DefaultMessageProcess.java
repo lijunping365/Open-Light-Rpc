@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultMessageProcess implements MessageProcess{
 
     @Override
-    public Message process(Message message) {
+    public byte[] process(Message message) {
         log.info("收到的消息是 {}", JSON.toJSON(message));
         return null;
     }

@@ -3,7 +3,6 @@ package com.saucesubfresh.rpc.core;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -13,14 +12,12 @@ import java.nio.charset.Charset;
  */
 @Data
 @NoArgsConstructor
-@Accessors(chain = true)
 public class Message implements Serializable {
     private static final String DEFAULT_ENCODING = Charset.defaultCharset().name();
     private PacketType command = PacketType.MESSAGE;
+    private String msgId;
     private String bodyEncoding;
     private byte[] body;
-    private String msgId;
-    private Boolean success;
 
     public Message(byte[] body) {
         this(body, DEFAULT_ENCODING);

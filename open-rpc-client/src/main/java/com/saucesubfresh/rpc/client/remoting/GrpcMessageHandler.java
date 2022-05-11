@@ -6,6 +6,7 @@ import com.saucesubfresh.rpc.client.registry.RegistryService;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.MessageServiceGrpc;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
@@ -40,29 +41,27 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
-        Message response = null;
         try {
             switch (command){
                 case REGISTER:
                     registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                    response = new Message().setSuccess(true);
                     break;
                 case DEREGISTER:
                     String clientId = requestBody.getClientId();
                     String[] clientInfo = StringUtils.split(clientId, CommonConstant.Symbol.DOUBLE_COLON);
                     registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
-                    response = new Message().setSuccess(true);
                     break;
                 case MESSAGE:
-                    response = messageProcess.process(message);
+                    byte[] body = messageProcess.process(message);
+                    responseBody.setBody(body);
                     break;
                 default:
                     throw new RpcException("UnSupport message packet" + command);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
-            responseBody.setResponseBody(response);
             String responseJsonBody = JSON.toJSON(responseBody);
             MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
             responseObserver.onNext(messageResponse);
