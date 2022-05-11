@@ -24,7 +24,7 @@ public class MessageResponseBody {
      */
     private ResponseStatus status = ResponseStatus.SUCCESS;
     /**
-     * 失败原因
+     * The Response error message
      */
     private String errorMsg;
     /**
