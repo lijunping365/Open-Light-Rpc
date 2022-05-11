@@ -24,6 +24,10 @@ public class MessageResponseBody {
      */
     private ResponseStatus status = ResponseStatus.SUCCESS;
     /**
+     * 失败原因
+     */
+    private String errorMsg;
+    /**
      * The Response body
      */
     private byte[] body;
