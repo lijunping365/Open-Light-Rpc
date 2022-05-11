@@ -15,11 +15,13 @@ import com.saucesubfresh.rpc.core.utils.json.JSON;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author lijunping on 2022/1/24
  */
+@Slf4j
 public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase{
 
     private final MessageProcess messageProcess;
@@ -57,6 +59,7 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
                     throw new RpcException("UnSupport message packet" + command);
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             responseBody.setErrorMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
