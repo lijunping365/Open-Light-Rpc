@@ -9,6 +9,16 @@ public interface CommonConstant {
    */
   String ADDRESS_PATTERN = "%s:%d";
 
+  /**
+   * netty的分隔符
+   */
+  String DELIMITER = "$(* *)$";
+
+  /**
+   * 单次包最大4M
+   */
+  int MAX_LENGTH = 4 * 1024 * 1024;
+
 
   public static final class Symbol {
     private Symbol() {

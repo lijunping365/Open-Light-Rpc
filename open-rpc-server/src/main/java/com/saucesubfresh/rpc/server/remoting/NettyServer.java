@@ -1,5 +1,6 @@
 package com.saucesubfresh.rpc.server.remoting;
 
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -28,13 +29,13 @@ public class NettyServer {
         try{
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
-                        .channel(NioServerSocketChannel.class)
-                        .handler(new LoggingHandler(LogLevel.INFO))
-                        .option(ChannelOption.SO_BACKLOG, 1024)
-                        // 保持长连接
-                        .childOption(ChannelOption.SO_KEEPALIVE, true)
-                        // 处理网络io事件，如记录日志、对消息编解码等
-                        .childHandler(new ChildChannelHandler());
+                    .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    // 保持长连接
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    // 处理网络io事件，如记录日志、对消息编解码等
+                    .childHandler(new ChildChannelHandler());
             //绑定端口，同步等待成功
             ChannelFuture future = bootstrap.bind(port).sync();
             Runtime.getRuntime().addShutdownHook(new Thread(()->{
@@ -50,7 +51,6 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 
     /**
@@ -61,10 +61,9 @@ public class NettyServer {
         @Override
         protected void initChannel(Channel ch) {
             NettyServerHandler serverHandler = new NettyServerHandler();
-
-            ByteBuf delimiter = Unpooled.copiedBuffer(Constant.DELIMITER.getBytes());
+            ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
             ch.pipeline()
-                    .addLast(new DelimiterBasedFrameDecoder(Constant.MAX_LENGTH, delimiter))
+                    .addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter))
                     .addLast(new StringDecoder())
                     .addLast(serverHandler);
         }
