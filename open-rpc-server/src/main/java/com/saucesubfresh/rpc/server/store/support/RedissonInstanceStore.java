@@ -21,8 +21,9 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
     }
 
     @Override
-    public void put(String namespace, List<ClientInformation> instances) {
-        map.put(namespace, instances);
+    public void put(String namespace, List<ClientInformation> onLineClients) {
+        final List<ClientInformation> client = getClient(namespace, onLineClients);
+        map.put(namespace, client);
     }
 
     @Override

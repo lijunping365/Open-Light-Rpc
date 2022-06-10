@@ -1,5 +1,6 @@
 package com.saucesubfresh.rpc.server.namespace;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -7,9 +8,8 @@ import java.util.List;
  */
 public class DefaultNamespaceService implements NamespaceService{
 
-
     @Override
     public List<String> loadNamespace() {
-        return null;
+        return Collections.emptyList();
     }
 }
