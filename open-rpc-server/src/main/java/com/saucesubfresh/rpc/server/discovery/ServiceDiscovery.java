@@ -1,7 +1,5 @@
 package com.saucesubfresh.rpc.server.discovery;
 
-
-
 import com.saucesubfresh.rpc.core.information.ClientInformation;
 
 import java.util.List;
@@ -13,22 +11,8 @@ public interface ServiceDiscovery {
 
     /**
      * 查找在线客户端列表
+     * @param namespace
      * @return
      */
-    List<ClientInformation> lookup();
-
-    /**
-     * 通知客户端下线
-     * @param clientId
-     * @return
-     */
-    boolean offlineClient(String clientId);
-
-    /**
-     * 通知客户端上线
-     * @param clientId
-     * @return
-     */
-    boolean onlineClient(String clientId);
-
+    List<ClientInformation> lookup(String namespace);
 }

@@ -1,16 +1,8 @@
 package com.saucesubfresh.rpc.server.discovery;
 
-import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.enums.PacketType;
-import com.saucesubfresh.rpc.core.enums.ResponseStatus;
-import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
-import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
-import com.saucesubfresh.rpc.server.ServerConfiguration;
-import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -22,53 +14,26 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
-    private static final String SPLIT_SYMBOL = "::";
-
-    private final RemotingInvoker remotingInvoker;
     private final InstanceStore instanceStore;
-    protected final ServerConfiguration configuration;
 
-    protected AbstractServiceDiscovery(RemotingInvoker remotingInvoker, InstanceStore instanceStore, ServerConfiguration configuration) {
-        if (StringUtils.isBlank(configuration.getClientName())){
-            throw new RpcException("The subscribe client name cannot be empty.");
-        }
-        this.remotingInvoker = remotingInvoker;
+    protected AbstractServiceDiscovery(InstanceStore instanceStore) {
         this.instanceStore = instanceStore;
-        this.configuration = configuration;
     }
 
     @Override
-    public List<ClientInformation> lookup(){
-        List<ClientInformation> clients = instanceStore.getOnlineList();
+    public List<ClientInformation> lookup(String namespace){
+        List<ClientInformation> clients = instanceStore.getOnlineList(namespace);
         if (!CollectionUtils.isEmpty(clients)){
             return clients;
         }
-        return doLookup();
+        return doLookup(namespace);
     }
 
-    @Override
-    public boolean offlineClient(String clientId){
-        final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
-        ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
-        Message message = new Message();
-        message.setCommand(PacketType.DEREGISTER);
-        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
-        return invoke.getStatus() == ResponseStatus.SUCCESS;
+    protected void updateCache(String namespace, List<ClientInformation> instances){
+        instanceStore.put(namespace, instances);
     }
 
-    @Override
-    public boolean onlineClient(String clientId){
-        final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
-        ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
-        Message message = new Message();
-        message.setCommand(PacketType.REGISTER);
-        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
-        return invoke.getStatus() == ResponseStatus.SUCCESS;
-    }
+    protected abstract void subscribe();
 
-    protected void updateCache(List<ClientInformation> instances){
-        instanceStore.put(instances);
-    }
-
-    protected abstract List<ClientInformation> doLookup();
+    protected abstract List<ClientInformation> doLookup(String namespace);
 }

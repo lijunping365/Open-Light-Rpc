@@ -2,9 +2,13 @@ package com.saucesubfresh.rpc.server.store;
 
 
 
+import com.saucesubfresh.rpc.core.enums.ClientStatus;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 客户端实例缓存
@@ -13,17 +17,24 @@ import java.util.List;
 public interface InstanceStore {
 
     /**
+     * @param namespace 应用名称
      * @param instances 要上线的客户端列表
      */
-    void put(List<ClientInformation> instances);
+    void put(String namespace, List<ClientInformation> instances);
 
     /**
      * @return 返回缓存中全部的客户端列表
      */
-    List<ClientInformation> getAll();
+    List<ClientInformation> getByNamespace(String namespace);
 
     /**
      * @return 返回缓存中在线的客户端列表
      */
-    List<ClientInformation> getOnlineList();
+    default List<ClientInformation> getOnlineList(String namespace){
+        List<ClientInformation> clients = getByNamespace(namespace);
+        if (CollectionUtils.isEmpty(clients)){
+            return Collections.emptyList();
+        }
+        return clients.stream().filter(e->e.getStatus() == ClientStatus.ON_LINE).collect(Collectors.toList());
+    }
 }

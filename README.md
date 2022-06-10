@@ -295,6 +295,12 @@ public class SpringWebMvcConfig {
 1. 对 client 响应的消息
 2. 修复了故障转移模式 bug
 
+## 1.0.2 版本更新说明
+
+## 1.0.3 版本更新说明
+
+1. 支持应用隔离
+
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star

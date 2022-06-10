@@ -13,8 +13,10 @@ public interface ClusterInvoker {
 
     /**
      * 给客户端发送消息
+     * @param namespace
      * @param message
+     * @return
      * @throws RpcException
      */
-    MessageResponseBody invoke(Message message) throws RpcException;
+    MessageResponseBody invoke(String namespace, Message message) throws RpcException;
 }

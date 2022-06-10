@@ -33,16 +33,16 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     @Override
-    public MessageResponseBody invoke(Message messages) throws RpcException {
-        final List<ClientInformation> clientList = lookup();
+    public MessageResponseBody invoke(String namespace, Message messages) throws RpcException {
+        final List<ClientInformation> clientList = lookup(namespace);
         return doInvoke(messages, clientList);
     }
 
     /**
      * 通过服务发现找到所有在线的客户端
      */
-    protected List<ClientInformation> lookup() {
-        List<ClientInformation> clients = serviceDiscovery.lookup();
+    protected List<ClientInformation> lookup(String namespace) {
+        List<ClientInformation> clients = serviceDiscovery.lookup(namespace);
         if (CollectionUtils.isEmpty(clients)) {
             throw new RpcException("No healthy clients were found.");
         }

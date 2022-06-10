@@ -6,6 +6,10 @@ import com.saucesubfresh.rpc.server.cluster.support.FailoverClusterInvoker;
 import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
 import com.saucesubfresh.rpc.server.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.server.loadbalance.support.ConsistentHashLoadBalance;
+import com.saucesubfresh.rpc.server.manager.DefaultInstanceManager;
+import com.saucesubfresh.rpc.server.manager.InstanceManager;
+import com.saucesubfresh.rpc.server.namespace.DefaultNamespaceService;
+import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.server.random.support.SequenceRequestIdGenerator;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
@@ -55,12 +59,26 @@ public class ServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RemotingInvoker remotingInvoker(RequestIdGenerator requestIdGenerator){
         return new GrpcRemotingInvoker(requestIdGenerator);
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public InstanceManager instanceManager(RemotingInvoker remotingInvoker){
+        return new DefaultInstanceManager(remotingInvoker);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public GrpcServer grpcServer(ServerConfiguration configuration){
         return new GrpcServer(configuration);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public NamespaceService namespaceService(){
+        return new DefaultNamespaceService();
     }
 }

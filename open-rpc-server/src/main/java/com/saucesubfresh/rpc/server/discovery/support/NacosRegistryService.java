@@ -7,9 +7,8 @@ import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
-import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
-import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
+import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -27,10 +26,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
     private final NamingService namingService;
+    private final NamespaceService namespaceService;
 
-    public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore, ServerConfiguration configuration) {
-        super(remotingInvoker, instanceStore, configuration);
+    public NacosRegistryService(NamingService namingService, InstanceStore instanceStore, NamespaceService namespaceService) {
+        super(instanceStore);
         this.namingService = namingService;
+        this.namespaceService = namespaceService;
     }
 
     @Override
@@ -39,21 +40,37 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
             return;
         }
         NamingEvent namingEvent = (NamingEvent) event;
+        final String serviceName = namingEvent.getServiceName();
         List<Instance> instances = namingEvent.getInstances();
         List<ClientInformation> clients = convertClientInformation(instances);
-        updateCache(clients);
+        updateCache(serviceName, clients);
         log.info("register successfully instance {}", clients);
     }
 
     @Override
-    protected List<ClientInformation> doLookup() {
+    protected List<ClientInformation> doLookup(String namespace) {
         try {
-            List<Instance> allInstances = namingService.getAllInstances(this.configuration.getClientName());
+            List<Instance> allInstances = namingService.getAllInstances(namespace);
             return convertClientInformation(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    protected void subscribe() {
+        final List<String> namespaces = namespaceService.loadNamespace();
+        if (CollectionUtils.isEmpty(namespaces)){
+            return;
+        }
+        namespaces.forEach(namespace->{
+            try {
+                this.namingService.subscribe(namespace, this);
+            } catch (NacosException e) {
+                log.error(e.getMessage(), e);
+            }
+        });
     }
 
     @Override
@@ -63,7 +80,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.namingService.subscribe(this.configuration.getClientName(), this);
+        this.subscribe();
     }
 
     private List<ClientInformation> convertClientInformation(List<Instance> instances){
