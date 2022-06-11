@@ -35,7 +35,7 @@ public abstract class AbstractInstanceStore implements InstanceStore{
         cacheClientIds.removeAll(onlineClientIds);
         List<ClientInformation> offLineClients = cacheClients.stream().filter(e -> cacheClientIds.contains(e.getClientId())).collect(Collectors.toList());
         buildClient(offLineClients, ClientStatus.OFF_LINE, currentTime);
-        onLineClients.addAll(cacheClients);
+        onLineClients.addAll(offLineClients);
         return onLineClients;
     }
 }
