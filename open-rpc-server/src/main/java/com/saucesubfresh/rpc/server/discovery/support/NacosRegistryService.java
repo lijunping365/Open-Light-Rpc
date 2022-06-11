@@ -11,6 +11,7 @@ import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
+    private static final String REMOVER = "DEFAULT_GROUP@@";
     private final NamingService namingService;
     private final NamespaceService namespaceService;
 
@@ -40,10 +42,11 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
             return;
         }
         NamingEvent namingEvent = (NamingEvent) event;
-        final String serviceName = namingEvent.getServiceName();
+        String serviceName = namingEvent.getServiceName();
+        String namespace = serviceName.replace(REMOVER, StringUtils.EMPTY);
         List<Instance> instances = namingEvent.getInstances();
         List<ClientInformation> clients = convertClientInformation(instances);
-        updateCache(serviceName, clients);
+        updateCache(namespace, clients);
         log.info("register successfully instance {}", clients);
     }
 
