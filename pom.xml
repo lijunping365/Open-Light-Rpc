@@ -46,7 +46,7 @@
         <resource.delimiter>@</resource.delimiter>
         <java.version>1.8</java.version>
 
-        <spring-boot.version>2.6.6</spring-boot.version>
+        <spring-boot.version>2.7.0</spring-boot.version>
         <lombok.version>1.18.16</lombok.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -126,6 +126,16 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.101tec</groupId>
