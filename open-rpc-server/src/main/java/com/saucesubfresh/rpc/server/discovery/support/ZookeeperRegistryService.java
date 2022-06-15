@@ -3,14 +3,12 @@ package com.saucesubfresh.rpc.server.discovery.support;
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
-import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -20,22 +18,19 @@ import java.util.stream.Collectors;
  * @author lijunping on 2021/12/3
  */
 @Slf4j
-public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
+public class ZookeeperRegistryService extends AbstractServiceDiscovery implements DisposableBean{
     private final ZkClient zkClient;
-    private final NamespaceService namespaceService;
 
-    public ZookeeperRegistryService(ZkClient zkClient, InstanceStore instanceStore, NamespaceService namespaceService){
+    public ZookeeperRegistryService(ZkClient zkClient, InstanceStore instanceStore){
         super(instanceStore);
         this.zkClient = zkClient;
-        this.namespaceService = namespaceService;
     }
 
     /**
      * 使用zk事件监听，如果服务发生宕机情况，重新读取新的节点
      */
     @Override
-    protected void subscribe(){
-        final List<String> namespaces = namespaceService.loadNamespace();
+    public void subscribe(List<String> namespaces){
         if (CollectionUtils.isEmpty(namespaces)){
             return;
         }
@@ -66,10 +61,5 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
     @Override
     public void destroy() throws Exception {
         this.zkClient.close();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.subscribe();
     }
 }

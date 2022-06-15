@@ -8,13 +8,11 @@ import com.saucesubfresh.rpc.server.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.server.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.server.manager.DefaultInstanceManager;
 import com.saucesubfresh.rpc.server.manager.InstanceManager;
-import com.saucesubfresh.rpc.server.namespace.DefaultNamespaceService;
-import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.server.random.support.SequenceRequestIdGenerator;
-import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.remoting.GrpcRemotingInvoker;
 import com.saucesubfresh.rpc.server.remoting.GrpcServer;
+import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import com.saucesubfresh.rpc.server.store.support.MemoryInstanceStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -74,11 +72,5 @@ public class ServerAutoConfiguration {
     @ConditionalOnMissingBean
     public GrpcServer grpcServer(ServerConfiguration configuration){
         return new GrpcServer(configuration);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public NamespaceService namespaceService(){
-        return new DefaultNamespaceService();
     }
 }

@@ -33,7 +33,5 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
         instanceStore.put(namespace, instances);
     }
 
-    protected abstract void subscribe();
-
     protected abstract List<ClientInformation> doLookup(String namespace);
 }

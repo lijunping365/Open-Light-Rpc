@@ -8,12 +8,10 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.saucesubfresh.rpc.core.information.ClientInformation;
 import com.saucesubfresh.rpc.server.discovery.AbstractServiceDiscovery;
-import com.saucesubfresh.rpc.server.namespace.NamespaceService;
 import com.saucesubfresh.rpc.server.store.InstanceStore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
@@ -25,15 +23,13 @@ import java.util.stream.Collectors;
  * @Date: 2021-10-31 14:50
  */
 @Slf4j
-public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
+public class NacosRegistryService extends AbstractServiceDiscovery implements DisposableBean, EventListener {
     private static final String REMOVER = "DEFAULT_GROUP@@";
     private final NamingService namingService;
-    private final NamespaceService namespaceService;
 
-    public NacosRegistryService(NamingService namingService, InstanceStore instanceStore, NamespaceService namespaceService) {
+    public NacosRegistryService(NamingService namingService, InstanceStore instanceStore) {
         super(instanceStore);
         this.namingService = namingService;
-        this.namespaceService = namespaceService;
     }
 
     @Override
@@ -62,8 +58,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     }
 
     @Override
-    protected void subscribe() {
-        final List<String> namespaces = namespaceService.loadNamespace();
+    public void subscribe(List<String> namespaces) {
         if (CollectionUtils.isEmpty(namespaces)){
             return;
         }
@@ -79,11 +74,6 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     @Override
     public void destroy() throws Exception {
         this.namingService.shutDown();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.subscribe();
     }
 
     private List<ClientInformation> convertClientInformation(List<Instance> instances){
