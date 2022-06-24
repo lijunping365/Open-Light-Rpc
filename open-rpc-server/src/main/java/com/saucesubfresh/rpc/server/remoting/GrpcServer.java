@@ -1,6 +1,7 @@
 package com.saucesubfresh.rpc.server.remoting;
 
 import com.saucesubfresh.rpc.server.ServerConfiguration;
+import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -20,22 +21,26 @@ public class GrpcServer implements InitializingBean, DisposableBean {
 
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
 
-    private final ServerConfiguration configuration;
     /**
      * The grpc server instance
      */
     private Server rpcServer;
+    private final ServerConfiguration configuration;
+    private final BindableService bindableService;
 
-    public GrpcServer(ServerConfiguration configuration){
+    public GrpcServer(ServerConfiguration configuration, GrpcMessageHandler bindableService){
         this.configuration = configuration;
+        this.bindableService = bindableService;
     }
 
     /**
      * Build the grpc {@link Server} instance
      */
     private void buildServer() {
-        ServerBuilder<?> serverBuilder = ServerBuilder.forPort(this.configuration.getServerPort());
-        this.rpcServer = serverBuilder.build();
+        this.rpcServer = ServerBuilder
+                .forPort(this.configuration.getServerPort())
+                .addService(this.bindableService)
+                .build();
     }
 
     /**

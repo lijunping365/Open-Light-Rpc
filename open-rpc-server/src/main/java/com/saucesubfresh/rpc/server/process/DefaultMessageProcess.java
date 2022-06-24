@@ -1,4 +1,4 @@
-package com.saucesubfresh.rpc.client.process;
+package com.saucesubfresh.rpc.server.process;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
@@ -12,7 +12,7 @@ public class DefaultMessageProcess implements MessageProcess{
 
     @Override
     public byte[] process(Message message) {
-        log.info("客户端收到的消息是 {}", JSON.toJSON(message));
+        log.info("服务端收到的消息是 {}", JSON.toJSON(message));
         return null;
     }
 }

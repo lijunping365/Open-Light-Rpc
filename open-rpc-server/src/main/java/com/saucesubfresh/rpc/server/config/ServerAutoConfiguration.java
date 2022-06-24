@@ -8,8 +8,11 @@ import com.saucesubfresh.rpc.server.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.server.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.server.manager.DefaultInstanceManager;
 import com.saucesubfresh.rpc.server.manager.InstanceManager;
+import com.saucesubfresh.rpc.server.process.DefaultMessageProcess;
+import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.server.random.support.SequenceRequestIdGenerator;
+import com.saucesubfresh.rpc.server.remoting.GrpcMessageHandler;
 import com.saucesubfresh.rpc.server.remoting.GrpcRemotingInvoker;
 import com.saucesubfresh.rpc.server.remoting.GrpcServer;
 import com.saucesubfresh.rpc.server.remoting.RemotingInvoker;
@@ -70,7 +73,19 @@ public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public GrpcServer grpcServer(ServerConfiguration configuration){
-        return new GrpcServer(configuration);
+    public MessageProcess messageProcess(){
+        return new DefaultMessageProcess();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GrpcMessageHandler gRpcMessageHandler(MessageProcess messageProcess){
+        return new GrpcMessageHandler(messageProcess);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GrpcServer grpcServer(ServerConfiguration configuration, GrpcMessageHandler gRpcMessageHandler){
+        return new GrpcServer(configuration, gRpcMessageHandler);
     }
 }
