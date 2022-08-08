@@ -6,7 +6,6 @@ import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,13 +41,6 @@ public class ProtostuffUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> clazz) {
-        Schema<T> schema = (Schema<T>) SCHEMA_CACHE.get(clazz);
-        if (Objects.isNull(schema)) {
-            schema = RuntimeSchema.getSchema(clazz);
-            if (Objects.nonNull(schema)){
-                SCHEMA_CACHE.put(clazz, schema);
-            }
-        }
-        return schema;
+        return (Schema<T>) SCHEMA_CACHE.computeIfAbsent(clazz, RuntimeSchema::createFrom);
     }
 }

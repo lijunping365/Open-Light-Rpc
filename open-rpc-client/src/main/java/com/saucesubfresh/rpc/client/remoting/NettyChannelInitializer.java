@@ -24,6 +24,6 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         cp.addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter));
         cp.addLast(new MsgDecoder(MessageRequest.class));
         cp.addLast(new MsgEncoder(MessageResponse.class));
-        cp.addLast(new NettyClientHandler());
+        cp.addLast(new NettyClientHandler(messageProcess, configuration, registryService));
     }
 }
