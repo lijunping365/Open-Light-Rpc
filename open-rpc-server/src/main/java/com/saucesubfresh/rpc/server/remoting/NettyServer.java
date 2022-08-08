@@ -1,18 +1,20 @@
 package com.saucesubfresh.rpc.server.remoting;
 
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,21 +23,29 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2022-06-08 07:25
  */
 @Slf4j
-public class NettyServer {
+public class NettyServer implements InitializingBean, DisposableBean {
 
-    public void start(int port){
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(4);
+    private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
+
+    private final ServerConfiguration configuration;
+
+    public NettyServer(ServerConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public void startup(int port){
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try{
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .option(ChannelOption.SO_BACKLOG, 1024)
-                    // 保持长连接
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    // 处理网络io事件，如记录日志、对消息编解码等
-                    .childHandler(new ChildChannelHandler());
+                     .channel(NioServerSocketChannel.class)
+                     .handler(new LoggingHandler(LogLevel.INFO))
+                     .option(ChannelOption.SO_BACKLOG, 1024)
+                     // 保持长连接
+                     .childOption(ChannelOption.SO_KEEPALIVE, true)
+                     // 处理网络io事件，如记录日志、对消息编解码等
+                     .childHandler(new NettyChannelInitializer());
             //绑定端口，同步等待成功
             ChannelFuture future = bootstrap.bind(port).sync();
             Runtime.getRuntime().addShutdownHook(new Thread(()->{
@@ -53,19 +63,14 @@ public class NettyServer {
         }
     }
 
-    /**
-     * handler类
-     */
-    private static class ChildChannelHandler extends ChannelInitializer<Channel> {
+    @Override
+    public void destroy() throws Exception {
+        int serverPort = configuration.getServerPort();
+        RPC_JOB_EXECUTOR.execute(()->startup(serverPort));
+    }
 
-        @Override
-        protected void initChannel(Channel ch) {
-            NettyServerHandler serverHandler = new NettyServerHandler();
-            ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
-            ch.pipeline()
-                    .addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter))
-                    .addLast(new StringDecoder())
-                    .addLast(serverHandler);
-        }
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        RPC_JOB_EXECUTOR.shutdown();
     }
 }

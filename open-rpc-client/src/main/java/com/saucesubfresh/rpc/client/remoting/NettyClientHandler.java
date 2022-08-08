@@ -1,4 +1,4 @@
-package com.saucesubfresh.rpc.server.remoting;
+package com.saucesubfresh.rpc.client.remoting;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
-public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
+public class NettyClientHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String message) throws Exception {
 

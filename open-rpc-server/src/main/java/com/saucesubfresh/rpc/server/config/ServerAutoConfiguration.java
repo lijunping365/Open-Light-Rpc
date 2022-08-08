@@ -55,6 +55,7 @@ public class ServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RemotingInvoker remotingInvoker(RequestIdGenerator requestIdGenerator){
         return new GrpcRemotingInvoker(requestIdGenerator);
     }
