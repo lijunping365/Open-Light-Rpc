@@ -48,7 +48,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     @Override
     protected List<ServerInformation> doLookup() {
         try {
-            List<Instance> allInstances = namingService.getAllInstances(this.configuration.getClientName());
+            List<Instance> allInstances = namingService.getAllInstances(this.configuration.getServerName());
             return convertClientInformation(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
@@ -63,7 +63,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.namingService.subscribe(this.configuration.getClientName(), this);
+        this.namingService.subscribe(this.configuration.getServerName(), this);
     }
 
     private List<ServerInformation> convertClientInformation(List<Instance> instances){

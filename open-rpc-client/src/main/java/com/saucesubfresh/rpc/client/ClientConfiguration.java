@@ -24,10 +24,10 @@ public class ClientConfiguration {
      */
     private long retryIntervalMilliSeconds = 1000;
     /**
-     * The name of the service registered by the client to nacos or zookeeper
-     * if you use nacos，You should be named like this: job-client-services
-     * if you use zookeeper, You should be named like this: /JobClient
+     * The name of the service registered by the server to nacos or zookeeper
+     * if you use nacos，You should be named like this: job-server-services
+     * if you use zookeeper, You should be named like this: /JobServer
      */
-    private String clientName;
+    private String serverName;
 
 }

@@ -32,7 +32,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
      * 使用zk事件监听，如果服务发生宕机情况，重新读取新的节点
      */
     private void subscribe(){
-        zkClient.subscribeChildChanges(configuration.getClientName(), new IZkChildListener() {
+        zkClient.subscribeChildChanges(configuration.getServerName(), new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
@@ -48,7 +48,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
 
     @Override
     protected List<ServerInformation> doLookup() {
-        List<String> children = zkClient.getChildren(configuration.getClientName());
+        List<String> children = zkClient.getChildren(configuration.getServerName());
         log.info("查询到的子节点有 {}", children);
         return children.stream().map(e->{
             final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
