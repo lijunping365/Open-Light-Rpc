@@ -1,10 +1,6 @@
 package com.saucesubfresh.rpc.server.remoting;
 
-import com.saucesubfresh.rpc.server.ServerConfiguration;
-import com.saucesubfresh.rpc.server.process.MessageProcess;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -13,12 +9,14 @@ import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
+import com.saucesubfresh.rpc.server.process.MessageProcess;
+import com.saucesubfresh.rpc.server.registry.RegistryService;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 这里处理所有netty事件。
@@ -51,9 +49,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<MessageReque
                     registryService.register(configuration.getServerAddress(), configuration.getServerPort());
                     break;
                 case DEREGISTER:
-                    String clientId = requestBody.getClientId();
-                    String[] clientInfo = StringUtils.split(clientId, CommonConstant.Symbol.DOUBLE_COLON);
-                    registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
+                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
                     break;
                 case MESSAGE:
                     byte[] body = messageProcess.process(message);

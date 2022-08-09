@@ -1,22 +1,20 @@
 package com.saucesubfresh.rpc.server.remoting;
 
-import com.saucesubfresh.rpc.server.ServerConfiguration;
-import com.saucesubfresh.rpc.server.process.MessageProcess;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.MessageServiceGrpc;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
-import com.saucesubfresh.rpc.core.utils.json.JSON;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
+import com.saucesubfresh.rpc.core.utils.json.JSON;
+import com.saucesubfresh.rpc.server.ServerConfiguration;
+import com.saucesubfresh.rpc.server.process.MessageProcess;
+import com.saucesubfresh.rpc.server.registry.RegistryService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author lijunping on 2022/1/24
@@ -47,9 +45,7 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
                     registryService.register(configuration.getServerAddress(), configuration.getServerPort());
                     break;
                 case DEREGISTER:
-                    String clientId = requestBody.getClientId();
-                    String[] clientInfo = StringUtils.split(clientId, CommonConstant.Symbol.DOUBLE_COLON);
-                    registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
+                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
                     break;
                 case MESSAGE:
                     byte[] body = messageProcess.process(message);
