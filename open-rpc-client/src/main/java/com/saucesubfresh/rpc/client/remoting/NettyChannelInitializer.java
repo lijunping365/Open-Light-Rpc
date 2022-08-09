@@ -17,6 +17,12 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
  */
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+    private final NettyServerHandler clientHandler;
+
+    public NettyChannelInitializer(NettyServerHandler clientHandler) {
+        this.clientHandler = clientHandler;
+    }
+
     @Override
     protected void initChannel(SocketChannel channel) {
         ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
@@ -24,6 +30,6 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         cp.addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter));
         cp.addLast(new MsgDecoder(MessageRequest.class));
         cp.addLast(new MsgEncoder(MessageResponse.class));
-        cp.addLast(new NettyClientHandler(messageProcess, configuration, registryService));
+        cp.addLast(clientHandler);
     }
 }

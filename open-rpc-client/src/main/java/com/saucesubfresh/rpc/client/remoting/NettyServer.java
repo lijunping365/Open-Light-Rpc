@@ -1,11 +1,13 @@
-package com.saucesubfresh.rpc.server.remoting;
+package com.saucesubfresh.rpc.client.remoting;
 
-import com.saucesubfresh.rpc.server.ServerConfiguration;
+import com.saucesubfresh.rpc.client.ClientConfiguration;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -18,19 +20,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 该 server用于给各个 client 实例连接用。
- * @author: 李俊平
- * @Date: 2022-06-08 07:25
+ * @author lijunping on 2022/6/8
  */
 @Slf4j
 public class NettyServer implements InitializingBean, DisposableBean {
 
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
 
-    private final ServerConfiguration configuration;
+    private final ClientConfiguration configuration;
+    private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public NettyServer(ServerConfiguration configuration) {
+    public NettyServer(ClientConfiguration configuration,
+                       ChannelInitializer<SocketChannel> channelInitializer) {
         this.configuration = configuration;
+        this.channelInitializer = channelInitializer;
     }
 
     public void startup(int port){
@@ -45,7 +48,7 @@ public class NettyServer implements InitializingBean, DisposableBean {
                      // 保持长连接
                      .childOption(ChannelOption.SO_KEEPALIVE, true)
                      // 处理网络io事件，如记录日志、对消息编解码等
-                     .childHandler(new NettyChannelInitializer());
+                     .childHandler(channelInitializer);
             //绑定端口，同步等待成功
             ChannelFuture future = bootstrap.bind(port).sync();
             Runtime.getRuntime().addShutdownHook(new Thread(()->{
@@ -64,13 +67,13 @@ public class NettyServer implements InitializingBean, DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void afterPropertiesSet() throws Exception {
         int serverPort = configuration.getServerPort();
         RPC_JOB_EXECUTOR.execute(()->startup(serverPort));
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void destroy() throws Exception {
         RPC_JOB_EXECUTOR.shutdown();
     }
 }

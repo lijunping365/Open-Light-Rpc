@@ -1,9 +1,13 @@
 package com.saucesubfresh.rpc.server.remoting;
 
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.SocketAddress;
 
 /**
  * 这里处理所有netty事件。
@@ -11,7 +15,8 @@ import lombok.extern.slf4j.Slf4j;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
-public class NettyServerHandler extends SimpleChannelInboundHandler<MessageResponse> {
+public class NettyClientHandler extends SimpleChannelInboundHandler<MessageResponse> {
+
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MessageResponse response) throws Exception {
 
@@ -19,7 +24,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<MessageRespo
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("some thing is error , " + cause.getMessage());
+        log.error("Client caught exception: {}", cause.getMessage());
         ctx.close();
     }
 
@@ -32,5 +37,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<MessageRespo
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.close();
         super.channelInactive(ctx);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            //Send ping
+            final Channel channel = ctx.channel();
+            SocketAddress socketAddress = channel.remoteAddress();
+            log.debug("Client send beat-ping to " + socketAddress);
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
     }
 }

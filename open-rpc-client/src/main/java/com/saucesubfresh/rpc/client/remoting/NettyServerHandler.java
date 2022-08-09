@@ -26,13 +26,13 @@ import org.apache.commons.lang3.StringUtils;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
-public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRequest> {
+public class NettyServerHandler extends SimpleChannelInboundHandler<MessageRequest> {
 
     private final MessageProcess messageProcess;
     private final ClientConfiguration configuration;
     private final RegistryService registryService;
 
-    public NettyClientHandler(MessageProcess messageProcess, ClientConfiguration configuration, RegistryService registryService) {
+    public NettyServerHandler(MessageProcess messageProcess, ClientConfiguration configuration, RegistryService registryService) {
         this.messageProcess = messageProcess;
         this.configuration = configuration;
         this.registryService = registryService;
