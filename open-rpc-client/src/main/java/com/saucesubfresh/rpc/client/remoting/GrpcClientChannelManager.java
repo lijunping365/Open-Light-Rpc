@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * 服务端通道管理器
  */
-public class ClientChannelManager {
+public class GrpcClientChannelManager {
     /**
      * Store the connection channel of each client
      * <p>

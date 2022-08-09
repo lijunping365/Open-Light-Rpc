@@ -30,7 +30,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         String serverId = serverInformation.getServerId();
-        ManagedChannel channel = ClientChannelManager.establishChannel(serverInformation);
+        ManagedChannel channel = GrpcClientChannelManager.establishChannel(serverInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
             final String random = requestIdGenerator.generate();
@@ -43,7 +43,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             log.error("To the client: {}, exception when sending a message, Status Code: {}", serverId, code);
             // The server status is UNAVAILABLE
             if (Status.Code.UNAVAILABLE == code) {
-                ClientChannelManager.removeChannel(serverId);
+                GrpcClientChannelManager.removeChannel(serverId);
                 log.error("The client is unavailable, and the cached channel is deleted.");
             }
             throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", serverId, code));

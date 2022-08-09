@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-public class GrpcServer implements InitializingBean, DisposableBean {
+public class GrpcClient implements InitializingBean, DisposableBean {
 
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
 
@@ -26,7 +26,7 @@ public class GrpcServer implements InitializingBean, DisposableBean {
      */
     private Server rpcServer;
 
-    public GrpcServer(ClientConfiguration configuration){
+    public GrpcClient(ClientConfiguration configuration){
         this.configuration = configuration;
     }
 

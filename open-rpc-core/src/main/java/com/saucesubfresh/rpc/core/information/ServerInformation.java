@@ -14,11 +14,11 @@ import lombok.ToString;
 @Getter
 public class ServerInformation {
     /**
-     * client address
+     * server address
      */
     private final String address;
     /**
-     * client port
+     * server port
      */
     private final int port;
     /**
