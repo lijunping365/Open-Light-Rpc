@@ -51,7 +51,7 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
     @Override
     public boolean offlineServer(String serverId){
-        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.ADDRESS_PATTERN);
+        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
         ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
@@ -61,7 +61,7 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
     @Override
     public boolean onlineServer(String serverId){
-        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.ADDRESS_PATTERN);
+        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
         ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);

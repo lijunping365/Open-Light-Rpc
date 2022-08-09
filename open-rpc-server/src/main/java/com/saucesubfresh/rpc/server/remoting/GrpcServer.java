@@ -12,12 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 客户端
- * 默认使用 gRpc 通信，如果有兴趣可更改为其他通信方式，例如 netty
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-public class GrpcClient implements InitializingBean, DisposableBean {
+public class GrpcServer implements InitializingBean, DisposableBean {
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
     /**
      * The grpc server instance
@@ -26,7 +24,7 @@ public class GrpcClient implements InitializingBean, DisposableBean {
     public final ServerConfiguration configuration;
     private final BindableService bindableService;
 
-    public GrpcClient(ServerConfiguration configuration, GrpcMessageHandler bindableService){
+    public GrpcServer(ServerConfiguration configuration, GrpcMessageHandler bindableService){
         this.configuration = configuration;
         this.bindableService = bindableService;
     }
@@ -36,7 +34,7 @@ public class GrpcClient implements InitializingBean, DisposableBean {
      */
     private void buildServer() {
         this.rpcServer = ServerBuilder
-                .forPort(configuration.getClientPort())
+                .forPort(configuration.getServerPort())
                 .addService(this.bindableService)
                 .build();
     }
@@ -47,7 +45,7 @@ public class GrpcClient implements InitializingBean, DisposableBean {
     public void startup() {
         try {
             this.rpcServer.start();
-            log.info("Job Client bind port : {}, startup successfully.", configuration.getClientPort());
+            log.info("Job Server bind port : {}, startup successfully.", configuration.getServerPort());
             this.rpcServer.awaitTermination();
         } catch (Exception e) {
             log.error("Job Client startup failed.", e);

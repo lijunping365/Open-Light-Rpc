@@ -31,8 +31,8 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
     @Override
     public void doRegister(String serverAddress, int serverPort) {
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("clientIp", this.configuration.getClientAddress());
-        metadata.put("clientPort", String.valueOf(this.configuration.getClientPort()));
+        metadata.put("serverIp", serverAddress);
+        metadata.put("serverPort", String.valueOf(serverPort));
         if (!zkClient.exists(this.configuration.getClientName())) {
             zkClient.createPersistent(this.configuration.getClientName(), null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }

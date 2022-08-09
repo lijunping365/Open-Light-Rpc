@@ -6,7 +6,7 @@ package com.saucesubfresh.rpc.server.registry;
 public interface RegistryService {
 
     /**
-     * Register client to server
+     * Register server
      *
      * @param serverAddress The server address
      * @param serverPort    The server port
@@ -14,9 +14,9 @@ public interface RegistryService {
     void register(String serverAddress, int serverPort);
 
     /**
-     * deRegister client
-     * @param clientAddress - The client address
-     * @param clientPort - The client port
+     * deRegister server
+     * @param serverAddress The server address
+     * @param serverPort    The server port
      */
-    void deRegister(String clientAddress, int clientPort);
+    void deRegister(String serverAddress, int serverPort);
 }

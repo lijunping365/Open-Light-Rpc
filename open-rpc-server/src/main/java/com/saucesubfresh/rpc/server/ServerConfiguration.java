@@ -1,6 +1,5 @@
 package com.saucesubfresh.rpc.server;
 
-import com.saucesubfresh.rpc.core.utils.internet.InternetAddressUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -10,14 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "com.saucesubfresh.rpc.server")
 public class ServerConfiguration {
-    /**
-     * client host
-     */
-    private String clientAddress;
-    /**
-     * client port
-     */
-    private int clientPort = 5200;
     /**
      * Register the target server address
      */
@@ -32,12 +23,4 @@ public class ServerConfiguration {
      * if you use zookeeper, You should be named like this: /JobClient
      */
     private String clientName;
-    /**
-     * Get local host
-     *
-     * @return local host
-     */
-    public String getClientAddress() {
-        return InternetAddressUtils.getLocalIpByNetCard();
-    }
 }

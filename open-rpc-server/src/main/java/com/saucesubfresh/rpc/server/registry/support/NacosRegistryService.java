@@ -42,8 +42,8 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
     public void doRegister(String serverAddress, int serverPort) {
         try {
             Instance instance = new Instance();
-            instance.setIp(this.configuration.getClientAddress());
-            instance.setPort(this.configuration.getClientPort());
+            instance.setIp(serverAddress);
+            instance.setPort(serverPort);
             Map<String, String> metadata = new HashMap<>();
             instance.setMetadata(metadata);
             this.namingService.registerInstance(this.configuration.getClientName(), instance);

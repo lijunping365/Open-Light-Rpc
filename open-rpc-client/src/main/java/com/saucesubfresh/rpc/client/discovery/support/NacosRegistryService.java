@@ -40,7 +40,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         }
         NamingEvent namingEvent = (NamingEvent) event;
         List<Instance> instances = namingEvent.getInstances();
-        List<ServerInformation> clients = convertClientInformation(instances);
+        List<ServerInformation> clients = convertServerInformation(instances);
         updateCache(clients);
         log.info("register successfully instance {}", clients);
     }
@@ -49,7 +49,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     protected List<ServerInformation> doLookup() {
         try {
             List<Instance> allInstances = namingService.getAllInstances(this.configuration.getServerName());
-            return convertClientInformation(allInstances);
+            return convertServerInformation(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
             return Collections.emptyList();
@@ -66,7 +66,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         this.namingService.subscribe(this.configuration.getServerName(), this);
     }
 
-    private List<ServerInformation> convertClientInformation(List<Instance> instances){
+    private List<ServerInformation> convertServerInformation(List<Instance> instances){
         if (CollectionUtils.isEmpty(instances)){
             return Collections.emptyList();
         }

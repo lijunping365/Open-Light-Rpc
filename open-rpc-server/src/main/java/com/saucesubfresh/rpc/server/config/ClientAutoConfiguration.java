@@ -5,7 +5,7 @@ import com.saucesubfresh.rpc.server.remoting.GrpcMessageHandler;
 import com.saucesubfresh.rpc.server.process.DefaultMessageProcess;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.registry.RegistryService;
-import com.saucesubfresh.rpc.server.remoting.GrpcClient;
+import com.saucesubfresh.rpc.server.remoting.GrpcServer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,9 +29,9 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(GrpcMessageHandler.class)
-    public GrpcClient grpcClient(ServerConfiguration configuration,
+    public GrpcServer grpcClient(ServerConfiguration configuration,
                                  GrpcMessageHandler bindableService){
-        return new GrpcClient(configuration, bindableService);
+        return new GrpcServer(configuration, bindableService);
     }
 
     @Bean
