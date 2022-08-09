@@ -3,7 +3,7 @@ package com.saucesubfresh.rpc.client.loadbalance.support;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.loadbalance.AbstractLoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import org.springframework.util.ObjectUtils;
@@ -27,18 +27,18 @@ public class RandomWeightedLoadBalance extends AbstractLoadBalance {
      *
      * @param message
      * @param clients message pipe bind clients
-     * @return Load-balanced {@link ClientInformation}
+     * @return Load-balanced {@link ServerInformation}
      * @throws RpcException message pipe exception
      */
     @Override
-    public ClientInformation doSelect(Message message, List<ClientInformation> clients) throws RpcException {
-        TreeMap<Double, ClientInformation> nodes = new TreeMap<>();
+    public ServerInformation doSelect(Message message, List<ServerInformation> clients) throws RpcException {
+        TreeMap<Double, ServerInformation> nodes = new TreeMap<>();
         clients.forEach(node -> {
             double lastWeight = nodes.size() == 0 ? 0 : nodes.lastKey();
             nodes.put(node.getWeight() + lastWeight, node);
         });
         Double randomWeight = nodes.lastKey() * Math.random();
-        SortedMap<Double, ClientInformation> tailMap = nodes.tailMap(randomWeight, false);
+        SortedMap<Double, ServerInformation> tailMap = nodes.tailMap(randomWeight, false);
         if (ObjectUtils.isEmpty(tailMap)) {
             throw new RpcException("No load balancing node was found");
         }

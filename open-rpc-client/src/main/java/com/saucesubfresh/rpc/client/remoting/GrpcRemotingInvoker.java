@@ -5,7 +5,7 @@ import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.MessageServiceGrpc;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
@@ -28,9 +28,9 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
 
     @Override
-    public MessageResponseBody invoke(Message message, ClientInformation clientInformation) throws RpcException {
-        String clientId = clientInformation.getClientId();
-        ManagedChannel channel = ClientChannelManager.establishChannel(clientInformation);
+    public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
+        String clientId = serverInformation.getClientId();
+        ManagedChannel channel = ClientChannelManager.establishChannel(serverInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
             final String random = requestIdGenerator.generate();

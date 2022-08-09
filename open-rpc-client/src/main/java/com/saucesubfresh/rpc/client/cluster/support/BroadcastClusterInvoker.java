@@ -3,7 +3,7 @@ package com.saucesubfresh.rpc.client.cluster.support;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.cluster.AbstractClusterInvoker;
@@ -24,7 +24,7 @@ public class BroadcastClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ClientInformation> clients) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> clients) throws RpcException {
         clients.forEach(clientInformation -> remotingInvoker.invoke(message, clientInformation));
         return new MessageResponseBody();
     }

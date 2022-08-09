@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.client.store.support;
 
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
 import org.redisson.api.RedissonClient;
 
@@ -15,24 +15,24 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
 
     private static final String KEY = "instance:store";
 
-    private final Map<String, ClientInformation> map;
+    private final Map<String, ServerInformation> map;
 
     public RedissonInstanceStore(RedissonClient redisson){
         this.map = redisson.getMap(KEY);
     }
 
     @Override
-    protected ClientInformation get(String clientId) {
+    protected ServerInformation get(String clientId) {
         return map.get(clientId);
     }
 
     @Override
-    protected void put(String clientId, ClientInformation instance) {
+    protected void put(String clientId, ServerInformation instance) {
         map.put(clientId, instance);
     }
 
     @Override
-    public List<ClientInformation> getAll() {
+    public List<ServerInformation> getAll() {
         return new ArrayList<>(map.values());
     }
 }

@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.store;
 
 import com.saucesubfresh.rpc.core.enums.ClientStatus;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractInstanceStore implements InstanceStore{
 
     @Override
-    public void put(List<ClientInformation> instances) {
+    public void put(List<ServerInformation> instances) {
         long currentTime = new Date().getTime();
         handlerOffline(instances, currentTime);
         if (!CollectionUtils.isEmpty(instances)){
@@ -25,11 +25,11 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      * 处理服务端的上线
      * @param instances 上线的服务端列表
      */
-    private void handlerOnline(List<ClientInformation> instances, long currentTime){
+    private void handlerOnline(List<ServerInformation> instances, long currentTime){
         instances.forEach(instance->{
             final String clientId = instance.getClientId();
-            ClientInformation clientInformation = get(clientId);
-            if (Objects.isNull(clientInformation) || clientInformation.getStatus() == ClientStatus.OFF_LINE){
+            ServerInformation serverInformation = get(clientId);
+            if (Objects.isNull(serverInformation) || serverInformation.getStatus() == ClientStatus.OFF_LINE){
                 instance.setStatus(ClientStatus.ON_LINE);
                 instance.setOnlineTime(currentTime);
                 put(clientId, instance);
@@ -42,21 +42,21 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      * 处理下线的服务端
      * @param instances 上线的服务端列表
      */
-    private void handlerOffline(List<ClientInformation> instances, long currentTime){
-        List<ClientInformation> cacheClients = getAll();
+    private void handlerOffline(List<ServerInformation> instances, long currentTime){
+        List<ServerInformation> cacheClients = getAll();
         if (CollectionUtils.isEmpty(cacheClients)){
             return;
         }
 
         List<String> onlineClientIds = new ArrayList<>();
         if (CollectionUtils.isEmpty(instances)){
-            onlineClientIds = instances.stream().map(ClientInformation::getClientId).collect(Collectors.toList());
+            onlineClientIds = instances.stream().map(ServerInformation::getClientId).collect(Collectors.toList());
         }
 
-        List<String> cacheClientIds = cacheClients.stream().map(ClientInformation::getClientId).collect(Collectors.toList());
+        List<String> cacheClientIds = cacheClients.stream().map(ServerInformation::getClientId).collect(Collectors.toList());
         cacheClientIds.removeAll(onlineClientIds);
         cacheClientIds.forEach(clientId-> {
-            ClientInformation instance = get(clientId);
+            ServerInformation instance = get(clientId);
             instance.setStatus(ClientStatus.OFF_LINE);
             instance.setOnlineTime(currentTime);
             put(instance.getClientId(), instance);
@@ -64,15 +64,15 @@ public abstract class AbstractInstanceStore implements InstanceStore{
     }
 
     @Override
-    public List<ClientInformation> getOnlineList() {
-        List<ClientInformation> clients = getAll();
+    public List<ServerInformation> getOnlineList() {
+        List<ServerInformation> clients = getAll();
         if (CollectionUtils.isEmpty(clients)){
             return Collections.emptyList();
         }
         return clients.stream().filter(e->e.getStatus() == ClientStatus.ON_LINE).collect(Collectors.toList());
     }
 
-    protected abstract ClientInformation get(String clientId);
+    protected abstract ServerInformation get(String clientId);
 
-    protected abstract void put(String clientId, ClientInformation instance);
+    protected abstract void put(String clientId, ServerInformation instance);
 }

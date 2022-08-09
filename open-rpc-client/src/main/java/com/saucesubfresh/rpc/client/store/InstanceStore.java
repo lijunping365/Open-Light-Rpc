@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.store;
 
 
 
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 
 import java.util.List;
 
@@ -15,15 +15,15 @@ public interface InstanceStore {
     /**
      * @param instances 要上线的服务端列表
      */
-    void put(List<ClientInformation> instances);
+    void put(List<ServerInformation> instances);
 
     /**
      * @return 返回缓存中全部的服务端列表
      */
-    List<ClientInformation> getAll();
+    List<ServerInformation> getAll();
 
     /**
      * @return 返回缓存中在线的服务端列表
      */
-    List<ClientInformation> getOnlineList();
+    List<ServerInformation> getOnlineList();
 }

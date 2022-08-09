@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.discovery;
 
 
 
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface ServiceDiscovery {
      * 查找在线服务端列表
      * @return
      */
-    List<ClientInformation> lookup();
+    List<ServerInformation> lookup();
 
     /**
      * 通知服务端下线

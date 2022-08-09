@@ -3,7 +3,7 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 /**
@@ -14,8 +14,8 @@ public interface RemotingInvoker {
     /**
      * 该接口是给系统调用的
      * @param message
-     * @param clientInformation
+     * @param serverInformation
      * @throws RpcException
      */
-    MessageResponseBody invoke(Message message, ClientInformation clientInformation) throws RpcException;
+    MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException;
 }

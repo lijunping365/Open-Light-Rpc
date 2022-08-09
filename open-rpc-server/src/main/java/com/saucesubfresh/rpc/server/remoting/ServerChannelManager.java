@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.server.remoting;
 
-import com.saucesubfresh.rpc.core.information.ServerInformation;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.util.ObjectUtils;
@@ -26,7 +26,7 @@ public class ServerChannelManager {
      * @param information ServerInformation
      * @return {@link ManagedChannel} instance
      */
-    public static ManagedChannel establishChannel(ServerInformation information) {
+    public static ManagedChannel establishChannel(ClientInformation information) {
         String serverId = information.getServerId();
         ManagedChannel channel = SERVER_CHANNEL.get(serverId);
         if (ObjectUtils.isEmpty(channel)) {

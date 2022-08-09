@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.util.ObjectUtils;
@@ -16,17 +16,17 @@ public class ClientChannelManager {
     /**
      * Store the connection channel of each client
      * <p>
-     * The key is {@link ClientInformation#getClientId()}
+     * The key is {@link ServerInformation#getClientId()}
      */
     private static final ConcurrentMap<String, ManagedChannel> CLIENT_CHANNEL = new ConcurrentHashMap<>();
 
     /**
      * Establish a client channel
      *
-     * @param information The {@link ClientInformation} instance
+     * @param information The {@link ServerInformation} instance
      * @return {@link ManagedChannel} instance
      */
-    public static ManagedChannel establishChannel(ClientInformation information) {
+    public static ManagedChannel establishChannel(ServerInformation information) {
         String clientId = information.getClientId();
         if (ObjectUtils.isEmpty(information)) {
             throw new RpcException("Client: " + clientId + " is not registered");

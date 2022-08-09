@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.loadbalance.support;
 
 
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.loadbalance.AbstractLoadBalance;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class LeastActiveLoadBalance extends AbstractLoadBalance {
 
     @Override
-    protected ClientInformation doSelect(Message message, List<ClientInformation> invokers) {
+    protected ServerInformation doSelect(Message message, List<ServerInformation> invokers) {
         return null;
     }
 }

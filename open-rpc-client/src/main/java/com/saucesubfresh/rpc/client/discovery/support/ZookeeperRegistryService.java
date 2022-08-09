@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.discovery.support;
 
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
@@ -36,9 +36,9 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
             @Override
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
-                final List<ClientInformation> collect = currentChilds.stream().map(e -> {
+                final List<ServerInformation> collect = currentChilds.stream().map(e -> {
                     final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
-                    return ClientInformation.valueOf(split[0], Integer.parseInt(split[1]));
+                    return ServerInformation.valueOf(split[0], Integer.parseInt(split[1]));
                 }).collect(Collectors.toList());
                 updateCache(collect);
                 log.info("register instance successfully {}", collect);
@@ -47,12 +47,12 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
     }
 
     @Override
-    protected List<ClientInformation> doLookup() {
+    protected List<ServerInformation> doLookup() {
         List<String> children = zkClient.getChildren(configuration.getClientName());
         log.info("查询到的子节点有 {}", children);
         return children.stream().map(e->{
             final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
-            return ClientInformation.valueOf(split[0], Integer.parseInt(split[1]));
+            return ServerInformation.valueOf(split[0], Integer.parseInt(split[1]));
         }).collect(Collectors.toList());
     }
 

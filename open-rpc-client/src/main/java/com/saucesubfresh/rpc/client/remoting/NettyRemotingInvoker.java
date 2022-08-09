@@ -3,7 +3,7 @@ package com.saucesubfresh.rpc.client.remoting;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
@@ -29,9 +29,9 @@ public class NettyRemotingInvoker implements RemotingInvoker {
     }
 
     @Override
-    public MessageResponseBody invoke(Message message, ClientInformation clientInformation) throws RpcException {
-        String clientId = clientInformation.getClientId();
-        Channel channel = channelManager.establishChannel(clientInformation);
+    public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
+        String clientId = serverInformation.getClientId();
+        Channel channel = channelManager.establishChannel(serverInformation);
         try {
             final String random = requestIdGenerator.generate();
             MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(random);

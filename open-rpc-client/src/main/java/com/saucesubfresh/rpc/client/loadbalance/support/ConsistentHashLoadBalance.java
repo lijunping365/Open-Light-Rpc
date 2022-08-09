@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.loadbalance.support;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.loadbalance.AbstractLoadBalance;
 
 import java.nio.charset.StandardCharsets;
@@ -23,9 +23,9 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     private static final int VIRTUAL_NODE_NUM = 100;
 
     @Override
-    public ClientInformation doSelect(Message message, List<ClientInformation> invokers) throws RpcException {
-        TreeMap<Long, ClientInformation> clientRing = new TreeMap<>();
-        for (ClientInformation invoker: invokers) {
+    public ServerInformation doSelect(Message message, List<ServerInformation> invokers) throws RpcException {
+        TreeMap<Long, ServerInformation> clientRing = new TreeMap<>();
+        for (ServerInformation invoker: invokers) {
             for (int i = 0; i < VIRTUAL_NODE_NUM; i++) {
                 long addressHash = hash(md5("SHARD-" + invoker.getAddress() + "-NODE-" + i));
                 clientRing.put(addressHash, invoker);
@@ -33,7 +33,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         }
 
         long jobHash = hash(md5(message.getMsgId()));
-        SortedMap<Long, ClientInformation> lastRing = clientRing.tailMap(jobHash);
+        SortedMap<Long, ServerInformation> lastRing = clientRing.tailMap(jobHash);
         if (!lastRing.isEmpty()) {
             return lastRing.get(lastRing.firstKey());
         }

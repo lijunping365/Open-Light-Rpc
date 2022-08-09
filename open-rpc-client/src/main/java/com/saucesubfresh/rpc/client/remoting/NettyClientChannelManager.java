@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -20,7 +20,7 @@ public class NettyClientChannelManager {
     /**
      * Store the connection channel of each client
      * <p>
-     * The key is {@link ClientInformation#getClientId()}
+     * The key is {@link ServerInformation#getClientId()}
      */
     private static final ConcurrentMap<String, Channel> CHANNEL_CACHE = new ConcurrentHashMap<>();
 
@@ -33,16 +33,16 @@ public class NettyClientChannelManager {
     /**
      * Establish a client channel
      *
-     * @param clientInformation The {@link ClientInformation} instance
+     * @param serverInformation The {@link ServerInformation} instance
      * @return {@link ManagedChannel} instance
      */
-    public Channel establishChannel(ClientInformation clientInformation) {
+    public Channel establishChannel(ServerInformation serverInformation) {
 
-        if (ObjectUtils.isEmpty(clientInformation)) {
+        if (ObjectUtils.isEmpty(serverInformation)) {
             throw new RpcException("clientInformation is not registered");
         }
 
-        String clientId = clientInformation.getClientId();
+        String clientId = serverInformation.getClientId();
         Channel channel = CHANNEL_CACHE.get(clientId);
 
         if (!ObjectUtils.isEmpty(channel) && channel.isActive()){
@@ -51,7 +51,7 @@ public class NettyClientChannelManager {
 
         Bootstrap bootstrap = nettyClient.getBootstrap();
         try {
-            ChannelFuture channelFuture = bootstrap.connect(clientInformation.getAddress(), clientInformation.getPort()).sync();
+            ChannelFuture channelFuture = bootstrap.connect(serverInformation.getAddress(), serverInformation.getPort()).sync();
             channel = channelFuture.channel();
             CHANNEL_CACHE.put(clientId, channel);
             return channel;

@@ -3,7 +3,7 @@ package com.saucesubfresh.rpc.client.loadbalance;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import java.util.List;
 public interface LoadBalance {
 
     /**
-     * Lookup a {@link ClientInformation}
+     * Lookup a {@link ServerInformation}
      *
      *
      * @param message
-     * @param clients {@link ClientInformation} list
+     * @param clients {@link ServerInformation} list
      * @return load-balanced client
      * @throws RpcException
      */
-    ClientInformation select(Message message, List<ClientInformation> clients) throws RpcException;
+    ServerInformation select(Message message, List<ServerInformation> clients) throws RpcException;
 }

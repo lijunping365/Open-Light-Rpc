@@ -2,7 +2,7 @@ package com.saucesubfresh.rpc.client.loadbalance;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class AbstractLoadBalance implements LoadBalance{
 
     @Override
-    public ClientInformation select(Message message, List<ClientInformation> invokers) throws RpcException {
+    public ServerInformation select(Message message, List<ServerInformation> invokers) throws RpcException {
         if (CollectionUtils.isEmpty(invokers)) {
             return null;
         }
@@ -24,5 +24,5 @@ public abstract class AbstractLoadBalance implements LoadBalance{
         return doSelect(message, invokers);
     }
 
-    protected abstract ClientInformation doSelect(Message message, List<ClientInformation> invokers);
+    protected abstract ServerInformation doSelect(Message message, List<ServerInformation> invokers);
 }

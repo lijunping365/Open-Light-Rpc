@@ -4,7 +4,7 @@ import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
@@ -38,8 +38,8 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
     }
 
     @Override
-    public List<ClientInformation> lookup(){
-        List<ClientInformation> clients = instanceStore.getOnlineList();
+    public List<ServerInformation> lookup(){
+        List<ServerInformation> clients = instanceStore.getOnlineList();
         if (!CollectionUtils.isEmpty(clients)){
             return clients;
         }
@@ -49,26 +49,26 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
     @Override
     public boolean offlineClient(String clientId){
         final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
-        ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
+        ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
-        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
+        MessageResponseBody invoke = remotingInvoker.invoke(message, serverInformation);
         return invoke.getStatus() == ResponseStatus.SUCCESS;
     }
 
     @Override
     public boolean onlineClient(String clientId){
         final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
-        ClientInformation clientInformation = ClientInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
+        ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);
-        MessageResponseBody invoke = remotingInvoker.invoke(message, clientInformation);
+        MessageResponseBody invoke = remotingInvoker.invoke(message, serverInformation);
         return invoke.getStatus() == ResponseStatus.SUCCESS;
     }
 
-    protected void updateCache(List<ClientInformation> instances){
+    protected void updateCache(List<ServerInformation> instances){
         instanceStore.put(instances);
     }
 
-    protected abstract List<ClientInformation> doLookup();
+    protected abstract List<ServerInformation> doLookup();
 }

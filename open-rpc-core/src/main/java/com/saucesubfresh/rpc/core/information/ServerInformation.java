@@ -1,46 +1,65 @@
 package com.saucesubfresh.rpc.core.information;
 
+import com.saucesubfresh.rpc.core.enums.ClientStatus;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author: 李俊平
- * @Date: 2021-10-30 13:43
+ * @Date: 2021-10-30 13:42
  */
+@ToString
 @Getter
 public class ServerInformation {
     /**
      * The client id string pattern
      */
-    private static final String SERVER_ID_PATTERN = "%s::%d";
+    private static final String CLIENT_ID_PATTERN = "%s::%d";
     /**
-     * Server address
+     * client address
      */
     private final String address;
     /**
-     * Server port
+     * client port
      */
     private final int port;
+    /**
+     * first online time
+     */
+    @Setter
+    private long onlineTime;
+    /**
+     * this client status
+     */
+    @Setter
+    private ClientStatus status;
+    /**
+     * node init weight
+     */
+    @Setter
+    private int weight = 1;
 
-    private ServerInformation(String address, int port) {
+    public ServerInformation(String address, int port) {
         this.address = address;
         this.port = port;
     }
 
     /**
-     * Get formatted serverId
+     * Get formatted clientId
      *
-     * @return The current server id
+     * @return The current client id
      */
-    public String getServerId() {
-        return String.format(SERVER_ID_PATTERN, this.address, this.port);
+    public String getClientId() {
+        return String.format(CLIENT_ID_PATTERN, this.address, this.port);
     }
 
     /**
-     * Get {@link ServerInformation} instance
+     * Get new {@link ServerInformation} instance
      *
-     * @param address server address
-     * @param port    server port
-     * @return The {@link ServerInformation} instance
+     * @param address client address
+     * @param port    client port
+     * @return {@link ServerInformation} instance
      */
     public static ServerInformation valueOf(String address, int port) {
         return new ServerInformation(address, port);

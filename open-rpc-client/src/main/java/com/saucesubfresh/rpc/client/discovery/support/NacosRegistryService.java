@@ -6,7 +6,7 @@ import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
@@ -40,13 +40,13 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         }
         NamingEvent namingEvent = (NamingEvent) event;
         List<Instance> instances = namingEvent.getInstances();
-        List<ClientInformation> clients = convertClientInformation(instances);
+        List<ServerInformation> clients = convertClientInformation(instances);
         updateCache(clients);
         log.info("register successfully instance {}", clients);
     }
 
     @Override
-    protected List<ClientInformation> doLookup() {
+    protected List<ServerInformation> doLookup() {
         try {
             List<Instance> allInstances = namingService.getAllInstances(this.configuration.getClientName());
             return convertClientInformation(allInstances);
@@ -66,12 +66,12 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         this.namingService.subscribe(this.configuration.getClientName(), this);
     }
 
-    private List<ClientInformation> convertClientInformation(List<Instance> instances){
+    private List<ServerInformation> convertClientInformation(List<Instance> instances){
         if (CollectionUtils.isEmpty(instances)){
             return Collections.emptyList();
         }
         return instances.stream()
-                .map(instance -> ClientInformation.valueOf(instance.getIp(), instance.getPort()))
+                .map(instance -> ServerInformation.valueOf(instance.getIp(), instance.getPort()))
                 .collect(Collectors.toList());
     }
 }
