@@ -39,7 +39,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     /**
-     * 通过服务发现找到所有在线的客户端
+     * 通过服务发现找到所有在线的服务端
      */
     protected List<ClientInformation> lookup() {
         List<ClientInformation> clients = serviceDiscovery.lookup();
@@ -50,7 +50,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     /**
-     * 通过负载均衡策略找出合适的客户端进行调用
+     * 通过负载均衡策略找出合适的服务端进行调用
      */
     protected ClientInformation select(Message message, List<ClientInformation> clients) throws RpcException{
         return loadBalance.select(message, clients);

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 客户端通道管理器
+ * 服务端通道管理器
  */
 public class ClientChannelManager {
     /**

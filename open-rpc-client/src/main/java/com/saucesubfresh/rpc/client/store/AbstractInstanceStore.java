@@ -22,8 +22,8 @@ public abstract class AbstractInstanceStore implements InstanceStore{
     }
 
     /**
-     * 处理客户端的上线
-     * @param instances 上线的客户端列表
+     * 处理服务端的上线
+     * @param instances 上线的服务端列表
      */
     private void handlerOnline(List<ClientInformation> instances, long currentTime){
         instances.forEach(instance->{
@@ -39,8 +39,8 @@ public abstract class AbstractInstanceStore implements InstanceStore{
 
 
     /**
-     * 处理下线的客户端
-     * @param instances 上线的客户端列表
+     * 处理下线的服务端
+     * @param instances 上线的服务端列表
      */
     private void handlerOffline(List<ClientInformation> instances, long currentTime){
         List<ClientInformation> cacheClients = getAll();

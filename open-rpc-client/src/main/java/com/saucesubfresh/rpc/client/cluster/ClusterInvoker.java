@@ -12,7 +12,7 @@ import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 public interface ClusterInvoker {
 
     /**
-     * 给客户端发送消息
+     * 给服务端发送消息
      * @param message
      * @throws RpcException
      */
