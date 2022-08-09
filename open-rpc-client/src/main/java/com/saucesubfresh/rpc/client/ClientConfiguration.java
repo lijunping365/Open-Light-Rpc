@@ -1,43 +1,33 @@
 package com.saucesubfresh.rpc.client;
 
-import com.saucesubfresh.rpc.core.utils.internet.InternetAddressUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Related configuration items needed to build the client
+ * server configuration
  */
 @Data
-@ConfigurationProperties(prefix = "com.saucesubfresh.rpc.client")
+@ConfigurationProperties(prefix = "com.saucesubfresh.rpc.server")
 public class ClientConfiguration {
     /**
-     * client host
-     */
-    private String clientAddress;
-    /**
-     * client port
-     */
-    private int clientPort = 5201;
-    /**
-     * Register the target server address
-     */
-    private String serverAddress = "localhost";
-    /**
-     * Register the target server port
+     * The server port
      */
     private int serverPort = 5200;
+    /**
+     * Invoke retries
+     */
+    private int retryTimes = 3;
+    /**
+     * Time interval when retrying to invoke to Client, unit: millisecond
+     *
+     * @see java.util.concurrent.TimeUnit#MILLISECONDS
+     */
+    private long retryIntervalMilliSeconds = 1000;
     /**
      * The name of the service registered by the client to nacos or zookeeper
      * if you use nacos，You should be named like this: job-client-services
      * if you use zookeeper, You should be named like this: /JobClient
      */
     private String clientName;
-    /**
-     * Get local host
-     *
-     * @return local host
-     */
-    public String getClientAddress() {
-        return InternetAddressUtils.getLocalIpByNetCard();
-    }
+
 }

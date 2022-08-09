@@ -1,10 +1,10 @@
 package com.saucesubfresh.rpc.server.annotation;
 
+import com.saucesubfresh.rpc.server.registry.RegistryService;
+import com.saucesubfresh.rpc.server.registry.support.NacosRegistryService;
+import com.saucesubfresh.rpc.server.registry.support.ZookeeperRegistryService;
+import com.saucesubfresh.rpc.server.selector.RegistrarServiceSelector;
 import com.saucesubfresh.rpc.core.enums.RegistryServiceType;
-import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
-import com.saucesubfresh.rpc.server.discovery.support.NacosRegistryService;
-import com.saucesubfresh.rpc.server.discovery.support.ZookeeperRegistryService;
-import com.saucesubfresh.rpc.server.selector.RegistryServiceSelector;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -13,18 +13,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author lijunping on 2022/1/21
+ * @author lijunping on 2022/1/20
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({RegistryServiceSelector.class})
+@Import({RegistrarServiceSelector.class})
 public @interface EnableOpenRpcServer {
 
     /**
      * Choose how to register to Server
      *
      * @return {@link RegistryServiceType} instance
-     * @see ServiceDiscovery
+     * @see RegistryService
      * @see NacosRegistryService
      * @see ZookeeperRegistryService
      */
