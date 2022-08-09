@@ -27,7 +27,7 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      */
     private void handlerOnline(List<ServerInformation> instances, long currentTime){
         instances.forEach(instance->{
-            final String clientId = instance.getClientId();
+            final String clientId = instance.getServerId();
             ServerInformation serverInformation = get(clientId);
             if (Objects.isNull(serverInformation) || serverInformation.getStatus() == ClientStatus.OFF_LINE){
                 instance.setStatus(ClientStatus.ON_LINE);
@@ -50,16 +50,16 @@ public abstract class AbstractInstanceStore implements InstanceStore{
 
         List<String> onlineClientIds = new ArrayList<>();
         if (CollectionUtils.isEmpty(instances)){
-            onlineClientIds = instances.stream().map(ServerInformation::getClientId).collect(Collectors.toList());
+            onlineClientIds = instances.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         }
 
-        List<String> cacheClientIds = cacheClients.stream().map(ServerInformation::getClientId).collect(Collectors.toList());
+        List<String> cacheClientIds = cacheClients.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         cacheClientIds.removeAll(onlineClientIds);
         cacheClientIds.forEach(clientId-> {
             ServerInformation instance = get(clientId);
             instance.setStatus(ClientStatus.OFF_LINE);
             instance.setOnlineTime(currentTime);
-            put(instance.getClientId(), instance);
+            put(instance.getServerId(), instance);
         });
     }
 

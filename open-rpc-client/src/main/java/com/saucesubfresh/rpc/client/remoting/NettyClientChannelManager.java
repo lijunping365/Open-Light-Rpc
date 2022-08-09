@@ -2,7 +2,6 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
-import io.grpc.ManagedChannel;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -18,9 +17,9 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class NettyClientChannelManager {
     /**
-     * Store the connection channel of each client
+     * Store the connection channel of each server
      * <p>
-     * The key is {@link ServerInformation#getClientId()}
+     * The key is {@link ServerInformation#getServerId()}
      */
     private static final ConcurrentMap<String, Channel> CHANNEL_CACHE = new ConcurrentHashMap<>();
 
@@ -31,18 +30,18 @@ public class NettyClientChannelManager {
     }
 
     /**
-     * Establish a client channel
+     * Establish a server channel
      *
      * @param serverInformation The {@link ServerInformation} instance
-     * @return {@link ManagedChannel} instance
+     * @return {@link Channel} instance
      */
     public Channel establishChannel(ServerInformation serverInformation) {
 
         if (ObjectUtils.isEmpty(serverInformation)) {
-            throw new RpcException("clientInformation is not registered");
+            throw new RpcException("serverInformation is not registered");
         }
 
-        String clientId = serverInformation.getClientId();
+        String clientId = serverInformation.getServerId();
         Channel channel = CHANNEL_CACHE.get(clientId);
 
         if (!ObjectUtils.isEmpty(channel) && channel.isActive()){

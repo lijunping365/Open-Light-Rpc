@@ -16,7 +16,7 @@ public class ClientChannelManager {
     /**
      * Store the connection channel of each client
      * <p>
-     * The key is {@link ServerInformation#getClientId()}
+     * The key is {@link ServerInformation#getServerId()}
      */
     private static final ConcurrentMap<String, ManagedChannel> CLIENT_CHANNEL = new ConcurrentHashMap<>();
 
@@ -27,7 +27,7 @@ public class ClientChannelManager {
      * @return {@link ManagedChannel} instance
      */
     public static ManagedChannel establishChannel(ServerInformation information) {
-        String clientId = information.getClientId();
+        String clientId = information.getServerId();
         if (ObjectUtils.isEmpty(information)) {
             throw new RpcException("Client: " + clientId + " is not registered");
         }

@@ -29,7 +29,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        String clientId = serverInformation.getClientId();
+        String clientId = serverInformation.getServerId();
         ManagedChannel channel = ClientChannelManager.establishChannel(serverInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);

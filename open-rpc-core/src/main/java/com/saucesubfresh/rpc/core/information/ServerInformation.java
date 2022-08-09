@@ -1,5 +1,6 @@
 package com.saucesubfresh.rpc.core.information;
 
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.ClientStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +13,6 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ServerInformation {
-    /**
-     * The client id string pattern
-     */
-    private static final String CLIENT_ID_PATTERN = "%s::%d";
     /**
      * client address
      */
@@ -50,8 +47,8 @@ public class ServerInformation {
      *
      * @return The current client id
      */
-    public String getClientId() {
-        return String.format(CLIENT_ID_PATTERN, this.address, this.port);
+    public String getServerId() {
+        return String.format(CommonConstant.ADDRESS_PATTERN, this.address, this.port);
     }
 
     /**

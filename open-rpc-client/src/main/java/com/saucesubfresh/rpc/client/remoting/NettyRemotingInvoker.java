@@ -30,7 +30,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        String clientId = serverInformation.getClientId();
+        String clientId = serverInformation.getServerId();
         Channel channel = channelManager.establishChannel(serverInformation);
         try {
             final String random = requestIdGenerator.generate();

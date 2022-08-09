@@ -8,7 +8,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 该 server用于给各个 client 实例连接用。
+ * Netty 客户端
  * @author: 李俊平
  * @Date: 2022-06-08 07:25
  */
