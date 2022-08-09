@@ -27,12 +27,12 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      */
     private void handlerOnline(List<ServerInformation> instances, long currentTime){
         instances.forEach(instance->{
-            final String clientId = instance.getServerId();
-            ServerInformation serverInformation = get(clientId);
+            final String serverId = instance.getServerId();
+            ServerInformation serverInformation = get(serverId);
             if (Objects.isNull(serverInformation) || serverInformation.getStatus() == ClientStatus.OFF_LINE){
                 instance.setStatus(ClientStatus.ON_LINE);
                 instance.setOnlineTime(currentTime);
-                put(clientId, instance);
+                put(serverId, instance);
             }
         });
     }
@@ -48,15 +48,15 @@ public abstract class AbstractInstanceStore implements InstanceStore{
             return;
         }
 
-        List<String> onlineClientIds = new ArrayList<>();
+        List<String> onlineServerIds = new ArrayList<>();
         if (CollectionUtils.isEmpty(instances)){
-            onlineClientIds = instances.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
+            onlineServerIds = instances.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         }
 
-        List<String> cacheClientIds = cacheClients.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
-        cacheClientIds.removeAll(onlineClientIds);
-        cacheClientIds.forEach(clientId-> {
-            ServerInformation instance = get(clientId);
+        List<String> cacheServerIds = cacheClients.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
+        cacheServerIds.removeAll(onlineServerIds);
+        cacheServerIds.forEach(serverId-> {
+            ServerInformation instance = get(serverId);
             instance.setStatus(ClientStatus.OFF_LINE);
             instance.setOnlineTime(currentTime);
             put(instance.getServerId(), instance);
@@ -72,7 +72,7 @@ public abstract class AbstractInstanceStore implements InstanceStore{
         return clients.stream().filter(e->e.getStatus() == ClientStatus.ON_LINE).collect(Collectors.toList());
     }
 
-    protected abstract ServerInformation get(String clientId);
+    protected abstract ServerInformation get(String serverId);
 
-    protected abstract void put(String clientId, ServerInformation instance);
+    protected abstract void put(String serverId, ServerInformation instance);
 }

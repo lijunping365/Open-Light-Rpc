@@ -4,6 +4,7 @@ import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,16 +28,16 @@ public class ClientChannelManager {
      * @return {@link ManagedChannel} instance
      */
     public static ManagedChannel establishChannel(ServerInformation information) {
-        String clientId = information.getServerId();
-        if (ObjectUtils.isEmpty(information)) {
-            throw new RpcException("Client: " + clientId + " is not registered");
+        String serverId = information.getServerId();
+        if (StringUtils.isBlank(serverId)) {
+            throw new RpcException("Server" + serverId + " is not registered");
         }
-        ManagedChannel channel = CLIENT_CHANNEL.get(clientId);
+        ManagedChannel channel = CLIENT_CHANNEL.get(serverId);
         if (ObjectUtils.isEmpty(channel) || channel.isShutdown()) {
             channel = ManagedChannelBuilder.forAddress(information.getAddress(), information.getPort())
                     .usePlaintext()
                     .build();
-            CLIENT_CHANNEL.put(clientId, channel);
+            CLIENT_CHANNEL.put(serverId, channel);
         }
         return channel;
     }
@@ -44,9 +45,9 @@ public class ClientChannelManager {
     /**
      * Remove client {@link ManagedChannel}
      *
-     * @param clientId The client id
+     * @param serverId The serverId
      */
-    public static void removeChannel(String clientId) {
-        CLIENT_CHANNEL.remove(clientId);
+    public static void removeChannel(String serverId) {
+        CLIENT_CHANNEL.remove(serverId);
     }
 }

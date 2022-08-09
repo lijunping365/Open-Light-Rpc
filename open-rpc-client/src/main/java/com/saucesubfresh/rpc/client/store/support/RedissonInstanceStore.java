@@ -22,13 +22,13 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
     }
 
     @Override
-    protected ServerInformation get(String clientId) {
-        return map.get(clientId);
+    protected ServerInformation get(String serverId) {
+        return map.get(serverId);
     }
 
     @Override
-    protected void put(String clientId, ServerInformation instance) {
-        map.put(clientId, instance);
+    protected void put(String serverId, ServerInformation instance) {
+        map.put(serverId, instance);
     }
 
     @Override

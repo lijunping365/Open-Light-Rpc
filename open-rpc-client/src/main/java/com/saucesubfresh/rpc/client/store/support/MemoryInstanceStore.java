@@ -16,8 +16,8 @@ public class MemoryInstanceStore extends AbstractInstanceStore {
     private final Map<String, ServerInformation> store = PlatformDependent.newConcurrentHashMap();
 
     @Override
-    protected ServerInformation get(String clientId) {
-        return store.get(clientId);
+    protected ServerInformation get(String serverId) {
+        return store.get(serverId);
     }
 
     @Override

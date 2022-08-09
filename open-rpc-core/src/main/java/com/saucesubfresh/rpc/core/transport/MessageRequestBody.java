@@ -15,9 +15,9 @@ public class MessageRequestBody {
      */
     private String requestId;
     /**
-     * ID of the client receiving the message
+     * ID of the server receiving the message
      */
-    private String clientId;
+    private String serverId;
     /**
      * The message subject of this consumption
      */

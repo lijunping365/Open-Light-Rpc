@@ -29,24 +29,24 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        String clientId = serverInformation.getServerId();
+        String serverId = serverInformation.getServerId();
         ManagedChannel channel = ClientChannelManager.establishChannel(serverInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
             final String random = requestIdGenerator.generate();
-            MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(random);
+            MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());
             return JSON.parse(response.getBody(), MessageResponseBody.class);
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
-            log.error("To the client: {}, exception when sending a message, Status Code: {}", clientId, code);
+            log.error("To the client: {}, exception when sending a message, Status Code: {}", serverId, code);
             // The server status is UNAVAILABLE
             if (Status.Code.UNAVAILABLE == code) {
-                ClientChannelManager.removeChannel(clientId);
+                ClientChannelManager.removeChannel(serverId);
                 log.error("The client is unavailable, and the cached channel is deleted.");
             }
-            throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", clientId, code));
+            throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", serverId, code));
         } catch (Exception e) {
             throw new RpcException("rpc failed:" + e.getMessage());
         }

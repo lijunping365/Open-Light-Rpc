@@ -6,6 +6,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,14 +37,12 @@ public class NettyClientChannelManager {
      * @return {@link Channel} instance
      */
     public Channel establishChannel(ServerInformation serverInformation) {
-
-        if (ObjectUtils.isEmpty(serverInformation)) {
-            throw new RpcException("serverInformation is not registered");
+        String serverId = serverInformation.getServerId();
+        if (StringUtils.isBlank(serverId)) {
+            throw new RpcException("Server" + serverId + " is not registered");
         }
 
-        String clientId = serverInformation.getServerId();
-        Channel channel = CHANNEL_CACHE.get(clientId);
-
+        Channel channel = CHANNEL_CACHE.get(serverId);
         if (!ObjectUtils.isEmpty(channel) && channel.isActive()){
             return channel;
         }
@@ -52,20 +51,20 @@ public class NettyClientChannelManager {
         try {
             ChannelFuture channelFuture = bootstrap.connect(serverInformation.getAddress(), serverInformation.getPort()).sync();
             channel = channelFuture.channel();
-            CHANNEL_CACHE.put(clientId, channel);
+            CHANNEL_CACHE.put(serverId, channel);
             return channel;
         } catch (Exception e) {
-            log.error("连接服务端失败 {}", clientId);
-            throw new RpcException("连接服务端失败" + clientId);
+            log.error("连接服务端失败 {}", serverId);
+            throw new RpcException("连接服务端失败" + serverId);
         }
     }
 
     /**
      * Remove client {@link Channel}
      *
-     * @param clientId The client id
+     * @param serverId The client id
      */
-    public static void removeChannel(String clientId) {
-        CHANNEL_CACHE.remove(clientId);
+    public static void removeChannel(String serverId) {
+        CHANNEL_CACHE.remove(serverId);
     }
 }

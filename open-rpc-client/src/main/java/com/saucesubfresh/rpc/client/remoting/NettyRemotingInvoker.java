@@ -30,11 +30,11 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        String clientId = serverInformation.getServerId();
+        String serverId = serverInformation.getServerId();
         Channel channel = channelManager.establishChannel(serverInformation);
         try {
             final String random = requestIdGenerator.generate();
-            MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(random);
+            MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
             ChannelFuture channelFuture = channel.writeAndFlush(messageRequest).sync();
@@ -48,7 +48,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         } catch (Exception e) {
             InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
             log.error("flush error {}", socketAddress.getAddress().getHostAddress());
-            throw new RpcException(String.format("To the Server: %s, exception when sending a message", clientId));
+            throw new RpcException(String.format("To the Server: %s, exception when sending a message", serverId));
         }
     }
 }

@@ -19,16 +19,16 @@ public interface ServiceDiscovery {
 
     /**
      * 通知服务端下线
-     * @param clientId
+     * @param serverId
      * @return
      */
-    boolean offlineServer(String clientId);
+    boolean offlineServer(String serverId);
 
     /**
      * 通知服务端上线
-     * @param clientId
+     * @param serverId
      * @return
      */
-    boolean onlineServer(String clientId);
+    boolean onlineServer(String serverId);
 
 }
