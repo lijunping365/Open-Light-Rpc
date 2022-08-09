@@ -22,13 +22,13 @@ public interface ServiceDiscovery {
      * @param clientId
      * @return
      */
-    boolean offlineClient(String clientId);
+    boolean offlineServer(String clientId);
 
     /**
      * 通知服务端上线
      * @param clientId
      * @return
      */
-    boolean onlineClient(String clientId);
+    boolean onlineServer(String clientId);
 
 }

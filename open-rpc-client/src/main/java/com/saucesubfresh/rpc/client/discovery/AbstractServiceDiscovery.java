@@ -1,6 +1,7 @@
 package com.saucesubfresh.rpc.client.discovery;
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -21,8 +22,6 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
-
-    private static final String SPLIT_SYMBOL = "::";
 
     private final RemotingInvoker remotingInvoker;
     private final InstanceStore instanceStore;
@@ -47,8 +46,8 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
     }
 
     @Override
-    public boolean offlineClient(String clientId){
-        final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
+    public boolean offlineServer(String clientId){
+        final String[] clientInfo = StringUtils.split(clientId, CommonConstant.ADDRESS_PATTERN);
         ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
@@ -57,8 +56,8 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
     }
 
     @Override
-    public boolean onlineClient(String clientId){
-        final String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
+    public boolean onlineServer(String clientId){
+        final String[] clientInfo = StringUtils.split(clientId, CommonConstant.ADDRESS_PATTERN);
         ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);
