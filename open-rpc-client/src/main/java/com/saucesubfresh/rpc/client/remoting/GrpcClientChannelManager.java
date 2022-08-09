@@ -19,10 +19,10 @@ public class GrpcClientChannelManager {
      * <p>
      * The key is {@link ServerInformation#getServerId()}
      */
-    private static final ConcurrentMap<String, ManagedChannel> CLIENT_CHANNEL = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ManagedChannel> SERVER_CHANNEL = new ConcurrentHashMap<>();
 
     /**
-     * Establish a client channel
+     * Establish a server channel
      *
      * @param information The {@link ServerInformation} instance
      * @return {@link ManagedChannel} instance
@@ -32,12 +32,12 @@ public class GrpcClientChannelManager {
         if (StringUtils.isBlank(serverId)) {
             throw new RpcException("Server" + serverId + " is not registered");
         }
-        ManagedChannel channel = CLIENT_CHANNEL.get(serverId);
+        ManagedChannel channel = SERVER_CHANNEL.get(serverId);
         if (ObjectUtils.isEmpty(channel) || channel.isShutdown()) {
             channel = ManagedChannelBuilder.forAddress(information.getAddress(), information.getPort())
                     .usePlaintext()
                     .build();
-            CLIENT_CHANNEL.put(serverId, channel);
+            SERVER_CHANNEL.put(serverId, channel);
         }
         return channel;
     }
@@ -48,6 +48,6 @@ public class GrpcClientChannelManager {
      * @param serverId The serverId
      */
     public static void removeChannel(String serverId) {
-        CLIENT_CHANNEL.remove(serverId);
+        SERVER_CHANNEL.remove(serverId);
     }
 }

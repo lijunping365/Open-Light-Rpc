@@ -22,7 +22,7 @@ public class NettyClientChannelManager {
      * <p>
      * The key is {@link ServerInformation#getServerId()}
      */
-    private static final ConcurrentMap<String, Channel> CHANNEL_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Channel> SERVER_CHANNEL = new ConcurrentHashMap<>();
 
     private final NettyClient nettyClient;
 
@@ -42,7 +42,7 @@ public class NettyClientChannelManager {
             throw new RpcException("Server" + serverId + " is not registered");
         }
 
-        Channel channel = CHANNEL_CACHE.get(serverId);
+        Channel channel = SERVER_CHANNEL.get(serverId);
         if (!ObjectUtils.isEmpty(channel) && channel.isActive()){
             return channel;
         }
@@ -51,7 +51,7 @@ public class NettyClientChannelManager {
         try {
             ChannelFuture channelFuture = bootstrap.connect(serverInformation.getAddress(), serverInformation.getPort()).sync();
             channel = channelFuture.channel();
-            CHANNEL_CACHE.put(serverId, channel);
+            SERVER_CHANNEL.put(serverId, channel);
             return channel;
         } catch (Exception e) {
             log.error("连接服务端失败 {}", serverId);
@@ -65,6 +65,6 @@ public class NettyClientChannelManager {
      * @param serverId The client id
      */
     public static void removeChannel(String serverId) {
-        CHANNEL_CACHE.remove(serverId);
+        SERVER_CHANNEL.remove(serverId);
     }
 }
