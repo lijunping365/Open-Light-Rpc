@@ -24,13 +24,13 @@ import lombok.extern.slf4j.Slf4j;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
-public class NettyServerHandler extends SimpleChannelInboundHandler<MessageRequest> {
+public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequest> {
 
     private final MessageProcess messageProcess;
     private final ServerConfiguration configuration;
     private final RegistryService registryService;
 
-    public NettyServerHandler(MessageProcess messageProcess, ServerConfiguration configuration, RegistryService registryService) {
+    public NettyMessageHandler(MessageProcess messageProcess, ServerConfiguration configuration, RegistryService registryService) {
         this.messageProcess = messageProcess;
         this.configuration = configuration;
         this.registryService = registryService;

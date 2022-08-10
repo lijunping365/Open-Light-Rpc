@@ -8,8 +8,7 @@ import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.client.random.support.SequenceRequestIdGenerator;
-import com.saucesubfresh.rpc.client.remoting.GrpcRemotingInvoker;
-import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
+import com.saucesubfresh.rpc.client.remoting.*;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
 import com.saucesubfresh.rpc.client.store.support.MemoryInstanceStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -54,8 +53,23 @@ public class ClientAutoConfiguration {
     }
 
     @Bean
+    public NettyClientHandler clientHandler(){
+        return new NettyClientHandler();
+    }
+
+    @Bean
+    public NettyChannelInitializer channelInitializer(NettyClientHandler clientHandler){
+        return new NettyChannelInitializer(clientHandler);
+    }
+
+    @Bean
+    public NettyClient nettyClient(NettyChannelInitializer channelInitializer){
+        return new NettyClient(channelInitializer);
+    }
+
+    @Bean
     @ConditionalOnMissingBean
-    public RemotingInvoker remotingInvoker(RequestIdGenerator requestIdGenerator){
-        return new GrpcRemotingInvoker(requestIdGenerator);
+    public RemotingInvoker remotingInvoker(NettyClient nettyClient, RequestIdGenerator requestIdGenerator){
+        return new NettyRemotingInvoker(nettyClient, requestIdGenerator);
     }
 }

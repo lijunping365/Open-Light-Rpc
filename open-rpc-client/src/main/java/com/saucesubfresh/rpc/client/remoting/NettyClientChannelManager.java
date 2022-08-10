@@ -8,7 +8,6 @@ import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,19 +23,13 @@ public class NettyClientChannelManager {
      */
     private static final ConcurrentMap<String, Channel> SERVER_CHANNEL = new ConcurrentHashMap<>();
 
-    private final NettyClient nettyClient;
-
-    public NettyClientChannelManager(NettyClient nettyClient) {
-        this.nettyClient = nettyClient;
-    }
-
     /**
      * Establish a server channel
      *
      * @param serverInformation The {@link ServerInformation} instance
      * @return {@link Channel} instance
      */
-    public Channel establishChannel(ServerInformation serverInformation) {
+    public static Channel establishChannel(Bootstrap bootstrap, ServerInformation serverInformation) {
         String serverId = serverInformation.getServerId();
         if (StringUtils.isBlank(serverId)) {
             throw new RpcException("Server" + serverId + " is not registered");
@@ -47,7 +40,6 @@ public class NettyClientChannelManager {
             return channel;
         }
 
-        Bootstrap bootstrap = nettyClient.getBootstrap();
         try {
             ChannelFuture channelFuture = bootstrap.connect(serverInformation.getAddress(), serverInformation.getPort()).sync();
             channel = channelFuture.channel();
@@ -64,7 +56,7 @@ public class NettyClientChannelManager {
      *
      * @param serverId The client id
      */
-    public void removeChannel(String serverId) {
+    public static void removeChannel(String serverId) {
         SERVER_CHANNEL.remove(serverId);
     }
 }

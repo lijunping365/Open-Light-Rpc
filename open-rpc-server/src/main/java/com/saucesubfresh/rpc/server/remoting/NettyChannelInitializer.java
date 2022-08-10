@@ -17,9 +17,9 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
  */
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final NettyServerHandler clientHandler;
+    private final NettyMessageHandler clientHandler;
 
-    public NettyChannelInitializer(NettyServerHandler clientHandler) {
+    public NettyChannelInitializer(NettyMessageHandler clientHandler) {
         this.clientHandler = clientHandler;
     }
 
