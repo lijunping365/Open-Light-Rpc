@@ -39,14 +39,15 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             return JSON.parse(response.getBody(), MessageResponseBody.class);
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
-            log.error("To the client: {}, exception when sending a message, Status Code: {}", serverId, code);
-            // The server status is UNAVAILABLE
+            log.error("To the Server: {}, exception when sending a message, Status Code: {}", serverId, code);
             if (Status.Code.UNAVAILABLE == code) {
+                channel.shutdown();
                 GrpcClientChannelManager.removeChannel(serverId);
-                log.error("The client is unavailable, and the cached channel is deleted.");
+                log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
             }
-            throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", serverId, code));
+            throw new RpcException(String.format("To the Server: %s, exception when sending a message, Status Code: %s", serverId, code));
         } catch (Exception e) {
+            channel.shutdown();
             throw new RpcException("rpc failed:" + e.getMessage());
         }
     }

@@ -44,7 +44,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     protected List<ServerInformation> lookup() {
         List<ServerInformation> clients = serviceDiscovery.lookup();
         if (CollectionUtils.isEmpty(clients)) {
-            throw new RpcException("No healthy clients were found.");
+            throw new RpcException("No healthy server were found.");
         }
         return clients;
     }

@@ -29,7 +29,7 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
     protected AbstractServiceDiscovery(RemotingInvoker remotingInvoker, InstanceStore instanceStore, ClientConfiguration configuration) {
         if (StringUtils.isBlank(configuration.getServerName())){
-            throw new RpcException("The subscribe client name cannot be empty.");
+            throw new RpcException("The subscribe server name cannot be empty.");
         }
         this.remotingInvoker = remotingInvoker;
         this.instanceStore = instanceStore;

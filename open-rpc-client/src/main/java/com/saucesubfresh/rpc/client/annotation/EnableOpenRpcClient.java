@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 public @interface EnableOpenRpcClient {
 
     /**
-     * Choose how to register to Server
+     * Choose how to listener Server change
      *
      * @return {@link RegistryServiceType} instance
      * @see ServiceDiscovery
