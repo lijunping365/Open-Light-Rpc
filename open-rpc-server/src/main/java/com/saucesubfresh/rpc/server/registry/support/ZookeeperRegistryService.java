@@ -33,22 +33,22 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
         Map<String, String> metadata = new HashMap<>();
         metadata.put("serverIp", serverAddress);
         metadata.put("serverPort", String.valueOf(serverPort));
-        if (!zkClient.exists(this.configuration.getClientName())) {
-            zkClient.createPersistent(this.configuration.getClientName(), null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+        if (!zkClient.exists(this.configuration.getServerName())) {
+            zkClient.createPersistent(this.configuration.getServerName(), null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
-        String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = this.configuration.getClientName() + CommonConstant.Symbol.SLASH + clientInfo;
-        if (!zkClient.exists(clientPath)) {
-            zkClient.createEphemeral(clientPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+        String serverInfo = String.format(CommonConstant.ADDRESS_PATTERN, serverAddress, serverPort);
+        String serverPath = this.configuration.getServerName() + CommonConstant.Symbol.SLASH + serverInfo;
+        if (!zkClient.exists(serverPath)) {
+            zkClient.createEphemeral(serverPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
         log.info("Current client registered to zookeeper server successfully.");
     }
 
     @Override
-    public void deRegister(String clientAddress, int clientPort) {
-        String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = this.configuration.getClientName() + CommonConstant.Symbol.SLASH + clientInfo;
-        this.zkClient.delete(clientPath);
+    public void deRegister(String serverAddress, int serverPort) {
+        String serverInfo = String.format(CommonConstant.ADDRESS_PATTERN, serverAddress, serverPort);
+        String serverPath = this.configuration.getServerName() + CommonConstant.Symbol.SLASH + serverInfo;
+        this.zkClient.delete(serverPath);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
         try {
             zkClient.close();
         } catch (Exception e) {
-            log.warn("Failed to close zookeeper client " + configuration.getClientAddress() + ", cause: " + e.getMessage(), e);
+            log.warn("Failed to close zookeeper client, cause: " + e.getMessage(), e);
         }
     }
 

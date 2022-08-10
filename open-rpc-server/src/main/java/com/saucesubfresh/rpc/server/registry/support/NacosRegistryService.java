@@ -46,7 +46,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
             instance.setPort(serverPort);
             Map<String, String> metadata = new HashMap<>();
             instance.setMetadata(metadata);
-            this.namingService.registerInstance(this.configuration.getClientName(), instance);
+            this.namingService.registerInstance(this.configuration.getServerName(), instance);
             log.info("Current client registered to nacos server successfully.");
         } catch (Exception e) {
             log.error("register instance failed {}", e.getMessage());
@@ -55,9 +55,9 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
     }
 
     @Override
-    public void deRegister(String clientAddress, int clientPort) {
+    public void deRegister(String serverAddress, int serverPort) {
         try {
-            this.namingService.deregisterInstance(this.configuration.getClientName(), clientAddress, clientPort);
+            this.namingService.deregisterInstance(this.configuration.getServerName(), serverAddress, serverPort);
         } catch (NacosException e) {
             log.error("deRegister instance failed {}", e.getMessage());
             throw new RpcException(e.getMessage());

@@ -14,12 +14,12 @@ public abstract class AbstractRegistryService implements RegistryService, Initia
 
     public AbstractRegistryService(ServerConfiguration configuration){
         if (configuration.getServerPort() <= 0 || configuration.getServerPort() > 65535) {
-            throw new RpcException("The Target Server port must be greater than 0 and less than 65535.");
+            throw new RpcException("The Server port must be greater than 0 and less than 65535.");
         }
         if (StringUtils.isBlank(configuration.getServerAddress())) {
             throw new RpcException("The Target server address cannot be empty.");
         }
-        if (StringUtils.isBlank(configuration.getClientName())){
+        if (StringUtils.isBlank(configuration.getServerName())){
             throw new RpcException("The client register name cannot be empty.");
         }
         this.configuration = configuration;
