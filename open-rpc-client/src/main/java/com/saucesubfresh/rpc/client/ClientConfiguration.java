@@ -10,10 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "com.saucesubfresh.rpc.client")
 public class ClientConfiguration {
     /**
-     * The server port
-     */
-    private int serverPort = 5200;
-    /**
      * Invoke retries
      */
     private int retryTimes = 3;

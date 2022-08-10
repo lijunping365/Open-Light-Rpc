@@ -64,7 +64,7 @@ public class NettyClientChannelManager {
      *
      * @param serverId The client id
      */
-    public static void removeChannel(String serverId) {
+    public void removeChannel(String serverId) {
         SERVER_CHANNEL.remove(serverId);
     }
 }

@@ -26,7 +26,6 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         this.requestIdGenerator = requestIdGenerator;
     }
 
-
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         String serverId = serverInformation.getServerId();

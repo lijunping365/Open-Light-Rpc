@@ -1,9 +1,9 @@
 package com.saucesubfresh.rpc.core.enums;
 
 /**
- * The client status
+ * The server status
  */
-public enum ClientStatus {
+public enum Status {
     ON_LINE,
     OFF_LINE
 }

@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.core.information;
 
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
-import com.saucesubfresh.rpc.core.enums.ClientStatus;
+import com.saucesubfresh.rpc.core.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,7 +30,7 @@ public class ServerInformation {
      * this client status
      */
     @Setter
-    private ClientStatus status;
+    private Status status;
     /**
      * node init weight
      */

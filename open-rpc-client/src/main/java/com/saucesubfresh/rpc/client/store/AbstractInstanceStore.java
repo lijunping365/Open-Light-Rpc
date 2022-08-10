@@ -1,6 +1,6 @@
 package com.saucesubfresh.rpc.client.store;
 
-import com.saucesubfresh.rpc.core.enums.ClientStatus;
+import com.saucesubfresh.rpc.core.enums.Status;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.springframework.util.CollectionUtils;
 
@@ -29,8 +29,8 @@ public abstract class AbstractInstanceStore implements InstanceStore{
         instances.forEach(instance->{
             final String serverId = instance.getServerId();
             ServerInformation serverInformation = get(serverId);
-            if (Objects.isNull(serverInformation) || serverInformation.getStatus() == ClientStatus.OFF_LINE){
-                instance.setStatus(ClientStatus.ON_LINE);
+            if (Objects.isNull(serverInformation) || serverInformation.getStatus() == Status.OFF_LINE){
+                instance.setStatus(Status.ON_LINE);
                 instance.setOnlineTime(currentTime);
                 put(serverId, instance);
             }
@@ -57,7 +57,7 @@ public abstract class AbstractInstanceStore implements InstanceStore{
         cacheServerIds.removeAll(onlineServerIds);
         cacheServerIds.forEach(serverId-> {
             ServerInformation instance = get(serverId);
-            instance.setStatus(ClientStatus.OFF_LINE);
+            instance.setStatus(Status.OFF_LINE);
             instance.setOnlineTime(currentTime);
             put(instance.getServerId(), instance);
         });
@@ -69,7 +69,7 @@ public abstract class AbstractInstanceStore implements InstanceStore{
         if (CollectionUtils.isEmpty(clients)){
             return Collections.emptyList();
         }
-        return clients.stream().filter(e->e.getStatus() == ClientStatus.ON_LINE).collect(Collectors.toList());
+        return clients.stream().filter(e->e.getStatus() == Status.ON_LINE).collect(Collectors.toList());
     }
 
     protected abstract ServerInformation get(String serverId);
