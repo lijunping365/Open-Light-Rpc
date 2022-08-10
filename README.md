@@ -18,15 +18,15 @@
   </a>
 </p>
 
-# 服务端（open-rpc-server）
+# 客户端（open-rpc-client）
 
 ## 功能
 
-- [x] 监听注册中心客户端的注册事件，并将注册成功的客户端保存起来。
+- [x] 监听注册中心服务端的注册事件，并将注册成功的服务端保存起来。
 
-- [x] 给客户端发送普通消息、客户端上线下线消息。
+- [x] 给服务端发送普通消息、服务端上线下线消息。
 
-- [x] 在服务端给客户端发送消息时提供多种负载均衡机制和容错机制供开发者使用
+- [x] 在给服务端发送消息时提供多种负载均衡机制和容错机制供开发者使用
 
 
 ## 快速开始
@@ -36,15 +36,15 @@
 ```xml
 <dependency>
     <groupId>com.saucesubfresh</groupId>
-    <artifactId>open-rpc-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>open-rpc-client</artifactId>
+    <version>1.0.3</version>
 </dependency>
 ```
 
-### 2. 在启动类上添加 @EnableLightRpcServer 注解
+### 2. 在启动类上添加 @EnableOpenRpcClient 注解
 
 ```java
-@EnableLightRpcServer
+@EnableOpenRpcClient
 @SpringBootApplication
 public class JobAdminApplication {
 
@@ -54,17 +54,17 @@ public class JobAdminApplication {
 }
 ```
 
-### 3. 配置 Grpc 服务端启动端口
+### 3. 配置服务名称
 
 ```yaml
 com:
   saucesubfresh:
     rpc:
-      server:
-        server-port: 5200
+      client:
+        server-name: open-crawler-services
 ```
 
-### 4. 给客户端发送消息
+### 4. 给服务端发送消息
 
 节选自 Open-Job
 
@@ -137,13 +137,13 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
 实现 InstanceStore 接口
 
-# 客户端（open-rpc-client）
+# 客户端（open-rpc-server）
 
 ## 功能
 
-- [x] 客户端向注册中心注册功能
+- [x] 服务端向注册中心注册功能
 
-- [x] 接收服务端发来的消息并做相应处理
+- [x] 接收客户端发来的消息并做相应处理
 
 ## 快速开始
 
@@ -152,15 +152,15 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 ```xml
 <dependency>
     <groupId>com.saucesubfresh</groupId>
-    <artifactId>open-rpc-client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>open-rpc-server</artifactId>
+    <version>1.0.3</version>
 </dependency>
 ```
 
-### 2. 在启动类上添加 @EnableLightRpcClient 注解
+### 2. 在启动类上添加 @EnableOpenRpcServer 注解
 
 ```java
-@EnableLightRpcClient
+@EnableOpenRpcServer
 @SpringBootApplication
 public class JobClientApplication {
 
@@ -170,19 +170,19 @@ public class JobClientApplication {
 }
 ```
 
-### 3. 配置 Grpc 服务端地址和端口、客户端启动端口
+### 3. 配置 Grpc 服务端地址和端口、服务名称
 
 ```yaml
 com:
   saucesubfresh:
     rpc:
-      client:
+      server:
         server-address: 127.0.0.1
         server-port: 5200
-        client-address: 5201
+        server-name: open-crawler-services
 ```
 
-### 4. 接收服务端发来的消息进行处理
+### 4. 接收客户端发来的消息进行处理
 
 注入 MessageProcess 接口的实现覆盖系统默认的 DefaultMessageProcess
 
@@ -208,7 +208,7 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
 
 ## 扩展示例
 
-### 1. 扩展客户端注册方式（RegistryService）
+### 1. 扩展服务端注册方式（RegistryService）
 
 实现 RegistryService 接口
 
@@ -284,16 +284,19 @@ public class SpringWebMvcConfig {
 }
 ```
 
-## 提问
-
-问：open-rpc-client 中 ServerChannelManager 做什么用的？
-
-答：这个是一个预留功能，后面如果需要客户端主动发送消息给服务端，那么这个就会被用到
-
 ## 1.0.1 版本更新说明
 
 1. 对 client 响应的消息
 2. 修复了故障转移模式 bug
+
+## 1.0.2 版本更新说明
+
+修复版本 bug
+
+## 1.0.3 版本更新说明
+
+1. 项目重构，
+2. 在 grpc 通信的基础上增加 netty 通信方式
 
 # 最后
 
