@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(ServerConfiguration.class)
-public class ClientAutoConfiguration {
+public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RegistryService.class)

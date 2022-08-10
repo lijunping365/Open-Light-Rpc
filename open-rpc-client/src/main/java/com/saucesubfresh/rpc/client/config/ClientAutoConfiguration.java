@@ -1,6 +1,5 @@
 package com.saucesubfresh.rpc.client.config;
 
-import com.alibaba.nacos.common.remote.client.grpc.GrpcClient;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.cluster.ClusterInvoker;
 import com.saucesubfresh.rpc.client.cluster.support.FailoverClusterInvoker;
@@ -9,8 +8,8 @@ import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.client.random.support.SequenceRequestIdGenerator;
-import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.client.remoting.GrpcRemotingInvoker;
+import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
 import com.saucesubfresh.rpc.client.store.support.MemoryInstanceStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -24,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(ClientConfiguration.class)
-public class ServerAutoConfiguration {
+public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
