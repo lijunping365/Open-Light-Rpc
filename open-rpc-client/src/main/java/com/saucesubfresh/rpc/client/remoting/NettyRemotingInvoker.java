@@ -50,7 +50,11 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         } catch (Exception e) {
             InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
             log.error("flush error {}", socketAddress.getAddress().getHostAddress());
-            NettyClientChannelManager.removeChannel(serverId);
+            if (!channel.isActive() && !channel.isOpen() && !channel.isWritable()) {
+                channel.close();
+                NettyClientChannelManager.removeChannel(serverId);
+                log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
+            }
             throw new RpcException(String.format("To the Server: %s, exception when sending a message", serverId));
         }
     }
