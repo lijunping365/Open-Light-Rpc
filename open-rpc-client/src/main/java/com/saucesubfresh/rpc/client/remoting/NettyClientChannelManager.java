@@ -4,12 +4,15 @@ import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 服务端通道管理器
@@ -41,14 +44,26 @@ public class NettyClientChannelManager {
         }
 
         try {
-            ChannelFuture channelFuture = bootstrap.connect(serverInformation.getAddress(), serverInformation.getPort()).sync();
-            channel = channelFuture.channel();
+            channel = connectAsync(bootstrap, serverInformation.getAddress(), serverInformation.getPort());
             SERVER_CHANNEL.put(serverId, channel);
             return channel;
         } catch (Exception e) {
             log.error("连接服务端失败 {}", serverId);
             throw new RpcException("连接服务端失败" + serverId);
         }
+    }
+
+    public static Channel connectAsync(Bootstrap bootstrap, String address, int port) throws ExecutionException, InterruptedException {
+        CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
+        bootstrap.connect(address, port).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                log.info("Connect to server [{}:{}] successful!", address, port);
+                completableFuture.complete(future.channel());
+            } else {
+                throw new IllegalStateException();
+            }
+        });
+        return completableFuture.get();
     }
 
     /**
