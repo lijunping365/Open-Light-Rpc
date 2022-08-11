@@ -1,13 +1,16 @@
 package com.saucesubfresh.rpc.client.remoting;
 
+import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.enums.PacketType;
+import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
-import io.netty.channel.Channel;
+import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
+import com.saucesubfresh.rpc.core.utils.json.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.SocketAddress;
 
 /**
  * 这里处理所有netty事件。
@@ -42,10 +45,16 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRespo
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
-            //Send ping
-            final Channel channel = ctx.channel();
-            SocketAddress socketAddress = channel.remoteAddress();
-            log.debug("Client send beat-ping to " + socketAddress);
+            IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
+            if (idleStateEvent.state() == IdleState.WRITER_IDLE) {
+                log.info("Client send beat-ping to [{}]", ctx.channel().remoteAddress());
+                Message message = new Message();
+                message.setCommand(PacketType.PING);
+                MessageRequestBody requestBody = new MessageRequestBody().setMessage(message);
+                String requestJsonBody = JSON.toJSON(requestBody);
+                MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+                ctx.writeAndFlush(messageRequest);
+            }
         } else {
             super.userEventTriggered(ctx, evt);
         }

@@ -5,6 +5,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,6 +31,7 @@ public class NettyClient {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
                  .channel(NioSocketChannel.class)
+                 .handler(new LoggingHandler(LogLevel.INFO))
                  .option(ChannelOption.SO_KEEPALIVE, true)
                  .option(ChannelOption.TCP_NODELAY, true)
                  .handler(initializer);

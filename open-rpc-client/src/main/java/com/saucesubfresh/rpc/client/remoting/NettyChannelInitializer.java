@@ -11,6 +11,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lijunping on 2022/8/8
@@ -27,6 +30,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel channel) {
         ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
         ChannelPipeline cp = channel.pipeline();
+        // If no data is sent to the server within 15 seconds, a heartbeat request is sent
+        cp.addLast(new IdleStateHandler(0, 15, 0, TimeUnit.SECONDS));
         cp.addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter));
         cp.addLast(new MsgDecoder(MessageResponse.class));
         cp.addLast(new MsgEncoder(MessageRequest.class));
