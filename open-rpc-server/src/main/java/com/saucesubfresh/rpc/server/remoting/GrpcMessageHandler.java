@@ -10,6 +10,7 @@ import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
+import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.registry.RegistryService;
@@ -56,9 +57,10 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            responseBody.setErrorMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
+            responseBody.setBody(ProtostuffUtils.serialize(e.getMessage()));
         } finally {
+            responseBody.setRequestId(requestBody.getRequestId());
             String responseJsonBody = JSON.toJSON(responseBody);
             MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
             responseObserver.onNext(messageResponse);

@@ -9,6 +9,7 @@ import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
+import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.registry.RegistryService;
@@ -41,6 +42,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
         MessageResponseBody responseBody = new MessageResponseBody();
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
+        responseBody.setRequestId(requestBody.getRequestId());
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
         try {
@@ -55,22 +57,19 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
                     byte[] body = messageProcess.process(message);
                     responseBody.setBody(body);
                     break;
+                case PING:
+                    responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
                 default:
                     throw new RpcException("UnSupport message packet" + command);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            responseBody.setErrorMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
+            responseBody.setBody(ProtostuffUtils.serialize(e.getMessage()));
         } finally {
             String responseJsonBody = JSON.toJSON(responseBody);
             MessageResponse response = MessageResponse.newBuilder().setBody(responseJsonBody).build();
-            ctx.writeAndFlush(response).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                    log.info("Send response for request " + requestBody.getRequestId());
-                }
-            });
+            ctx.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> log.info("Send response for request " + requestBody.getRequestId()));
         }
     }
 
