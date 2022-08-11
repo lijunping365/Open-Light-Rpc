@@ -13,12 +13,9 @@ import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.registry.RegistryService;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -90,18 +87,5 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.close();
         super.channelInactive(ctx);
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
-            if (idleStateEvent.state() == IdleState.READER_IDLE) {
-                log.info("idle check happen, so close the connection");
-                ctx.close();
-            }
-        } else {
-            super.userEventTriggered(ctx, evt);
-        }
     }
 }
