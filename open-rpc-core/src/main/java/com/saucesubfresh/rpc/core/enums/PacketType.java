@@ -7,7 +7,7 @@ public enum PacketType {
 
     REGISTER(0, true), DEREGISTER(1, true),
 
-    MESSAGE(1),
+    MESSAGE(1), PING(2), PONG(3),
 
     ;
 
