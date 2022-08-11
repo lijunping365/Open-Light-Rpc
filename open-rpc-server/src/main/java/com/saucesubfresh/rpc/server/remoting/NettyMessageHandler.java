@@ -58,6 +58,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
                     break;
                 case PING:
                     responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
+                    break;
                 default:
                     throw new RpcException("UnSupport message packet" + command);
             }
