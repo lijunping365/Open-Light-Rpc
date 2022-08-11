@@ -1,5 +1,6 @@
 package com.saucesubfresh.rpc.client.remoting;
 
+import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
@@ -7,13 +8,13 @@ import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
-import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lijunping on 2022/2/16
@@ -31,22 +32,26 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
+        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         String serverId = serverInformation.getServerId();
         Bootstrap bootstrap = nettyClient.getBootstrap();
+        final String random = requestIdGenerator.generate();
         Channel channel = NettyClientChannelManager.establishChannel(bootstrap, serverInformation);
-        try {
-            final String random = requestIdGenerator.generate();
-            MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-            String requestJsonBody = JSON.toJSON(requestBody);
-            MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
-            ChannelFuture channelFuture = channel.writeAndFlush(messageRequest).sync();
-            if (!channelFuture.isSuccess()) {
-                log.error("Send request {} error", requestBody.getRequestId());
-            }
+        NettyUnprocessedRequests.put(random, completableFuture);
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        String requestJsonBody = JSON.toJSON(requestBody);
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
 
-            //MessageResponse response = channelFuture.ge();
-            //return JSON.parse(response.getBody(), MessageResponseBody.class);
-            return null;
+        channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
+            if (!future.isSuccess()) {
+                completableFuture.completeExceptionally(future.cause());
+                log.error("Send failed:", future.cause());
+            }
+        });
+
+        try {
+            MessageResponseBody responseBody = completableFuture.get();
+            return JSON.parse(responseBody, MessageResponseBody.class);
         } catch (Exception e) {
             InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
             log.error("flush error {}", socketAddress.getAddress().getHostAddress());

@@ -5,12 +5,15 @@ import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 这里处理所有netty事件。
@@ -18,11 +21,18 @@ import lombok.extern.slf4j.Slf4j;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
+@ChannelHandler.Sharable
 public class NettyClientHandler extends SimpleChannelInboundHandler<MessageResponse> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MessageResponse response) throws Exception {
         log.info("收到消息 {}", response);
+        MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
+        //If the requestId of response is blank, think it is a heartbeat
+        if (StringUtils.isNotBlank(responseBody.getRequestId())){
+            return;
+        }
+        NettyUnprocessedRequests.complete(responseBody);
     }
 
     @Override
