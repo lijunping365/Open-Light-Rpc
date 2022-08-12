@@ -25,10 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 public class NettyClientHandler extends SimpleChannelInboundHandler<MessageResponse> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, MessageResponse response) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageResponse response) throws Exception {
         MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-        //If the requestId of response is blank, think it is a heartbeat
         if (StringUtils.isBlank(responseBody.getRequestId())){
+            log.info("Receive beat-pong from {}", ctx.channel().remoteAddress());
             return;
         }
         try {
