@@ -29,7 +29,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRespo
         log.info("收到消息 {}", response);
         MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
         //If the requestId of response is blank, think it is a heartbeat
-        if (StringUtils.isNotBlank(responseBody.getRequestId())){
+        if (StringUtils.isBlank(responseBody.getRequestId())){
             return;
         }
         NettyUnprocessedRequests.complete(responseBody);
