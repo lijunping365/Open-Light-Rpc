@@ -27,7 +27,7 @@ public class RegistrarServiceSelector implements ImportSelector {
         Map<String, Object> annotationAttributes =
                 importingClassMetadata.getAnnotationAttributes(EnableOpenRpcServer.class.getName());
         RegistryServiceType serverServiceType = (RegistryServiceType) annotationAttributes.get(REGISTRAR_TYPE_ATTRIBUTE_NAME);
-        log.info("Use the [{}] method to register the Client service", serverServiceType);
+        log.info("Use the [{}] method to register the Server service", serverServiceType);
         switch (serverServiceType) {
             case NACOS:
                 return new String[]{NacosRegistryService.class.getName()};

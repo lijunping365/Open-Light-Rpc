@@ -26,7 +26,6 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRespo
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MessageResponse response) throws Exception {
-        log.info("收到消息 {}", response);
         MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
         //If the requestId of response is blank, think it is a heartbeat
         if (StringUtils.isBlank(responseBody.getRequestId())){

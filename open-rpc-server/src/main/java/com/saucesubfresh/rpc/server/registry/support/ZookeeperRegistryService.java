@@ -41,7 +41,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
         if (!zkClient.exists(serverPath)) {
             zkClient.createEphemeral(serverPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
-        log.info("Current client registered to zookeeper server successfully.");
+        log.info("Current server registered to zookeeper server successfully.");
     }
 
     @Override

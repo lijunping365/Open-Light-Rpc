@@ -47,7 +47,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
             Map<String, String> metadata = new HashMap<>();
             instance.setMetadata(metadata);
             this.namingService.registerInstance(this.configuration.getServerName(), instance);
-            log.info("Current client registered to nacos server successfully.");
+            log.info("Current server registered to nacos server successfully.");
         } catch (Exception e) {
             log.error("register instance failed {}", e.getMessage());
             throw new RpcException(e.getMessage());
@@ -72,7 +72,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
     @Override
     public void destroy() throws Exception {
         this.namingService.shutDown();
-        log.info("The client is successfully offline from the nacos server.");
+        log.info("The server is successfully offline from the nacos server.");
     }
 
     @Override

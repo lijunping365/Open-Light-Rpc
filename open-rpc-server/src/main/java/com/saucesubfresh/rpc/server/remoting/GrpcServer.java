@@ -45,10 +45,10 @@ public class GrpcServer implements InitializingBean, DisposableBean {
     public void startup() {
         try {
             this.rpcServer.start();
-            log.info("Job Server bind port : {}, startup successfully.", configuration.getServerPort());
+            log.info("The Server bind port : {}, startup successfully.", configuration.getServerPort());
             this.rpcServer.awaitTermination();
         } catch (Exception e) {
-            log.error("Job Client startup failed.", e);
+            log.error("The Server startup failed.", e);
         }
     }
 
@@ -57,18 +57,18 @@ public class GrpcServer implements InitializingBean, DisposableBean {
      */
     public void shutdown() {
         try {
-            log.info("Job Client shutting down.");
+            log.info("The Server shutting down.");
             this.rpcServer.shutdown();
             long waitTime = 100;
             long timeConsuming = 0;
             while (!this.rpcServer.isShutdown()) {
-                log.info("Job Client stopping....，total time consuming：{}", timeConsuming);
+                log.info("The Server stopping....，total time consuming：{}", timeConsuming);
                 timeConsuming += waitTime;
                 Thread.sleep(waitTime);
             }
-            log.info("Job Client stop successfully.");
+            log.info("The Server stop successfully.");
         } catch (Exception e) {
-            log.error("Job Client shutdown failed.", e);
+            log.error("The Server shutdown failed.", e);
         }
     }
 
