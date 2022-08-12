@@ -4,6 +4,7 @@ import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -44,15 +45,27 @@ public class NettyClientChannelManager {
         }
 
         try {
-            channel = connectAsync(bootstrap, serverInformation.getAddress(), serverInformation.getPort());
-            SERVER_CHANNEL.put(serverId, channel);
-            return channel;
+            channel = connect(bootstrap, serverInformation.getAddress(), serverInformation.getPort());
         } catch (Exception e) {
             log.error("连接服务端失败 {}", serverId);
-            throw new RpcException("连接服务端失败" + serverId);
+            throw new RpcException("连接服务端失败:" + serverId);
         }
+
+        SERVER_CHANNEL.put(serverId, channel);
+        return channel;
     }
 
+    /**
+     * connect sync
+     */
+    public static Channel connect(Bootstrap bootstrap, String address, int port) throws InterruptedException {
+        ChannelFuture channelFuture = bootstrap.connect(address, port).sync();
+        return channelFuture.channel();
+    }
+
+    /**
+     * connect async
+     */
     public static Channel connectAsync(Bootstrap bootstrap, String address, int port) throws ExecutionException, InterruptedException {
         CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
         bootstrap.connect(address, port).addListener((ChannelFutureListener) future -> {
