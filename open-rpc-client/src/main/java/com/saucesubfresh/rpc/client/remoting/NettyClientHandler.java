@@ -32,7 +32,11 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRespo
         if (StringUtils.isBlank(responseBody.getRequestId())){
             return;
         }
-        NettyUnprocessedRequests.complete(responseBody);
+        try {
+            NettyUnprocessedRequests.complete(responseBody);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
     }
 
     @Override
