@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
     private final RequestIdGenerator requestIdGenerator;
+
     public GrpcRemotingInvoker(RequestIdGenerator requestIdGenerator) {
         this.requestIdGenerator = requestIdGenerator;
     }

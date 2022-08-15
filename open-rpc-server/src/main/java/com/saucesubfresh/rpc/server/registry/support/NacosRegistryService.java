@@ -3,15 +3,11 @@ package com.saucesubfresh.rpc.server.registry.support;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.registry.AbstractRegistryService;
-import com.saucesubfresh.rpc.core.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +18,13 @@ import java.util.Map;
  * @Date: 2021-10-31 14:38
  */
 @Slf4j
-public class NacosRegistryService extends AbstractRegistryService implements InitializingBean, DisposableBean, BeanFactoryAware {
-    private BeanFactory beanFactory;
-    private NamingService namingService;
+public class NacosRegistryService extends AbstractRegistryService implements DisposableBean{
 
-    public NacosRegistryService(ServerConfiguration configuration) {
+    private final NamingService namingService;
+
+    public NacosRegistryService(NamingService namingService, ServerConfiguration configuration) {
         super(configuration);
+        this.namingService = namingService;
     }
     /**
      * Register client to nacos server
@@ -65,23 +62,8 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
     }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    @Override
     public void destroy() throws Exception {
         this.namingService.shutDown();
         log.info("The server is successfully offline from the nacos server.");
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        try {
-            this.namingService = this.beanFactory.getBean(NamingService.class);
-        } catch (BeansException e) {
-            log.warn("No NamingService instance is provided, a new instance will be automatically created for use");
-        }
-        super.afterPropertiesSet();
     }
 }
