@@ -24,9 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class NettyServer implements InitializingBean, DisposableBean {
-
-    private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
-
+    private static final ExecutorService SERVER_START_EXECUTOR = Executors.newSingleThreadExecutor();
     private final ServerConfiguration configuration;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
@@ -36,7 +34,7 @@ public class NettyServer implements InitializingBean, DisposableBean {
         this.channelInitializer = channelInitializer;
     }
 
-    public void startup(int port){
+    private void startup(int port){
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try{
@@ -72,11 +70,11 @@ public class NettyServer implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         int serverPort = configuration.getServerPort();
-        RPC_JOB_EXECUTOR.execute(()->startup(serverPort));
+        SERVER_START_EXECUTOR.execute(()->startup(serverPort));
     }
 
     @Override
     public void destroy() throws Exception {
-        RPC_JOB_EXECUTOR.shutdown();
+        SERVER_START_EXECUTOR.shutdown();
     }
 }

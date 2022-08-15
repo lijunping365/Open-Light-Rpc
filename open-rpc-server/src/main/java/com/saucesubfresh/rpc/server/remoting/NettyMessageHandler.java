@@ -14,7 +14,7 @@ import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.rpc.server.registry.RegistryService;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Date: 2022-06-08 08:04
  */
 @Slf4j
-@ChannelHandler.Sharable
+@Sharable
 public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequest> {
 
     private final MessageProcess messageProcess;

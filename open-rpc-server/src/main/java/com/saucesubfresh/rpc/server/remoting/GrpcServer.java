@@ -16,12 +16,12 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 public class GrpcServer implements InitializingBean, DisposableBean {
-    private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
+    private static final ExecutorService SERVER_START_EXECUTOR = Executors.newSingleThreadExecutor();
     /**
      * The grpc server instance
      */
     private Server rpcServer;
-    public final ServerConfiguration configuration;
+    private final ServerConfiguration configuration;
     private final BindableService bindableService;
 
     public GrpcServer(ServerConfiguration configuration, GrpcMessageHandler bindableService){
@@ -42,7 +42,7 @@ public class GrpcServer implements InitializingBean, DisposableBean {
     /**
      * Startup grpc {@link Server}
      */
-    public void startup() {
+    private void startup() {
         try {
             this.rpcServer.start();
             log.info("The Server bind port : {}, startup successfully.", configuration.getServerPort());
@@ -55,7 +55,7 @@ public class GrpcServer implements InitializingBean, DisposableBean {
     /**
      * Shutdown grpc {@link Server}
      */
-    public void shutdown() {
+    private void shutdown() {
         try {
             log.info("The Server shutting down.");
             this.rpcServer.shutdown();
@@ -75,12 +75,12 @@ public class GrpcServer implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         this.buildServer();
-        RPC_JOB_EXECUTOR.execute(this::startup);
+        SERVER_START_EXECUTOR.execute(this::startup);
     }
 
     @Override
     public void destroy() throws Exception {
         this.shutdown();
-        RPC_JOB_EXECUTOR.shutdown();
+        SERVER_START_EXECUTOR.shutdown();
     }
 }
