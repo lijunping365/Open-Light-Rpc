@@ -16,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class NettyClient {
-
     private final Bootstrap bootstrap;
-
     private final NettyChannelInitializer initializer;
 
     public NettyClient(NettyChannelInitializer initializer) {
