@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(ServerConfiguration.class)
-@ConditionalOnBean(EnableOpenRpcServer.class)
+@ConditionalOnBean(annotation = {EnableOpenRpcServer.class})
 public class ServerAutoConfiguration {
 
     @Bean
