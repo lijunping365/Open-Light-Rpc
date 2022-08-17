@@ -4,7 +4,6 @@ import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.redisson.api.RedissonClient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
 
     @Override
     public void put(String namespace, List<ServerInformation> instances) {
-        map.put(namespace, instances);
+        map.put(namespace, super.handler(namespace, instances));
     }
 
     @Override

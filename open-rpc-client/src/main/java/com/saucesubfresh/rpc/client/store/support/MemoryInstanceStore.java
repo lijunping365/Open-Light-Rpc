@@ -4,7 +4,6 @@ import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.util.internal.PlatformDependent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public class MemoryInstanceStore extends AbstractInstanceStore {
 
     @Override
     public void put(String namespace, List<ServerInformation> instances) {
-        store.put(namespace, instances);
+        store.put(namespace, super.handler(namespace, instances));
     }
 
     @Override
