@@ -14,9 +14,6 @@ public abstract class AbstractInstanceStore implements InstanceStore{
 
     @Override
     public void put(List<ServerInformation> instances) {
-        if (CollectionUtils.isEmpty(instances)){
-            return;
-        }
         List<ServerInformation> serverInstances = handler(instances);
         serverInstances.forEach(e-> put(e.getServerId(), e));
     }
