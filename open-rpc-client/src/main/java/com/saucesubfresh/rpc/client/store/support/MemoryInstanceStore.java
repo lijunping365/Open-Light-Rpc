@@ -13,15 +13,15 @@ import java.util.Map;
  */
 public class MemoryInstanceStore extends AbstractInstanceStore {
 
-    private final Map<String, ServerInformation> store = PlatformDependent.newConcurrentHashMap();
+    private final Map<String, List<ServerInformation>> store = PlatformDependent.newConcurrentHashMap();
 
     @Override
-    public void put(String serverId, ServerInformation instance) {
-        store.put(serverId, instance);
+    public void put(String namespace, List<ServerInformation> instances) {
+        store.put(namespace, instances);
     }
 
     @Override
-    public List<ServerInformation> getAll() {
-        return new ArrayList<>(store.values());
+    public List<ServerInformation> getByNamespace(String namespace) {
+        return store.get(namespace);
     }
 }

@@ -12,23 +12,17 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractInstanceStore implements InstanceStore{
 
-    @Override
-    public void put(List<ServerInformation> instances) {
-        List<ServerInformation> serverInstances = handler(instances);
-        serverInstances.forEach(e-> put(e.getServerId(), e));
-    }
-
     /**
      * handler online servers
      *
      * @param onLineServers online servers
      * @return 返回 online servers  + offline servers
      */
-    protected List<ServerInformation> handler(List<ServerInformation> onLineServers){
+    protected List<ServerInformation> handler(String namespace, List<ServerInformation> onLineServers){
         long currentTime = System.currentTimeMillis();
         buildServer(onLineServers, Status.ON_LINE, currentTime);
 
-        List<ServerInformation> cacheServers = getAll();
+        List<ServerInformation> cacheServers = getByNamespace(namespace);
         List<String> onlineServerIds = onLineServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         List<String> cacheServerIds = cacheServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         cacheServerIds.removeAll(onlineServerIds);
@@ -48,6 +42,4 @@ public abstract class AbstractInstanceStore implements InstanceStore{
             instance.setOnlineTime(currentTime);
         });
     }
-
-    protected abstract void put(String serverId, ServerInformation instance);
 }

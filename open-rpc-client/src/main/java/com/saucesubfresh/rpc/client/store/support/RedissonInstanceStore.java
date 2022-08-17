@@ -15,19 +15,19 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
 
     private static final String KEY = "instance:store";
 
-    private final Map<String, ServerInformation> map;
+    private final Map<String, List<ServerInformation>> map;
 
     public RedissonInstanceStore(RedissonClient redisson){
         this.map = redisson.getMap(KEY);
     }
 
     @Override
-    public void put(String serverId, ServerInformation instance) {
-        map.put(serverId, instance);
+    public void put(String namespace, List<ServerInformation> instances) {
+        map.put(namespace, instances);
     }
 
     @Override
-    public List<ServerInformation> getAll() {
-        return new ArrayList<>(map.values());
+    public List<ServerInformation> getByNamespace(String namespace) {
+        return map.get(namespace);
     }
 }

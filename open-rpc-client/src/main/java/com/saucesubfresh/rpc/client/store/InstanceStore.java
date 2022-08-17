@@ -17,20 +17,21 @@ import java.util.stream.Collectors;
 public interface InstanceStore {
 
     /**
+     * @param namespace 应用名称
      * @param instances 要上线的服务端列表
      */
-    void put(List<ServerInformation> instances);
+    void put(String namespace, List<ServerInformation> instances);
 
     /**
      * @return 返回缓存中全部的服务端列表
      */
-    List<ServerInformation> getAll();
+    List<ServerInformation> getByNamespace(String namespace);
 
     /**
      * @return 返回缓存中在线的服务端列表
      */
-    default List<ServerInformation> getOnlineList(){
-        List<ServerInformation> serverInstances = getAll();
+    default List<ServerInformation> getOnlineList(String namespace){
+        List<ServerInformation> serverInstances = getByNamespace(namespace);
         if (CollectionUtils.isEmpty(serverInstances)){
             return Collections.emptyList();
         }

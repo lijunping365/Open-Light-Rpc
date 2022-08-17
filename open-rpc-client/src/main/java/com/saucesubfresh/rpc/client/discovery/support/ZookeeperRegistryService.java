@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.discovery.support;
 
-import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
+import com.saucesubfresh.rpc.client.namespace.NamespaceService;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
@@ -11,6 +11,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,17 +22,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
     private final ZkClient zkClient;
+    private final NamespaceService namespaceService;
 
-    public ZookeeperRegistryService(ZkClient zkClient, InstanceStore instanceStore, ClientConfiguration configuration){
-        super(instanceStore, configuration);
+    public ZookeeperRegistryService(ZkClient zkClient, InstanceStore instanceStore, NamespaceService namespaceService){
+        super(instanceStore);
         this.zkClient = zkClient;
+        this.namespaceService = namespaceService;
     }
 
-    /**
-     * 使用zk事件监听，如果服务发生宕机情况，重新读取新的节点
-     */
-    private void subscribe(){
-        zkClient.subscribeChildChanges(configuration.getServerName(), new IZkChildListener() {
+
+    @Override
+    public void subscribe(List<String> namespaces){
+        if (CollectionUtils.isEmpty(namespaces)){
+            return;
+        }
+        namespaces.forEach(namespace-> zkClient.subscribeChildChanges(namespace, new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
@@ -39,15 +44,15 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
                     final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
                     return ServerInformation.valueOf(split[0], Integer.parseInt(split[1]));
                 }).collect(Collectors.toList());
-                updateCache(collect);
+                updateCache(namespace, collect);
                 log.info("register instance successfully {}", collect);
             }
-        });
+        }));
     }
 
     @Override
-    protected List<ServerInformation> doLookup() {
-        List<String> children = zkClient.getChildren(configuration.getServerName());
+    protected List<ServerInformation> doLookup(String namespace) {
+        List<String> children = zkClient.getChildren(namespace);
         log.info("查询到的子节点有 {}", children);
         return children.stream().map(e->{
             final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
@@ -62,6 +67,11 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.subscribe();
+        try {
+            List<String> namespaces = namespaceService.loadNamespace();
+            this.subscribe(namespaces);
+        }catch (Exception e){
+            log.error("load namespace failed: {}", e.getMessage());
+        }
     }
 }

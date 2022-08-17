@@ -17,4 +17,10 @@ public interface ServiceDiscovery {
      * @return
      */
     List<ServerInformation> lookup(String namespace);
+
+    /**
+     * 注册监听
+     * @param namespaces
+     */
+    void subscribe(List<String> namespaces);
 }
