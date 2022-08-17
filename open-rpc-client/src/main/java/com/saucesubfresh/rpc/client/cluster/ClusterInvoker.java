@@ -13,8 +13,9 @@ public interface ClusterInvoker {
 
     /**
      * 给服务端发送消息
-     * @param message
+     * @param namespace 应用名称
+     * @param message 消息体
      * @throws RpcException
      */
-    MessageResponseBody invoke(Message message) throws RpcException;
+    MessageResponseBody invoke(String namespace, Message message) throws RpcException;
 }

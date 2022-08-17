@@ -13,9 +13,10 @@ public interface ServiceDiscovery {
 
     /**
      * 查找在线服务端列表
+     * @param namespace 应用名称
      * @return
      */
-    List<ServerInformation> lookup();
+    List<ServerInformation> lookup(String namespace);
 
     /**
      * 通知服务端下线

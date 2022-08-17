@@ -298,6 +298,10 @@ public class SpringWebMvcConfig {
 1. 项目重构，
 2. 在 grpc 通信的基础上增加 netty 通信方式
 
+## 1.0.4 版本更新说明
+
+1. 支持应用隔离
+
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star

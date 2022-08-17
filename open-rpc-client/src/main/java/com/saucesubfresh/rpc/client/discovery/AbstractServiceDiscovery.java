@@ -37,7 +37,7 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
     }
 
     @Override
-    public List<ServerInformation> lookup(){
+    public List<ServerInformation> lookup(String namespace){
         List<ServerInformation> servers = instanceStore.getOnlineList();
         if (!CollectionUtils.isEmpty(servers)){
             return servers;
