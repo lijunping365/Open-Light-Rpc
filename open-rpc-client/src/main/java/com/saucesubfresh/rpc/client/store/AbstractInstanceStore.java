@@ -26,22 +26,27 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      */
     protected List<ServerInformation> handler(List<ServerInformation> onLineServers){
         long currentTime = System.currentTimeMillis();
-        onLineServers.forEach(instance->{
-            instance.setStatus(Status.ON_LINE);
-            instance.setOnlineTime(currentTime);
-        });
+        buildServer(onLineServers, Status.ON_LINE, currentTime);
 
         List<ServerInformation> cacheServers = getAll();
         List<String> onlineServerIds = onLineServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         List<String> cacheServerIds = cacheServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         cacheServerIds.removeAll(onlineServerIds);
         List<ServerInformation> offLineClients = cacheServers.stream().filter(e -> cacheServerIds.contains(e.getServerId())).collect(Collectors.toList());
-        offLineClients.forEach(instance->{
-            instance.setStatus(Status.OFF_LINE);
-            instance.setOnlineTime(currentTime);
-        });
+
+        buildServer(offLineClients, Status.OFF_LINE, currentTime);
         onLineServers.addAll(offLineClients);
         return onLineServers;
+    }
+
+    protected void buildServer(List<ServerInformation> instances, Status serverStatus, long currentTime){
+        if (CollectionUtils.isEmpty(instances)){
+            return;
+        }
+        instances.forEach(instance->{
+            instance.setStatus(serverStatus);
+            instance.setOnlineTime(currentTime);
+        });
     }
 
     protected abstract void put(String serverId, ServerInformation instance);
