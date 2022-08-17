@@ -1,11 +1,10 @@
 package com.saucesubfresh.rpc.client.discovery.support;
 
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
-import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
-import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
@@ -23,8 +22,8 @@ import java.util.stream.Collectors;
 public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
     private final ZkClient zkClient;
 
-    public ZookeeperRegistryService(ZkClient zkClient, RemotingInvoker remotingInvoker, InstanceStore instanceStore, ClientConfiguration configuration){
-        super(remotingInvoker, instanceStore, configuration);
+    public ZookeeperRegistryService(ZkClient zkClient, InstanceStore instanceStore, ClientConfiguration configuration){
+        super(instanceStore, configuration);
         this.zkClient = zkClient;
     }
 

@@ -9,6 +9,8 @@ import com.saucesubfresh.rpc.client.discovery.ServiceDiscovery;
 import com.saucesubfresh.rpc.client.discovery.support.NacosRegistryService;
 import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.support.ConsistentHashLoadBalance;
+import com.saucesubfresh.rpc.client.manager.DefaultInstanceManager;
+import com.saucesubfresh.rpc.client.manager.InstanceManager;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.client.random.support.SequenceRequestIdGenerator;
 import com.saucesubfresh.rpc.client.remoting.GrpcRemotingInvoker;
@@ -49,12 +51,17 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public InstanceManager instanceManager(RemotingInvoker remotingInvoker){
+        return new DefaultInstanceManager(remotingInvoker);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnBean(NamingService.class)
     public ServiceDiscovery serviceDiscovery(NamingService namingService,
-                                             RemotingInvoker remotingInvoker,
                                              InstanceStore instanceStore,
                                              ClientConfiguration configuration){
-        return new NacosRegistryService(namingService, remotingInvoker, instanceStore, configuration);
+        return new NacosRegistryService(namingService, instanceStore, configuration);
     }
 
     @Bean
