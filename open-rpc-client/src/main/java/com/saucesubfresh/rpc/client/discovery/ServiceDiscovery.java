@@ -1,12 +1,12 @@
 package com.saucesubfresh.rpc.client.discovery;
 
 
-
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 
 import java.util.List;
 
 /**
+ * 服务发现
  * @author lijunping on 2022/1/20
  */
 public interface ServiceDiscovery {
@@ -16,19 +16,4 @@ public interface ServiceDiscovery {
      * @return
      */
     List<ServerInformation> lookup();
-
-    /**
-     * 通知服务端下线
-     * @param serverId
-     * @return
-     */
-    boolean offlineServer(String serverId);
-
-    /**
-     * 通知服务端上线
-     * @param serverId
-     * @return
-     */
-    boolean onlineServer(String serverId);
-
 }

@@ -6,11 +6,10 @@ import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
-import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,8 +27,8 @@ import java.util.stream.Collectors;
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
     private final NamingService namingService;
 
-    public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore, ClientConfiguration configuration) {
-        super(remotingInvoker, instanceStore, configuration);
+    public NacosRegistryService(NamingService namingService, InstanceStore instanceStore, ClientConfiguration configuration) {
+        super(instanceStore, configuration);
         this.namingService = namingService;
     }
 

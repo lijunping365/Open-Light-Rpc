@@ -14,65 +14,38 @@ public abstract class AbstractInstanceStore implements InstanceStore{
 
     @Override
     public void put(List<ServerInformation> instances) {
-        long currentTime = new Date().getTime();
-        handlerOffline(instances, currentTime);
-        if (!CollectionUtils.isEmpty(instances)){
-            handlerOnline(instances, currentTime);
-        }
-    }
-
-    /**
-     * 处理服务端的上线
-     * @param instances 上线的服务端列表
-     */
-    private void handlerOnline(List<ServerInformation> instances, long currentTime){
-        instances.forEach(instance->{
-            final String serverId = instance.getServerId();
-            ServerInformation serverInformation = get(serverId);
-            if (Objects.isNull(serverInformation) || serverInformation.getStatus() == Status.OFF_LINE){
-                instance.setStatus(Status.ON_LINE);
-                instance.setOnlineTime(currentTime);
-                put(serverId, instance);
-            }
-        });
-    }
-
-
-    /**
-     * 处理下线的服务端
-     * @param instances 上线的服务端列表
-     */
-    private void handlerOffline(List<ServerInformation> instances, long currentTime){
-        List<ServerInformation> cacheClients = getAll();
-        if (CollectionUtils.isEmpty(cacheClients)){
+        if (CollectionUtils.isEmpty(instances)){
             return;
         }
+        List<ServerInformation> serverInstances = handler(instances);
+        serverInstances.forEach(e-> put(e.getServerId(), e));
+    }
 
-        List<String> onlineServerIds = new ArrayList<>();
-        if (CollectionUtils.isEmpty(instances)){
-            onlineServerIds = instances.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
-        }
+    /**
+     * handler online servers
+     *
+     * @param onLineServers online servers
+     * @return 返回 online servers  + offline servers
+     */
+    protected List<ServerInformation> handler(List<ServerInformation> onLineServers){
+        long currentTime = System.currentTimeMillis();
+        onLineServers.forEach(instance->{
+            instance.setStatus(Status.ON_LINE);
+            instance.setOnlineTime(currentTime);
+        });
 
-        List<String> cacheServerIds = cacheClients.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
+        List<ServerInformation> cacheServers = getAll();
+        List<String> onlineServerIds = onLineServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
+        List<String> cacheServerIds = cacheServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         cacheServerIds.removeAll(onlineServerIds);
-        cacheServerIds.forEach(serverId-> {
-            ServerInformation instance = get(serverId);
+        List<ServerInformation> offLineClients = cacheServers.stream().filter(e -> cacheServerIds.contains(e.getServerId())).collect(Collectors.toList());
+        offLineClients.forEach(instance->{
             instance.setStatus(Status.OFF_LINE);
             instance.setOnlineTime(currentTime);
-            put(instance.getServerId(), instance);
         });
+        onLineServers.addAll(offLineClients);
+        return onLineServers;
     }
-
-    @Override
-    public List<ServerInformation> getOnlineList() {
-        List<ServerInformation> clients = getAll();
-        if (CollectionUtils.isEmpty(clients)){
-            return Collections.emptyList();
-        }
-        return clients.stream().filter(e->e.getStatus() == Status.ON_LINE).collect(Collectors.toList());
-    }
-
-    protected abstract ServerInformation get(String serverId);
 
     protected abstract void put(String serverId, ServerInformation instance);
 }

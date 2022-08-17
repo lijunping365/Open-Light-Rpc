@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.store.support;
 
-import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.redisson.api.RedissonClient;
 
 import java.util.ArrayList;
@@ -22,12 +22,7 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
     }
 
     @Override
-    protected ServerInformation get(String serverId) {
-        return map.get(serverId);
-    }
-
-    @Override
-    protected void put(String serverId, ServerInformation instance) {
+    public void put(String serverId, ServerInformation instance) {
         map.put(serverId, instance);
     }
 

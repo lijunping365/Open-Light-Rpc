@@ -1,7 +1,7 @@
 package com.saucesubfresh.rpc.client.store.support;
 
-import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.util.internal.PlatformDependent;
 
 import java.util.ArrayList;
@@ -16,13 +16,8 @@ public class MemoryInstanceStore extends AbstractInstanceStore {
     private final Map<String, ServerInformation> store = PlatformDependent.newConcurrentHashMap();
 
     @Override
-    protected ServerInformation get(String serverId) {
-        return store.get(serverId);
-    }
-
-    @Override
-    protected void put(String key, ServerInformation instance) {
-        store.put(key, instance);
+    public void put(String serverId, ServerInformation instance) {
+        store.put(serverId, instance);
     }
 
     @Override
