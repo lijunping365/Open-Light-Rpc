@@ -18,17 +18,19 @@ public abstract class AbstractInstanceStore implements InstanceStore{
      * @return 返回 online servers  + offline servers
      */
     protected List<ServerInformation> handler(String namespace, List<ServerInformation> onLineServers){
+        List<ServerInformation> instances = new ArrayList<>();
         List<ServerInformation> cacheServers = getByNamespace(namespace);
         List<String> onlineServerIds = onLineServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         List<String> cacheServerIds = cacheServers.stream().map(ServerInformation::getServerId).collect(Collectors.toList());
         cacheServerIds.removeAll(onlineServerIds);
-        List<ServerInformation> offLineClients = cacheServers.stream().filter(e -> cacheServerIds.contains(e.getServerId())).collect(Collectors.toList());
+        List<ServerInformation> offLineServers = cacheServers.stream().filter(e -> cacheServerIds.contains(e.getServerId())).collect(Collectors.toList());
         long currentTime = System.currentTimeMillis();
-        offLineClients.forEach(instance->{
+        offLineServers.forEach(instance->{
             instance.setStatus(Status.OFF_LINE);
             instance.setOnlineTime(currentTime);
         });
-        onLineServers.addAll(offLineClients);
-        return onLineServers;
+        instances.addAll(onLineServers);
+        instances.addAll(offLineServers);
+        return instances;
     }
 }
