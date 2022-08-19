@@ -9,12 +9,14 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.saucesubfresh.rpc.client.ClientConfiguration;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
+import com.saucesubfresh.rpc.core.enums.Status;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +41,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         }
         NamingEvent namingEvent = (NamingEvent) event;
         List<Instance> instances = namingEvent.getInstances();
-        List<ServerInformation> clients = convertServerInformation(instances);
+        List<ServerInformation> clients = convert(instances);
         updateCache(clients);
         log.info("register successfully instance {}", clients);
     }
@@ -48,7 +50,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     protected List<ServerInformation> doLookup() {
         try {
             List<Instance> allInstances = namingService.getAllInstances(this.configuration.getServerName());
-            return convertServerInformation(allInstances);
+            return convert(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
             return Collections.emptyList();
@@ -65,12 +67,16 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         this.namingService.subscribe(this.configuration.getServerName(), this);
     }
 
-    private List<ServerInformation> convertServerInformation(List<Instance> instances){
+    private List<ServerInformation> convert(List<Instance> instances){
         if (CollectionUtils.isEmpty(instances)){
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
-        return instances.stream()
-                .map(instance -> ServerInformation.valueOf(instance.getIp(), instance.getPort()))
-                .collect(Collectors.toList());
+        return instances.stream().map(instance -> {
+            long currentTime = System.currentTimeMillis();
+            ServerInformation serverInfo = ServerInformation.valueOf(instance.getIp(), instance.getPort());
+            serverInfo.setStatus(Status.ON_LINE);
+            serverInfo.setOnlineTime(currentTime);
+            return serverInfo;
+        }).collect(Collectors.toList());
     }
 }

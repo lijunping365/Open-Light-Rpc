@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author lijunping on 2022/2/17
  */
-public class MemoryInstanceStore extends AbstractInstanceStore {
+public class LocalInstanceStore extends AbstractInstanceStore {
 
     private final Map<String, ServerInformation> store = PlatformDependent.newConcurrentHashMap();
 
