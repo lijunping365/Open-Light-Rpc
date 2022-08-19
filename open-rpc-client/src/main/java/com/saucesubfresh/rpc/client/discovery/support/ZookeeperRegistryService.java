@@ -3,18 +3,15 @@ package com.saucesubfresh.rpc.client.discovery.support;
 import com.saucesubfresh.rpc.client.discovery.AbstractServiceDiscovery;
 import com.saucesubfresh.rpc.client.namespace.NamespaceService;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author lijunping on 2021/12/3
@@ -38,12 +35,9 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
         }
         namespaces.forEach(namespace-> zkClient.subscribeChildChanges(namespace, new IZkChildListener() {
             @Override
-            public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
-                log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
-                final List<ServerInformation> collect = currentChilds.stream().map(e -> {
-                    final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
-                    return ServerInformation.valueOf(split[0], Integer.parseInt(split[1]));
-                }).collect(Collectors.toList());
+            public void handleChildChange(String parentPath, List<String> children) throws Exception {
+                log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, children);
+                List<ServerInformation> collect = convert(children);
                 updateCache(namespace, collect);
                 log.info("register instance successfully {}", collect);
             }
@@ -54,15 +48,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
     protected List<ServerInformation> doLookup(String namespace) {
         List<String> children = zkClient.getChildren(namespace);
         log.info("查询到的子节点有 {}", children);
-        return children.stream().map(e->{
-            final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
-            return ServerInformation.valueOf(split[0], Integer.parseInt(split[1]));
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        this.zkClient.close();
+        return convert(children);
     }
 
     @Override
@@ -73,5 +59,10 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
         }catch (Exception e){
             log.error("load namespace failed: {}", e.getMessage());
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.zkClient.close();
     }
 }

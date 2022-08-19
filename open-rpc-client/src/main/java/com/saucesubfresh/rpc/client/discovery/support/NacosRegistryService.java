@@ -18,7 +18,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author: 李俊平
@@ -45,16 +44,16 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         String serviceName = namingEvent.getServiceName();
         String namespace = serviceName.replace(REMOVER, StringUtils.EMPTY);
         List<Instance> instances = namingEvent.getInstances();
-        List<ServerInformation> servers = convertServerInformation(instances);
-        updateCache(namespace, servers);
-        log.info("register successfully instance {}", servers);
+        List<ServerInformation> onlineServers = convertTo(instances);
+        updateCache(namespace, onlineServers);
+        log.info("register successfully instance {}", onlineServers);
     }
 
     @Override
     protected List<ServerInformation> doLookup(String namespace) {
         try {
             List<Instance> allInstances = namingService.getAllInstances(namespace);
-            return convertServerInformation(allInstances);
+            return convertTo(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
             return Collections.emptyList();
@@ -76,11 +75,6 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     }
 
     @Override
-    public void destroy() throws Exception {
-        this.namingService.shutDown();
-    }
-
-    @Override
     public void afterPropertiesSet() throws Exception {
         try {
             List<String> namespaces = namespaceService.loadNamespace();
@@ -90,12 +84,8 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         }
     }
 
-    private List<ServerInformation> convertServerInformation(List<Instance> instances){
-        if (CollectionUtils.isEmpty(instances)){
-            return Collections.emptyList();
-        }
-        return instances.stream()
-                .map(instance -> ServerInformation.valueOf(instance.getIp(), instance.getPort()))
-                .collect(Collectors.toList());
+    @Override
+    public void destroy() throws Exception {
+        this.namingService.shutDown();
     }
 }
