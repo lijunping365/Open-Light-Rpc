@@ -18,7 +18,7 @@ import com.saucesubfresh.rpc.client.random.support.SequenceRequestIdGenerator;
 import com.saucesubfresh.rpc.client.remoting.GrpcRemotingInvoker;
 import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
-import com.saucesubfresh.rpc.client.store.support.MemoryInstanceStore;
+import com.saucesubfresh.rpc.client.store.support.LocalInstanceStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +48,7 @@ public class ClientAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public InstanceStore instanceStore(){
-        return new MemoryInstanceStore();
+        return new LocalInstanceStore();
     }
 
     @Bean
