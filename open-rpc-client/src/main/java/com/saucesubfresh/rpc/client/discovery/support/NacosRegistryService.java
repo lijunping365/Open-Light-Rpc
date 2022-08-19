@@ -18,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,19 +47,21 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
         String namespace = serviceName.replace(REMOVER, StringUtils.EMPTY);
         List<Instance> instances = namingEvent.getInstances();
         List<ServerInformation> onlineServers = convert(instances);
+        log.info("current online instance {}", onlineServers);
         updateCache(namespace, onlineServers);
-        log.info("register successfully instance {}", onlineServers);
     }
 
     @Override
     protected List<ServerInformation> doLookup(String namespace) {
+        List<ServerInformation> onlineServers = new ArrayList<>();
         try {
             List<Instance> allInstances = namingService.getAllInstances(namespace);
-            return convert(allInstances);
+            onlineServers = convert(allInstances);
+            log.info("lookup online instance {}", onlineServers);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
-            return Collections.emptyList();
         }
+        return onlineServers;
     }
 
     @Override

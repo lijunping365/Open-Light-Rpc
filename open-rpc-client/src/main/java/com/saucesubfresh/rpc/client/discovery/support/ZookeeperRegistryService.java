@@ -32,7 +32,6 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
         this.namespaceService = namespaceService;
     }
 
-
     @Override
     public void subscribe(List<String> namespaces){
         if (CollectionUtils.isEmpty(namespaces)){
@@ -41,19 +40,24 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
         namespaces.forEach(namespace-> zkClient.subscribeChildChanges(namespace, new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> children) throws Exception {
-                log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, children);
-                List<ServerInformation> collect = convert(children);
-                updateCache(namespace, collect);
-                log.info("register instance successfully {}", collect);
+                List<ServerInformation> onlineServers = convert(children);
+                log.info("zookeeper parentPath {}, current online instance {}", parentPath, onlineServers);
+                updateCache(namespace, onlineServers);
             }
         }));
     }
 
     @Override
     protected List<ServerInformation> doLookup(String namespace) {
-        List<String> children = zkClient.getChildren(namespace);
-        log.info("查询到的子节点有 {}", children);
-        return convert(children);
+        List<ServerInformation> onlineServers = new ArrayList<>();
+        try {
+            List<String> children = zkClient.getChildren(namespace);
+            onlineServers = convert(children);
+            log.info("lookup online instance {}", onlineServers);
+        }catch (Exception e){
+            log.error("lookup instance failed {}", e.getMessage());
+        }
+        return onlineServers;
     }
 
     @Override
