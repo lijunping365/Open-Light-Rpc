@@ -4,7 +4,7 @@ import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.util.internal.PlatformDependent;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +22,6 @@ public class LocalInstanceStore extends AbstractInstanceStore {
 
     @Override
     public List<ServerInformation> getByNamespace(String namespace) {
-        return store.getOrDefault(namespace, Collections.emptyList());
+        return store.getOrDefault(namespace, new ArrayList<>());
     }
 }

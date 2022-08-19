@@ -4,7 +4,7 @@ import com.saucesubfresh.rpc.client.store.AbstractInstanceStore;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.redisson.api.RedissonClient;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +28,6 @@ public class RedissonInstanceStore extends AbstractInstanceStore {
 
     @Override
     public List<ServerInformation> getByNamespace(String namespace) {
-        return map.getOrDefault(namespace, Collections.emptyList());
+        return map.getOrDefault(namespace, new ArrayList<>());
     }
 }
