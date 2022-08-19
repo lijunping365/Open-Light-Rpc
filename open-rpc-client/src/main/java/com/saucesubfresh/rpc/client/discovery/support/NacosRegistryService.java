@@ -17,7 +17,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,15 +47,15 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
 
     @Override
     protected List<ServerInformation> doLookup() {
+        List<ServerInformation> onlineServers = new ArrayList<>();
         try {
             List<Instance> allInstances = namingService.getAllInstances(this.configuration.getServerName());
-            List<ServerInformation> onlineServers = convert(allInstances);
-            log.info("lookup current online instance {}", onlineServers);
-            return onlineServers;
+            onlineServers = convert(allInstances);
+            log.info("lookup online instance {}", onlineServers);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
-            return Collections.emptyList();
         }
+        return onlineServers;
     }
 
     @Override

@@ -37,19 +37,24 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
         zkClient.subscribeChildChanges(configuration.getServerName(), new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> children) throws Exception {
-                log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, children);
-                List<ServerInformation> collect = convert(children);
-                updateCache(collect);
-                log.info("register instance successfully {}", collect);
+                List<ServerInformation> onlineServers = convert(children);
+                log.info("zookeeper parentPath {}, current online instance {}", parentPath, onlineServers);
+                updateCache(onlineServers);
             }
         });
     }
 
     @Override
     protected List<ServerInformation> doLookup() {
-        List<String> children = zkClient.getChildren(configuration.getServerName());
-        log.info("查询到的子节点有 {}", children);
-        return convert(children);
+        List<ServerInformation> onlineServers = new ArrayList<>();
+        try {
+            List<String> children = zkClient.getChildren(configuration.getServerName());
+            onlineServers = convert(children);
+            log.info("lookup online instance {}", onlineServers);
+        }catch (Exception e){
+            log.error("lookup instance failed {}", e.getMessage());
+        }
+        return onlineServers;
     }
 
     @Override

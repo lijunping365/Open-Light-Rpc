@@ -30,13 +30,16 @@ public abstract class AbstractServiceDiscovery implements ServiceDiscovery{
 
     @Override
     public List<ServerInformation> lookup(){
-        List<ServerInformation> servers = instanceStore.getOnlineList();
-        if (!CollectionUtils.isEmpty(servers)){
-            return servers;
+        List<ServerInformation> onlineServers = instanceStore.getOnlineList();
+        if (!CollectionUtils.isEmpty(onlineServers)){
+            return onlineServers;
         }
-        servers = doLookup();
-        updateCache(servers);
-        return servers;
+
+        onlineServers = doLookup();
+        if (!CollectionUtils.isEmpty(onlineServers)){
+            updateCache(onlineServers);
+        }
+        return onlineServers;
     }
 
     protected void updateCache(List<ServerInformation> instances){
