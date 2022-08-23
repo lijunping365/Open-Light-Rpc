@@ -8,7 +8,6 @@ import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +21,11 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class NettyRemotingInvoker implements RemotingInvoker {
 
-    private final NettyClient nettyClient;
+    private final RpcClient rpcClient;
     private final RequestIdGenerator requestIdGenerator;
 
-    public NettyRemotingInvoker(NettyClient nettyClient, RequestIdGenerator requestIdGenerator) {
-        this.nettyClient = nettyClient;
+    public NettyRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator) {
+        this.rpcClient = rpcClient;
         this.requestIdGenerator = requestIdGenerator;
     }
 
@@ -34,22 +33,20 @@ public class NettyRemotingInvoker implements RemotingInvoker {
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         String serverId = serverInformation.getServerId();
-        Bootstrap bootstrap = nettyClient.getBootstrap();
         final String random = requestIdGenerator.generate();
-        Channel channel = NettyClientChannelManager.establishChannel(bootstrap, serverInformation);
+        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
         NettyUnprocessedRequests.put(random, completableFuture);
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
         String requestJsonBody = JSON.toJSON(requestBody);
         MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
 
-        channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
-            if (!future.isSuccess()) {
-                completableFuture.completeExceptionally(future.cause());
-                log.error("Send failed:", future.cause());
-            }
-        });
-
         try {
+            channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
+                if (!future.isSuccess()) {
+                    completableFuture.completeExceptionally(future.cause());
+                    log.error("Send failed:", future.cause());
+                }
+            });
             MessageResponseBody responseBody = completableFuture.get();
             return JSON.parse(responseBody, MessageResponseBody.class);
         } catch (Exception e) {

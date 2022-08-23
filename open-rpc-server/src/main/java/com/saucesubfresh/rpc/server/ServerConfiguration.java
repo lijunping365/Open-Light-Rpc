@@ -18,9 +18,9 @@ public class ServerConfiguration {
      */
     private int serverPort = 5200;
     /**
-     * The name of the service registered by the server to nacos or zookeeper
-     * if you use nacos，You should be named like this: job-client-services
-     * if you use zookeeper, You should be named like this: /JobClient
+     * The name of the service registered to the nacos or zookeeper
+     * if you use nacos，You should be named like this: job-server-services
+     * if you use zookeeper, You should be named like this: /JobServer
      */
     private String serverName;
 }

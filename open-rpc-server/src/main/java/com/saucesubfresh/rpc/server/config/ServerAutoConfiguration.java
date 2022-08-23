@@ -37,15 +37,17 @@ public class ServerAutoConfiguration {
     }
 
     @Bean
-    public GrpcMessageHandler gRpcMessageHandler(RegistryService registryService,
-                                                 MessageProcess messageProcess,
-                                                 ServerConfiguration configuration){
+    @ConditionalOnMissingBean
+    public MessageHandler messageHandler(RegistryService registryService,
+                                         MessageProcess messageProcess,
+                                         ServerConfiguration configuration){
         return new GrpcMessageHandler(messageProcess, configuration, registryService);
     }
 
     @Bean
-    public GrpcServer grpcServer(ServerConfiguration configuration,
-                                 GrpcMessageHandler bindableService){
-        return new GrpcServer(configuration, bindableService);
+    @ConditionalOnMissingBean
+    public RpcServer server(MessageHandler messageHandler,
+                            ServerConfiguration configuration){
+        return new GrpcServer(configuration, messageHandler);
     }
 }

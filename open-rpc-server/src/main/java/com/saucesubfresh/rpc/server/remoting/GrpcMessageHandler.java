@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase{
+public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBase implements MessageHandler {
 
     private final MessageProcess messageProcess;
     private final ServerConfiguration configuration;

@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Sharable
-public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequest> {
+public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequest> implements MessageHandler{
 
     private final MessageProcess messageProcess;
     private final ServerConfiguration configuration;

@@ -21,16 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
+    private final RpcClient rpcClient;
     private final RequestIdGenerator requestIdGenerator;
 
-    public GrpcRemotingInvoker(RequestIdGenerator requestIdGenerator) {
+    public GrpcRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator) {
+        this.rpcClient = rpcClient;
         this.requestIdGenerator = requestIdGenerator;
     }
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         String serverId = serverInformation.getServerId();
-        ManagedChannel channel = GrpcClientChannelManager.establishChannel(serverInformation);
+        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
             final String random = requestIdGenerator.generate();
