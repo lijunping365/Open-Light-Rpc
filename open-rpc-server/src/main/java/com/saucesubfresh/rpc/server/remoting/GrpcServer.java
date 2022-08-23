@@ -15,18 +15,19 @@ import java.util.concurrent.Executors;
  * @author lijunping on 2022/1/24
  */
 @Slf4j
-public class GrpcServer implements InitializingBean, DisposableBean {
+public class GrpcServer implements RpcServer, InitializingBean, DisposableBean {
     private static final ExecutorService SERVER_START_EXECUTOR = Executors.newSingleThreadExecutor();
     /**
      * The grpc server instance
      */
     private Server rpcServer;
+    private final MessageHandler messageHandler;
     private final ServerConfiguration configuration;
-    private final BindableService bindableService;
 
-    public GrpcServer(ServerConfiguration configuration, GrpcMessageHandler bindableService){
+
+    public GrpcServer(ServerConfiguration configuration, MessageHandler messageHandler){
         this.configuration = configuration;
-        this.bindableService = bindableService;
+        this.messageHandler = messageHandler;
     }
 
     /**
@@ -35,7 +36,7 @@ public class GrpcServer implements InitializingBean, DisposableBean {
     private void buildServer() {
         this.rpcServer = ServerBuilder
                 .forPort(configuration.getServerPort())
-                .addService(this.bindableService)
+                .addService((BindableService) this.messageHandler)
                 .build();
     }
 

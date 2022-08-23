@@ -1,14 +1,19 @@
 package com.saucesubfresh.rpc.server.remoting;
 
+import com.saucesubfresh.rpc.core.codec.MsgDecoder;
+import com.saucesubfresh.rpc.core.codec.MsgEncoder;
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
+import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
+import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -23,16 +28,16 @@ import java.util.concurrent.TimeUnit;
  * @author lijunping on 2022/6/8
  */
 @Slf4j
-public class NettyServer implements InitializingBean, DisposableBean {
+public class NettyServer implements RpcServer, InitializingBean, DisposableBean {
     private static final ExecutorService SERVER_START_EXECUTOR = Executors.newSingleThreadExecutor();
+    private final MessageHandler messageHandler;
     private final ServerConfiguration configuration;
-    private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public NettyServer(ServerConfiguration configuration,
-                       ChannelInitializer<SocketChannel> channelInitializer) {
+    public NettyServer(MessageHandler messageHandler, ServerConfiguration configuration) {
+        this.messageHandler = messageHandler;
         this.configuration = configuration;
-        this.channelInitializer = channelInitializer;
     }
+
 
     private void startup(int port){
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -49,7 +54,7 @@ public class NettyServer implements InitializingBean, DisposableBean {
                      // 保持长连接, 是否开启 TCP 底层心跳机制
                      .childOption(ChannelOption.SO_KEEPALIVE, true)
                      // 当客户端第一次进行请求的时候才会进行初始化, 处理网络io事件，如记录日志、对消息编解码等
-                     .childHandler(channelInitializer);
+                    .childHandler(new ChildChannelHandler());
             //绑定端口，同步等待成功
             ChannelFuture future = bootstrap.bind(port).sync();
             Runtime.getRuntime().addShutdownHook(new Thread(()->{
@@ -64,6 +69,21 @@ public class NettyServer implements InitializingBean, DisposableBean {
             //优雅退出，释放线程池资源
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+        }
+    }
+
+    /**
+     * handler
+     */
+    private class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
+        @Override
+        protected void initChannel(SocketChannel channel) {
+            ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
+            ChannelPipeline cp = channel.pipeline();
+            cp.addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter));
+            cp.addLast(new MsgDecoder(MessageRequest.class));
+            cp.addLast(new MsgEncoder(MessageResponse.class));
+            cp.addLast((ChannelHandler) messageHandler);
         }
     }
 
