@@ -40,14 +40,13 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         String requestJsonBody = JSON.toJSON(requestBody);
         MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
 
-        channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
-            if (!future.isSuccess()) {
-                completableFuture.completeExceptionally(future.cause());
-                log.error("Send failed:", future.cause());
-            }
-        });
-
         try {
+            channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
+                if (!future.isSuccess()) {
+                    completableFuture.completeExceptionally(future.cause());
+                    log.error("Send failed:", future.cause());
+                }
+            });
             MessageResponseBody responseBody = completableFuture.get();
             return JSON.parse(responseBody, MessageResponseBody.class);
         } catch (Exception e) {
