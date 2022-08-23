@@ -38,7 +38,6 @@ public class NettyServer implements RpcServer, InitializingBean, DisposableBean 
         this.configuration = configuration;
     }
 
-
     private void startup(int port){
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
