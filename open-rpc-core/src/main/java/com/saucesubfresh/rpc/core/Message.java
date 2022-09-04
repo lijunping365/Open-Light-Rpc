@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 public class Message implements Serializable {
     private static final String DEFAULT_ENCODING = Charset.defaultCharset().name();
     private PacketType command = PacketType.MESSAGE;
+    private String namespace;
     private String msgId;
     private String bodyEncoding;
     private byte[] body;

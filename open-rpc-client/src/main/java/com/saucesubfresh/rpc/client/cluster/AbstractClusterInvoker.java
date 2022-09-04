@@ -33,7 +33,8 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     }
 
     @Override
-    public MessageResponseBody invoke(String namespace, Message messages) throws RpcException {
+    public MessageResponseBody invoke(Message messages) throws RpcException {
+        final String namespace = messages.getNamespace();
         final List<ServerInformation> clientList = lookup(namespace);
         return doInvoke(messages, clientList);
     }
