@@ -22,6 +22,7 @@ import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 /**
  * 对外提供的接口，提供给用户使用
+ *
  * @author lijunping on 2022/1/21
  */
 public interface ClusterInvoker {

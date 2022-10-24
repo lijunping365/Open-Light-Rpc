@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * 服务端实例缓存
+ *
  * @author lijunping on 2022/2/17
  */
 public interface InstanceStore {

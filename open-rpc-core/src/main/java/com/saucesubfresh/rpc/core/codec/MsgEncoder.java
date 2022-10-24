@@ -23,6 +23,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * 编码器
+ *
  * @author lijunping on 2022/8/8
  */
 public class MsgEncoder extends MessageToByteEncoder<Object> {

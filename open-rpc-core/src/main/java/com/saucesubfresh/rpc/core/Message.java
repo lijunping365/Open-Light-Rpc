@@ -24,6 +24,8 @@ import java.nio.charset.Charset;
 
 /**
  * Message entity
+ *
+ * @author lijunping
  */
 @Data
 @NoArgsConstructor

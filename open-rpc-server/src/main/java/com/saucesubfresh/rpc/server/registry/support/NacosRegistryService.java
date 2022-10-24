@@ -29,8 +29,8 @@ import java.util.Map;
 
 /**
  * Register to Server in Nacos mode
- * @author: 李俊平
- * @Date: 2021-10-31 14:38
+ *
+ * @author lijunping 2021-10-31 14:38
  */
 @Slf4j
 public class NacosRegistryService extends AbstractRegistryService implements DisposableBean{

@@ -37,8 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author: 李俊平
- * @Date: 2021-10-31 14:50
+ * @author lijunping 2021-10-31 14:50
  */
 @Slf4j
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {

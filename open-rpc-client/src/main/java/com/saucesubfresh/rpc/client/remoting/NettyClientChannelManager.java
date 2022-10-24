@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * 服务端通道管理器
+ *
+ * @author lijunping
  */
 @Slf4j
 public class NettyClientChannelManager {

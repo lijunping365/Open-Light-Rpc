@@ -30,8 +30,8 @@ import java.util.List;
 
 /**
  * 失败重试调用模式
- * @author: 李俊平
- * @Date: 2022-01-31 19:29
+ *
+ * @author lijunping 2022-01-31 19:29
  */
 @Slf4j
 public class FailbackClusterInvoker extends AbstractClusterInvoker {

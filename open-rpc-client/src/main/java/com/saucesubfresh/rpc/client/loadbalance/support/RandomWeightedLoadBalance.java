@@ -30,7 +30,7 @@ import java.util.TreeMap;
 /**
  * The {@link LoadBalance} random strategy
  *
- * @see LoadBalance
+ * @author lijunping
  */
 public class RandomWeightedLoadBalance extends AbstractLoadBalance {
 

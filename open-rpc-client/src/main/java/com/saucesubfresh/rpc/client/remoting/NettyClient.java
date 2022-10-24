@@ -39,8 +39,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Netty 客户端
- * @author: 李俊平
- * @Date: 2022-06-08 07:25
+ *
+ * @author lijunping 2022-06-08 07:25
  */
 @Slf4j
 public class NettyClient implements RpcClient{

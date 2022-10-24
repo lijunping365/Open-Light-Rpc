@@ -16,8 +16,9 @@
 package com.saucesubfresh.rpc.core.enums;
 
 /**
- * @author lijunping on 2022/5/11
  * The message response status
+ *
+ * @author lijunping on 2022/5/11
  */
 public enum ResponseStatus {
     /**

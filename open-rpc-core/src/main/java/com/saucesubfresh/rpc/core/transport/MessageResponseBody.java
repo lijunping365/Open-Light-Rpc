@@ -23,6 +23,8 @@ import java.nio.charset.Charset;
 
 /**
  * The message response
+ *
+ * @author lijunping
  */
 @Data
 @Accessors(chain = true)

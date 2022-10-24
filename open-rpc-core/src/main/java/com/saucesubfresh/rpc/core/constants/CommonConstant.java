@@ -16,7 +16,7 @@
 package com.saucesubfresh.rpc.core.constants;
 
 /**
- * @author 李俊平
+ * @author lijunping
  */
 public interface CommonConstant {
   /**

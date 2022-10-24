@@ -17,6 +17,8 @@ package com.saucesubfresh.rpc.core.enums;
 
 /**
  * The server status
+ *
+ * @author lijunping
  */
 public enum Status {
     /**

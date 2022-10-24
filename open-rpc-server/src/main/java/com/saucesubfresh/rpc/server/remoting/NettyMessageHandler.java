@@ -36,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 这里处理所有netty事件。
- * @author: 李俊平
- * @Date: 2022-06-08 08:04
+ *
+ * @author lijunping 2022-06-08 08:04
  */
 @Slf4j
 @Sharable

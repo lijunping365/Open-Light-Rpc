@@ -31,8 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 这里处理所有netty事件。
- * @author: 李俊平
- * @Date: 2022-06-08 08:04
+ *
+ * @author lijunping 2022-06-08 08:04
  */
 @Slf4j
 public class NettyClientHandler extends SimpleChannelInboundHandler<MessageResponse> {

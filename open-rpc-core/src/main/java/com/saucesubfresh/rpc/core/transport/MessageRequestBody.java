@@ -21,6 +21,8 @@ import lombok.experimental.Accessors;
 
 /**
  * The message request
+ *
+ * @author lijunping
  */
 @Data
 @Accessors(chain = true)

@@ -23,8 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- * @author: 李俊平
- * @Date: 2022-01-30 09:36
+ * @author lijunping 2022-01-30 09:36
  */
 @Slf4j
 public abstract class AbstractServiceDiscovery implements ServiceDiscovery{

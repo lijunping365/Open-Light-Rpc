@@ -23,8 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- * @author: 李俊平
- * @Date: 2022-02-01 10:07
+ * @author lijunping 2022-02-01 10:07
  */
 public abstract class AbstractLoadBalance implements LoadBalance{
 

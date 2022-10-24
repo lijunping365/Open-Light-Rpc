@@ -22,8 +22,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * @author: 李俊平
- * @Date: 2021-10-30 13:42
+ * @author lijunping 2021-10-30 13:42
  */
 @ToString
 @Getter

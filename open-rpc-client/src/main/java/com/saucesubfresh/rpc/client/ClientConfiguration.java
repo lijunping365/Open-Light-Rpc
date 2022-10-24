@@ -20,6 +20,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * server configuration
+ *
+ * @author lijunping
  */
 @Data
 @ConfigurationProperties(prefix = "com.saucesubfresh.rpc.client")

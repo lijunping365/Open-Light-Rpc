@@ -32,8 +32,8 @@ import java.util.List;
 
 /**
  * 故障转移模式
- * @author: 李俊平
- * @Date: 2022-02-02 08:40
+ *
+ * @author lijunping 2022-02-02 08:40
  */
 @Slf4j
 public class FailoverClusterInvoker extends AbstractClusterInvoker {
