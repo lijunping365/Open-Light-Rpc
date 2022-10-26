@@ -40,12 +40,12 @@ import java.util.stream.Collectors;
  * @author lijunping 2021-10-31 14:50
  */
 @Slf4j
-public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
+public class NacosDiscoveryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
     private static final String REMOVER = "DEFAULT_GROUP@@";
     private final NamingService namingService;
     private final NamespaceService namespaceService;
 
-    public NacosRegistryService(NamingService namingService, InstanceStore instanceStore, NamespaceService namespaceService) {
+    public NacosDiscoveryService(NamingService namingService, InstanceStore instanceStore, NamespaceService namespaceService) {
         super(instanceStore);
         this.namingService = namingService;
         this.namespaceService = namespaceService;

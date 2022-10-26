@@ -21,7 +21,7 @@ import com.saucesubfresh.rpc.client.annotation.EnableOpenRpcClient;
 import com.saucesubfresh.rpc.client.cluster.ClusterInvoker;
 import com.saucesubfresh.rpc.client.cluster.support.FailoverClusterInvoker;
 import com.saucesubfresh.rpc.client.discovery.ServiceDiscovery;
-import com.saucesubfresh.rpc.client.discovery.support.NacosRegistryService;
+import com.saucesubfresh.rpc.client.discovery.support.NacosDiscoveryService;
 import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.client.manager.DefaultInstanceManager;
@@ -92,7 +92,7 @@ public class ClientAutoConfiguration {
     public ServiceDiscovery serviceDiscovery(NamingService namingService,
                                              InstanceStore instanceStore,
                                              NamespaceService namespaceService){
-        return new NacosRegistryService(namingService, instanceStore, namespaceService);
+        return new NacosDiscoveryService(namingService, instanceStore, namespaceService);
     }
 
     @Bean
