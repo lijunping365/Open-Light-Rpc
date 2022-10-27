@@ -37,7 +37,7 @@
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-client</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -46,10 +46,10 @@
 ```java
 @EnableOpenRpcClient
 @SpringBootApplication
-public class JobAdminApplication {
+public class JobDashboardApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JobAdminApplication.class, args);
+        SpringApplication.run(JobDashboardApplication.class, args);
     }
 }
 ```
@@ -61,7 +61,7 @@ com:
   saucesubfresh:
     rpc:
       client:
-        server-name: open-crawler-services
+        server-name: open-job-services
 ```
 
 ### 4. 给服务端发送消息
@@ -153,7 +153,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-server</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -162,10 +162,10 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 ```java
 @EnableOpenRpcServer
 @SpringBootApplication
-public class JobClientApplication {
+public class JobServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JobClientApplication.class, args);
+        SpringApplication.run(JobServerApplication.class, args);
     }
 }
 ```
@@ -179,7 +179,7 @@ com:
       server:
         server-address: 127.0.0.1
         server-port: 5200
-        server-name: open-crawler-services
+        server-name: open-job-services
 ```
 
 ### 4. 接收客户端发来的消息进行处理
@@ -191,17 +191,30 @@ com:
 ```java
 @Slf4j
 @Component
-public class JobHandlerManager implements MessageProcess, InitializingBean, ApplicationContextAware {
+public class JobMessageProcessor implements MessageProcess {
 
-    //...
-    
+    private final JobHandlerCollector jobHandlerCollector;
+
+    public JobMessageProcessor(JobHandlerCollector jobHandlerCollector) {
+        this.jobHandlerCollector = jobHandlerCollector;
+    }
+
     @Override
-    public boolean process(Message message) {
+    public byte[] process(Message message) {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
-        JobHandler jobHandler = this.getJobHandler(messageBody.getHandlerName());
-        jobHandler.handler(messageBody.getParams());
-        return true;
+        String handlerName = messageBody.getHandlerName();
+        OpenJobHandler openJobHandler = jobHandlerCollector.getJobHandler(handlerName);
+        if (ObjectUtils.isEmpty(openJobHandler)) {
+            throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
+        }
+        try {
+            openJobHandler.handler(messageBody.getParams());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new RpcException("JobHandlerName: " + handlerName + ", execute exception:" + e.getMessage());
+        }
+        return null;
     }
 }
 ```
@@ -218,10 +231,9 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
 
 ## 注意点
 
-### 1. 客户端与服务端使用的注册中心类型须一致
+1. 系统默认客户端和服务端使用的注册中心是 Nacos，注意客户端与服务端使用的注册中心类型须一致，也就是说如果客户端使用 Nacos 作为注册中心，那服务端也需要使用 Nacos 作为注册中心。
 
-
-### 2. 如果使用 Nacos 作为注册中心，也就是系统默认使用的注册中心.
+## 如果使用 Nacos 作为注册中心
 
 1. 需要添加如下 maven 依赖
 
@@ -250,7 +262,7 @@ public class SpringWebMvcConfig {
 }
 ```
 
-### 3. 如果使用 Zookeeper 作为注册中心
+## 如果使用 Zookeeper 作为注册中心
 
 1. 需要添加如下 maven 依赖
 
@@ -287,6 +299,7 @@ public class SpringWebMvcConfig {
 ## 1.0.1 版本更新说明
 
 1. 对 client 响应的消息
+
 2. 修复了故障转移模式 bug
 
 ## 1.0.2 版本更新说明
@@ -296,6 +309,7 @@ public class SpringWebMvcConfig {
 ## 1.0.3 版本更新说明
 
 1. 项目重构，
+
 2. 在 grpc 通信的基础上增加 netty 通信方式
 
 ## 1.0.4 版本更新说明
