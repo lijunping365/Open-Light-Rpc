@@ -43,25 +43,25 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> clients) throws RpcException {
-        ServerInformation serverInformation = select(message, clients);
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
+        ServerInformation serverInformation = select(message, servers);
         MessageResponseBody response;
         try {
             response = remotingInvoker.invoke(message, serverInformation);
         } catch (RpcException e){
-            clients.remove(serverInformation);
-            if (CollectionUtils.isEmpty(clients)){
+            servers.remove(serverInformation);
+            if (CollectionUtils.isEmpty(servers)){
                 throw new RpcException(e.getMessage());
             }
-            response = invoke(message, clients);
+            response = invoke(message, servers);
         }
         return response;
     }
 
-    private MessageResponseBody invoke(Message message, List<ServerInformation> clients) throws RpcException{
+    private MessageResponseBody invoke(Message message, List<ServerInformation> servers) throws RpcException{
         RpcException ex = null;
         MessageResponseBody response = null;
-        for (ServerInformation serverInformation : clients) {
+        for (ServerInformation serverInformation : servers) {
             try {
                 response = remotingInvoker.invoke(message, serverInformation);
                 break;

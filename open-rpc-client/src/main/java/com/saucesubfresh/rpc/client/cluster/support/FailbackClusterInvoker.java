@@ -41,8 +41,8 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> clients) throws RpcException {
-        ServerInformation serverInformation = select(message, clients);
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
+        ServerInformation serverInformation = select(message, servers);
         boolean success = false;
         int maxTimes = configuration.getRetryTimes();
         int currentTimes = 0;

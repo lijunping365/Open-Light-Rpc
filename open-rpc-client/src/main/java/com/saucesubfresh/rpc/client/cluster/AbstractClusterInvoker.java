@@ -50,27 +50,27 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     @Override
     public MessageResponseBody invoke(Message messages) throws RpcException {
         final String namespace = messages.getNamespace();
-        final List<ServerInformation> clientList = lookup(namespace);
-        return doInvoke(messages, clientList);
+        final List<ServerInformation> serverList = lookup(namespace);
+        return doInvoke(messages, serverList);
     }
 
     /**
      * 通过服务发现找到所有在线的服务端
      */
     protected List<ServerInformation> lookup(String namespace) {
-        List<ServerInformation> clients = serviceDiscovery.lookup(namespace);
-        if (CollectionUtils.isEmpty(clients)) {
+        List<ServerInformation> servers = serviceDiscovery.lookup(namespace);
+        if (CollectionUtils.isEmpty(servers)) {
             throw new RpcException("No healthy server were found.");
         }
-        return clients;
+        return servers;
     }
 
     /**
      * 通过负载均衡策略找出合适的服务端进行调用
      */
-    protected ServerInformation select(Message message, List<ServerInformation> clients) throws RpcException{
-        return loadBalance.select(message, clients);
+    protected ServerInformation select(Message message, List<ServerInformation> servers) throws RpcException{
+        return loadBalance.select(message, servers);
     }
 
-    protected abstract MessageResponseBody doInvoke(Message message, List<ServerInformation> clients) throws RpcException;
+    protected abstract MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException;
 }

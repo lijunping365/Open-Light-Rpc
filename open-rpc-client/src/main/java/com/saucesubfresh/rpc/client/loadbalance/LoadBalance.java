@@ -32,9 +32,9 @@ public interface LoadBalance {
      *
      *
      * @param message
-     * @param clients {@link ServerInformation} list
+     * @param servers {@link ServerInformation} list
      * @return load-balanced client
      * @throws RpcException
      */
-    ServerInformation select(Message message, List<ServerInformation> clients) throws RpcException;
+    ServerInformation select(Message message, List<ServerInformation> servers) throws RpcException;
 }

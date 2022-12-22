@@ -40,8 +40,8 @@ public class BroadcastClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> clients) throws RpcException {
-        clients.forEach(clientInformation -> remotingInvoker.invoke(message, clientInformation));
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
+        servers.forEach(clientInformation -> remotingInvoker.invoke(message, clientInformation));
         return new MessageResponseBody();
     }
 }
