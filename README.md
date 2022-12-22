@@ -314,6 +314,10 @@ public class SpringWebMvcConfig {
 
 ## 1.0.4 版本更新说明
 
+1. 增加版权
+
+## 1.0.6 版本更新说明
+
 1. 支持应用隔离
 
 # 最后
