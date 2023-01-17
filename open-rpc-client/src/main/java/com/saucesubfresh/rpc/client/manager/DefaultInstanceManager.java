@@ -39,8 +39,8 @@ public class DefaultInstanceManager implements InstanceManager{
 
     @Override
     public boolean offlineServer(String serverId){
-        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
-        ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
+        final String[] serverInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
+        ServerInformation serverInformation = ServerInformation.valueOf(serverInfo[0], Integer.parseInt(serverInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.DEREGISTER);
         MessageResponseBody invoke = remotingInvoker.invoke(message, serverInformation);
@@ -49,8 +49,8 @@ public class DefaultInstanceManager implements InstanceManager{
 
     @Override
     public boolean onlineServer(String serverId){
-        final String[] clientInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
-        ServerInformation serverInformation = ServerInformation.valueOf(clientInfo[0], Integer.parseInt(clientInfo[1]));
+        final String[] serverInfo = StringUtils.split(serverId, CommonConstant.Symbol.MH);
+        ServerInformation serverInformation = ServerInformation.valueOf(serverInfo[0], Integer.parseInt(serverInfo[1]));
         Message message = new Message();
         message.setCommand(PacketType.REGISTER);
         MessageResponseBody invoke = remotingInvoker.invoke(message, serverInformation);
