@@ -17,6 +17,7 @@ package com.saucesubfresh.rpc.client.cluster;
 
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.exception.NotFoundServerException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
@@ -60,7 +61,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
     protected List<ServerInformation> lookup(String namespace) {
         List<ServerInformation> servers = serviceDiscovery.lookup(namespace);
         if (CollectionUtils.isEmpty(servers)) {
-            throw new RpcException("No healthy server were found.");
+            throw new NotFoundServerException("No healthy server were found.");
         }
         return servers;
     }

@@ -18,7 +18,7 @@ package com.saucesubfresh.rpc.server.remoting;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
-import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.exception.UnSupportPacketException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
@@ -77,7 +77,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
                     responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
                     break;
                 default:
-                    throw new RpcException("UnSupport message packet" + command);
+                    throw new UnSupportPacketException("UnSupport message packet" + command);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
