@@ -71,6 +71,7 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            responseBody.setMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
             responseBody.setRequestId(requestBody.getRequestId());

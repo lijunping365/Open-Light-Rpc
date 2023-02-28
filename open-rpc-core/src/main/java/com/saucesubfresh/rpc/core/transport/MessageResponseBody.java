@@ -41,4 +41,8 @@ public class MessageResponseBody {
      * The Response body
      */
     private byte[] body;
+    /**
+     * The error msg
+     */
+    private String msg;
 }

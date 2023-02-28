@@ -81,6 +81,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            responseBody.setMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
             String responseJsonBody = JSON.toJSON(responseBody);
