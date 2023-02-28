@@ -37,11 +37,11 @@ import java.util.stream.Collectors;
  * @author lijunping on 2021/12/3
  */
 @Slf4j
-public class ZookeeperDiscoveryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
+public class ZookeeperServiceDiscovery extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
     private final ZkClient zkClient;
     private final NamespaceService namespaceService;
 
-    public ZookeeperDiscoveryService(ZkClient zkClient, InstanceStore instanceStore, NamespaceService namespaceService){
+    public ZookeeperServiceDiscovery(ZkClient zkClient, InstanceStore instanceStore, NamespaceService namespaceService){
         super(instanceStore);
         this.zkClient = zkClient;
         this.namespaceService = namespaceService;
