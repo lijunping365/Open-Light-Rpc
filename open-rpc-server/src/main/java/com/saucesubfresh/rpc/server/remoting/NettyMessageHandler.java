@@ -59,6 +59,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         responseBody.setRequestId(requestBody.getRequestId());
+        responseBody.setServerId(requestBody.getServerId());
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
         try {

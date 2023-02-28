@@ -19,8 +19,6 @@ import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.nio.charset.Charset;
-
 /**
  * The message response
  *
@@ -30,19 +28,23 @@ import java.nio.charset.Charset;
 @Accessors(chain = true)
 public class MessageResponseBody {
     /**
-     * The Response status
+     * The Response body
      */
-    private ResponseStatus status = ResponseStatus.SUCCESS;
+    private byte[] body;
+    /**
+     * The error msg，when status is ERROR
+     */
+    private String msg;
     /**
      * Message request number processed
      */
     private String requestId;
     /**
-     * The Response body
+     * serverId of server address connect port
      */
-    private byte[] body;
+    private String serverId;
     /**
-     * The error msg
+     * The Response status
      */
-    private String msg;
+    private ResponseStatus status = ResponseStatus.SUCCESS;
 }

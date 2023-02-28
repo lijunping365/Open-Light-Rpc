@@ -20,7 +20,7 @@ package com.saucesubfresh.rpc.core.exception;
  */
 public class NetworkException extends RpcException{
 
-    public NetworkException(String msg) {
-        super(msg);
+    public NetworkException(String serverId, String msg) {
+        super(serverId, msg);
     }
 }

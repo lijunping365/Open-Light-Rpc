@@ -74,6 +74,7 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
             responseBody.setMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
+            responseBody.setServerId(requestBody.getServerId());
             responseBody.setRequestId(requestBody.getRequestId());
             String responseJsonBody = JSON.toJSON(responseBody);
             MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();

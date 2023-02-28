@@ -62,7 +62,7 @@ public class GrpcClientChannelManager {
             return channel;
         }catch (Exception e){
             log.error("Failed to connect to the server {}", serverId);
-            throw new NetworkException("Failed to connect to the server:" + serverId);
+            throw new NetworkException(serverId, "Failed to connect to the server:" + serverId);
         }
     }
 
