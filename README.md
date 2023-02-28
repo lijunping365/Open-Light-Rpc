@@ -320,6 +320,14 @@ public class SpringWebMvcConfig {
 
 1. 支持应用隔离
 
+## 1.0.7 版本更新说明
+
+1. 优化异常
+
+2. 响应添加 msg 字段
+
+3. 响应及异常新增  serverId 字段
+
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star
