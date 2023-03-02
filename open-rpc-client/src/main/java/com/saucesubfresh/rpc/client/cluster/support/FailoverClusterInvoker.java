@@ -17,6 +17,7 @@ package com.saucesubfresh.rpc.client.cluster.support;
 
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.exception.FailoverException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
@@ -51,7 +52,7 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
         } catch (RpcException e){
             servers.remove(serverInformation);
             if (CollectionUtils.isEmpty(servers)){
-                throw new RpcException(e.getMessage());
+                throw new FailoverException(serverInformation.getServerId(), e.getMessage());
             }
             response = invoke(message, servers);
         }
@@ -70,7 +71,7 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             }
         }
         if (response == null && ex != null){
-            throw new RpcException(ex.getMessage());
+            throw new FailoverException(servers.get(servers.size() -1).getServerId(), ex.getMessage());
         }
         return response;
     }

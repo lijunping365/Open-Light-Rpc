@@ -16,7 +16,7 @@
 package com.saucesubfresh.rpc.client.cluster.support;
 
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.exception.OverRetryLimitException;
+import com.saucesubfresh.rpc.core.exception.FailbackException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
@@ -58,7 +58,7 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
             if (!success) {
                 currentTimes++;
                 if (currentTimes > maxTimes) {
-                    throw new OverRetryLimitException(serverInformation.getServerId(),
+                    throw new FailbackException(serverInformation.getServerId(),
                             "The number of invoke retries reaches the upper limit, " +
                             "the maximum number of times：" + maxTimes);
                 }
