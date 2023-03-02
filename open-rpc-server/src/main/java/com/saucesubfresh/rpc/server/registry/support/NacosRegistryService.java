@@ -18,7 +18,7 @@ package com.saucesubfresh.rpc.server.registry.support;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.exception.ServerRegisterException;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.registry.AbstractRegistryService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Dis
         this.namingService = namingService;
     }
     /**
-     * Register client to nacos server
+     * Register server to nacos server
      * <p>
      * If there is an instance of {@link NamingService} in the running project,
      * use it directly, otherwise create a new instance
@@ -62,7 +62,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Dis
             log.info("Current server registered to nacos server successfully.");
         } catch (Exception e) {
             log.error("register instance failed {}", e.getMessage());
-            throw new RpcException(e.getMessage());
+            throw new ServerRegisterException(e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class NacosRegistryService extends AbstractRegistryService implements Dis
             this.namingService.deregisterInstance(this.configuration.getServerName(), serverAddress, serverPort);
         } catch (NacosException e) {
             log.error("deRegister instance failed {}", e.getMessage());
-            throw new RpcException(e.getMessage());
+            throw new ServerRegisterException(e.getMessage());
         }
     }
 
