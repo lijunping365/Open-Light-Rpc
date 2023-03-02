@@ -17,6 +17,7 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
@@ -72,7 +73,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
                 NettyClientChannelManager.removeChannel(serverId);
                 log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
             }
-            throw new RpcException(String.format("To the Server: %s, exception when sending a message", serverId));
+            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message", serverId));
         }
     }
 }

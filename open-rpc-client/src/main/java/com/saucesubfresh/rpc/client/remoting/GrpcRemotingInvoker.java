@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.MessageServiceGrpc;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
@@ -63,10 +64,10 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
                 GrpcClientChannelManager.removeChannel(serverId);
                 log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
             }
-            throw new RpcException(String.format("To the Server: %s, exception when sending a message, Status Code: %s", serverId, code));
+            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message, Status Code: %s", serverId, code));
         } catch (Exception e) {
             channel.shutdown();
-            throw new RpcException("rpc failed:" + e.getMessage());
+            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message", serverId));
         }
     }
 }
