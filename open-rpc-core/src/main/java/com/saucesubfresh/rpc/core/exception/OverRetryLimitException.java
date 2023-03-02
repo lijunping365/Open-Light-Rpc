@@ -16,11 +16,13 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
+ * 超过重试次数异常
+ *
  * @author lijunping on 2023/2/9
  */
-public class ConfigurationException extends RpcException{
+public class OverRetryLimitException extends RpcException{
 
-    public ConfigurationException(String msg) {
-        super(msg);
+    public OverRetryLimitException(String serverId, String msg) {
+        super(serverId, msg);
     }
 }

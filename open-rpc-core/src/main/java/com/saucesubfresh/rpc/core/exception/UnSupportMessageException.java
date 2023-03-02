@@ -16,11 +16,13 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
- * @author lijunping on 2023/2/28
+ * 不支持的消息类型异常
+ *
+ * @author lijunping on 2023/2/9
  */
-public class TimeoutException extends RpcException{
+public class UnSupportMessageException extends RpcException{
 
-    public TimeoutException(String msg) {
+    public UnSupportMessageException(String msg) {
         super(msg);
     }
 }

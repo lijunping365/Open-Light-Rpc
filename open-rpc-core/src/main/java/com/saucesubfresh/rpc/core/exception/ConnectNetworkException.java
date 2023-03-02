@@ -16,11 +16,13 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
- * @author lijunping on 2023/2/9
+ * 连接服务端网络异常
+ *
+ * @author lijunping on 2023/2/28
  */
-public class RetryLimitException extends RpcException{
+public class ConnectNetworkException extends RpcException{
 
-    public RetryLimitException(String msg) {
-        super(msg);
+    public ConnectNetworkException(String serverId, String msg) {
+        super(serverId, msg);
     }
 }

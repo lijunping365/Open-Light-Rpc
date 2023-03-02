@@ -16,11 +16,13 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
- * @author lijunping on 2023/2/28
+ * 服务端参数配置异常
+ *
+ * @author lijunping on 2023/2/9
  */
-public class NetworkException extends RpcException{
+public class ServerConfigException extends RpcException{
 
-    public NetworkException(String serverId, String msg) {
-        super(serverId, msg);
+    public ServerConfigException(String msg) {
+        super(msg);
     }
 }

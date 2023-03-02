@@ -16,11 +16,13 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
- * @author lijunping on 2023/2/9
+ * 连接服务端超时异常
+ *
+ * @author lijunping on 2023/2/28
  */
-public class UnSupportPacketException extends RpcException{
+public class ConnectTimeoutException extends RpcException{
 
-    public UnSupportPacketException(String msg) {
-        super(msg);
+    public ConnectTimeoutException(String serverId, String msg) {
+        super(serverId, msg);
     }
 }

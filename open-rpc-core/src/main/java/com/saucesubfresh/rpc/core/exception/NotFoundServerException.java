@@ -16,6 +16,8 @@
 package com.saucesubfresh.rpc.core.exception;
 
 /**
+ * 未找到服务异常
+ *
  * @author lijunping on 2023/2/9
  */
 public class NotFoundServerException extends RpcException{

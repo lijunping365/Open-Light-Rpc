@@ -15,7 +15,7 @@
  */
 package com.saucesubfresh.rpc.server.registry;
 
-import com.saucesubfresh.rpc.core.exception.ConfigurationException;
+import com.saucesubfresh.rpc.core.exception.ServerConfigException;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,13 +29,13 @@ public abstract class AbstractRegistryService implements RegistryService, Initia
 
     public AbstractRegistryService(ServerConfiguration configuration){
         if (configuration.getServerPort() <= 0 || configuration.getServerPort() > 65535) {
-            throw new ConfigurationException("The Server port must be greater than 0 and less than 65535.");
+            throw new ServerConfigException("The Server port must be greater than 0 and less than 65535.");
         }
         if (StringUtils.isBlank(configuration.getServerAddress())) {
-            throw new ConfigurationException("The Target server address cannot be empty.");
+            throw new ServerConfigException("The Target server address cannot be empty.");
         }
         if (StringUtils.isBlank(configuration.getServerName())){
-            throw new ConfigurationException("The client register name cannot be empty.");
+            throw new ServerConfigException("The client register name cannot be empty.");
         }
         this.configuration = configuration;
     }

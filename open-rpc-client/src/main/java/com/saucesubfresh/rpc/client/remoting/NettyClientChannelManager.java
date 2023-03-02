@@ -15,7 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.remoting;
 
-import com.saucesubfresh.rpc.core.exception.NetworkException;
+import com.saucesubfresh.rpc.core.exception.ConnectNetworkException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.netty.channel.Channel;
@@ -63,7 +63,7 @@ public class NettyClientChannelManager {
             return channel;
         } catch (Exception e) {
             log.error("Failed to connect to the server {}", serverId);
-            throw new NetworkException(serverId, "Failed to connect to the server:" + serverId);
+            throw new ConnectNetworkException(serverId, "Failed to connect to the server:" + serverId);
         }
     }
 
