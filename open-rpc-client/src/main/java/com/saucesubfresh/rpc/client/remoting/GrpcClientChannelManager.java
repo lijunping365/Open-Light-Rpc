@@ -16,11 +16,9 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.core.exception.ConnectNetworkException;
-import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import io.grpc.ManagedChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,9 +46,6 @@ public class GrpcClientChannelManager {
      */
     public static ManagedChannel establishChannel(GrpcClient grpcClient, ServerInformation information) {
         String serverId = information.getServerId();
-        if (StringUtils.isBlank(serverId)) {
-            throw new RpcException("Server" + serverId + " is not registered");
-        }
         ManagedChannel channel = SERVER_CHANNEL.get(serverId);
         if (!ObjectUtils.isEmpty(channel) && !channel.isShutdown()) {
             return channel;
