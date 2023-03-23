@@ -82,8 +82,8 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public NamespaceService namespaceService(){
-        return new DefaultNamespaceService();
+    public NamespaceService namespaceService(ClientConfiguration configuration){
+        return new DefaultNamespaceService(configuration);
     }
 
     @Bean

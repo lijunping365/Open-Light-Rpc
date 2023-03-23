@@ -15,16 +15,26 @@
  */
 package com.saucesubfresh.rpc.client.namespace;
 
+import com.saucesubfresh.rpc.client.ClientConfiguration;
+
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * 默认从配置文件中加载
+ *
  * @author lijunping on 2022/8/17
  */
 public class DefaultNamespaceService implements NamespaceService{
 
+    private final ClientConfiguration clientConfiguration;
+
+    public DefaultNamespaceService(ClientConfiguration clientConfiguration) {
+        this.clientConfiguration = clientConfiguration;
+    }
+
     @Override
     public List<String> loadNamespace() {
-        return Collections.emptyList();
+        return Collections.singletonList(clientConfiguration.getServerName());
     }
 }
