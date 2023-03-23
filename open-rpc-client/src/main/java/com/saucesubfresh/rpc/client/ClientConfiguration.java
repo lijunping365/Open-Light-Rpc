@@ -18,6 +18,8 @@ package com.saucesubfresh.rpc.client;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * server configuration
  *
@@ -41,6 +43,6 @@ public class ClientConfiguration {
      * if you use nacos，You should be named like this: job-server-services
      * if you use zookeeper, You should be named like this: /JobServer
      */
-    private String serverName;
+    private List<String> serverNames;
 
 }

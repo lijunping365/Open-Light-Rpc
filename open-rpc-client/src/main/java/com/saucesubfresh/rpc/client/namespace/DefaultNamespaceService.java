@@ -16,8 +16,6 @@
 package com.saucesubfresh.rpc.client.namespace;
 
 import com.saucesubfresh.rpc.client.ClientConfiguration;
-
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +33,6 @@ public class DefaultNamespaceService implements NamespaceService{
 
     @Override
     public List<String> loadNamespace() {
-        return Collections.singletonList(clientConfiguration.getServerName());
+        return clientConfiguration.getServerNames();
     }
 }
