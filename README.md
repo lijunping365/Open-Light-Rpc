@@ -328,6 +328,10 @@ public class SpringWebMvcConfig {
 
 3. 响应及异常新增  serverId 字段
 
+## 1.0.8 版本更新说明
+
+1. 优化多应用支持代码
+
 # 最后
 
 欢迎使用，欢迎交流，欢迎 star
