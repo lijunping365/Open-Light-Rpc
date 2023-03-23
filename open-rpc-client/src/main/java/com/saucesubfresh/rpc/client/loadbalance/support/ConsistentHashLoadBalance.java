@@ -43,7 +43,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         TreeMap<Long, ServerInformation> clientRing = new TreeMap<>();
         for (ServerInformation invoker: invokers) {
             for (int i = 0; i < VIRTUAL_NODE_NUM; i++) {
-                long addressHash = hash(md5("SHARD-" + invoker.getAddress() + "-NODE-" + i));
+                long addressHash = hash(md5("SHARD-" + invoker.getServerId() + "-NODE-" + i));
                 clientRing.put(addressHash, invoker);
             }
         }
