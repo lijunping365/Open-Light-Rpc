@@ -330,7 +330,7 @@ public class SpringWebMvcConfig {
 
 ## 1.0.8 版本更新说明
 
-1. 优化多应用支持代码
+1. 加载应用默认采用从配置文件中读取
 
 # 最后
 
