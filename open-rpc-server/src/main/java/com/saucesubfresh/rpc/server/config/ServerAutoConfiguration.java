@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.server.config;
 
 import com.alibaba.nacos.api.naming.NamingService;
+import com.saucesubfresh.rpc.core.thread.NamedThreadFactory;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.annotation.EnableOpenRpcServer;
 import com.saucesubfresh.rpc.server.registry.support.NacosRegistryService;
@@ -28,6 +29,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lijunping on 2022/1/20
@@ -51,12 +56,26 @@ public class ServerAutoConfiguration {
         return new DefaultMessageProcess();
     }
 
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean
+    public ThreadPoolExecutor threadPoolExecutor(){
+        return new ThreadPoolExecutor(
+                0,
+                200,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(2000),
+                new NamedThreadFactory("open-light-rpc"),
+                new ThreadPoolExecutor.AbortPolicy());
+    }
+
     @Bean
     @ConditionalOnMissingBean
     public MessageHandler messageHandler(RegistryService registryService,
                                          MessageProcess messageProcess,
-                                         ServerConfiguration configuration){
-        return new GrpcMessageHandler(messageProcess, configuration, registryService);
+                                         ServerConfiguration configuration,
+                                         ThreadPoolExecutor threadPoolExecutor){
+        return new GrpcMessageHandler(messageProcess, configuration, registryService, threadPoolExecutor);
     }
 
     @Bean

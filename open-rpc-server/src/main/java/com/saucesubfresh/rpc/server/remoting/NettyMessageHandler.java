@@ -34,6 +34,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * 这里处理所有netty事件。
  *
@@ -46,49 +48,56 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
     private final MessageProcess messageProcess;
     private final ServerConfiguration configuration;
     private final RegistryService registryService;
+    private final ThreadPoolExecutor poolExecutor;
 
-    public NettyMessageHandler(MessageProcess messageProcess, ServerConfiguration configuration, RegistryService registryService) {
+    public NettyMessageHandler(MessageProcess messageProcess,
+                               ServerConfiguration configuration,
+                               RegistryService registryService,
+                               ThreadPoolExecutor poolExecutor) {
         this.messageProcess = messageProcess;
         this.configuration = configuration;
         this.registryService = registryService;
+        this.poolExecutor = poolExecutor;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageRequest request) throws Exception {
-        MessageResponseBody responseBody = new MessageResponseBody();
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
-        responseBody.setRequestId(requestBody.getRequestId());
-        responseBody.setServerId(requestBody.getServerId());
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
-        try {
-            switch (command){
-                case REGISTER:
-                    registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case DEREGISTER:
-                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case MESSAGE:
-                    byte[] body = messageProcess.process(message);
-                    responseBody.setBody(body);
-                    break;
-                case PING:
-                    responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
-                    break;
-                default:
-                    throw new UnSupportMessageException("UnSupport message packet" + command);
+        poolExecutor.execute(()->{
+            MessageResponseBody responseBody = new MessageResponseBody();
+            try {
+                switch (command){
+                    case REGISTER:
+                        registryService.register(configuration.getServerAddress(), configuration.getServerPort());
+                        break;
+                    case DEREGISTER:
+                        registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
+                        break;
+                    case MESSAGE:
+                        byte[] body = messageProcess.process(message);
+                        responseBody.setBody(body);
+                        break;
+                    case PING:
+                        responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
+                        break;
+                    default:
+                        throw new UnSupportMessageException("UnSupport message packet" + command);
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                responseBody.setMsg(e.getMessage());
+                responseBody.setStatus(ResponseStatus.ERROR);
+            } finally {
+                responseBody.setRequestId(requestBody.getRequestId());
+                responseBody.setServerId(requestBody.getServerId());
+                String responseJsonBody = JSON.toJSON(responseBody);
+                MessageResponse response = MessageResponse.newBuilder().setBody(responseJsonBody).build();
+                ctx.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> log.info("Send response for request " + requestBody.getRequestId()));
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            responseBody.setMsg(e.getMessage());
-            responseBody.setStatus(ResponseStatus.ERROR);
-        } finally {
-            String responseJsonBody = JSON.toJSON(responseBody);
-            MessageResponse response = MessageResponse.newBuilder().setBody(responseJsonBody).build();
-            ctx.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> log.info("Send response for request " + requestBody.getRequestId()));
-        }
+        });
     }
 
     @Override

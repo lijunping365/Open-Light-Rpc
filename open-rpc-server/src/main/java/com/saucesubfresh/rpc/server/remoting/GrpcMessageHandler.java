@@ -31,6 +31,8 @@ import com.saucesubfresh.rpc.server.registry.RegistryService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * @author lijunping on 2022/1/24
  */
@@ -40,46 +42,53 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
     private final MessageProcess messageProcess;
     private final ServerConfiguration configuration;
     private final RegistryService registryService;
+    private final ThreadPoolExecutor poolExecutor;
 
-    public GrpcMessageHandler(MessageProcess messageProcess, ServerConfiguration configuration, RegistryService registryService) {
+    public GrpcMessageHandler(MessageProcess messageProcess,
+                              ServerConfiguration configuration,
+                              RegistryService registryService,
+                              ThreadPoolExecutor poolExecutor) {
         this.messageProcess = messageProcess;
         this.configuration = configuration;
         this.registryService = registryService;
+        this.poolExecutor = poolExecutor;
     }
 
     @Override
     public void messageProcessing(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
-        MessageResponseBody responseBody = new MessageResponseBody();
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
-        try {
-            switch (command){
-                case REGISTER:
-                    registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case DEREGISTER:
-                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case MESSAGE:
-                    byte[] body = messageProcess.process(message);
-                    responseBody.setBody(body);
-                    break;
-                default:
-                    throw new UnSupportMessageException("UnSupport message packet" + command);
+        poolExecutor.execute(()->{
+            MessageResponseBody responseBody = new MessageResponseBody();
+            try {
+                switch (command){
+                    case REGISTER:
+                        registryService.register(configuration.getServerAddress(), configuration.getServerPort());
+                        break;
+                    case DEREGISTER:
+                        registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
+                        break;
+                    case MESSAGE:
+                        byte[] body = messageProcess.process(message);
+                        responseBody.setBody(body);
+                        break;
+                    default:
+                        throw new UnSupportMessageException("UnSupport message packet" + command);
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                responseBody.setMsg(e.getMessage());
+                responseBody.setStatus(ResponseStatus.ERROR);
+            } finally {
+                responseBody.setServerId(requestBody.getServerId());
+                responseBody.setRequestId(requestBody.getRequestId());
+                String responseJsonBody = JSON.toJSON(responseBody);
+                MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
+                responseObserver.onNext(messageResponse);
+                responseObserver.onCompleted();
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            responseBody.setMsg(e.getMessage());
-            responseBody.setStatus(ResponseStatus.ERROR);
-        } finally {
-            responseBody.setServerId(requestBody.getServerId());
-            responseBody.setRequestId(requestBody.getRequestId());
-            String responseJsonBody = JSON.toJSON(responseBody);
-            MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
-            responseObserver.onNext(messageResponse);
-            responseObserver.onCompleted();
-        }
+        });
     }
 }
