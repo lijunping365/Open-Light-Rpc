@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.cluster.support;
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.FailbackException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -42,8 +43,9 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
-        ServerInformation serverInformation = select(message, servers);
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+        ServerInformation serverInformation = super.select(message, servers);
+        super.callback(message, serverInformation, callback);
         boolean success = false;
         int maxTimes = configuration.getRetryTimes();
         int currentTimes = 0;

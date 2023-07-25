@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.cluster.support;
 
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
@@ -40,7 +41,7 @@ public class BroadcastClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
         servers.forEach(clientInformation -> remotingInvoker.invoke(message, clientInformation));
         return new MessageResponseBody();
     }

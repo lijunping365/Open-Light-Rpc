@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.cluster;
 
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
@@ -33,4 +34,11 @@ public interface ClusterInvoker {
      * @throws RpcException
      */
     MessageResponseBody invoke(Message message) throws RpcException;
+
+    /**
+     * 给服务端发送消息并且有回调
+     * @param message 消息体
+     * @throws RpcException
+     */
+    MessageResponseBody invokeWithCallback(Message message, CallCallback callback) throws RpcException;
 }

@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.cluster;
 
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.NotFoundServerException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -50,9 +51,14 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
 
     @Override
     public MessageResponseBody invoke(Message messages) throws RpcException {
+        return invokeWithCallback(messages, null);
+    }
+
+    @Override
+    public MessageResponseBody invokeWithCallback(Message messages, CallCallback callback) throws RpcException {
         final String namespace = messages.getNamespace();
         final List<ServerInformation> serverList = lookup(namespace);
-        return doInvoke(messages, serverList);
+        return doInvoke(messages, serverList, callback);
     }
 
     /**
@@ -73,5 +79,14 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker{
         return loadBalance.select(message, servers);
     }
 
-    protected abstract MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException;
+    /**
+     * 服务调用回调
+     */
+    protected void callback(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException{
+        if (null != callback){
+            callback.onCall(message, serverInformation);
+        }
+    }
+
+    protected abstract MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException;
 }

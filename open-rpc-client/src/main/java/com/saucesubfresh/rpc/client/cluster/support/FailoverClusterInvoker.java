@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.cluster.support;
 
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.FailoverException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -44,8 +45,9 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
-        ServerInformation serverInformation = select(message, servers);
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+        ServerInformation serverInformation = super.select(message, servers);
+        super.callback(message, serverInformation, callback);
         MessageResponseBody response;
         try {
             response = remotingInvoker.invoke(message, serverInformation);
@@ -54,15 +56,16 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             if (CollectionUtils.isEmpty(servers)){
                 throw new FailoverException(serverInformation.getServerId(), e.getMessage());
             }
-            response = invoke(message, servers);
+            response = invoke(message, servers, callback);
         }
         return response;
     }
 
-    private MessageResponseBody invoke(Message message, List<ServerInformation> servers) throws RpcException{
+    private MessageResponseBody invoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException{
         RpcException ex = null;
         MessageResponseBody response = null;
         for (ServerInformation serverInformation : servers) {
+            super.callback(message, serverInformation, callback);
             try {
                 response = remotingInvoker.invoke(message, serverInformation);
                 break;
