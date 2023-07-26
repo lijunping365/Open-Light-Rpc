@@ -340,7 +340,7 @@ public class SpringWebMvcConfig {
 
 1. 去掉了上个版本的自定义业务线程池
 
-2. 客户端增加调用回调
+2. 增加了带回调的 rpc 调用方法
 
 # 最后
 
