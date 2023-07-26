@@ -18,20 +18,25 @@
   </a>
 </p>
 
-# 客户端（open-rpc-client）
-
 ## 功能
 
-- [x] 监听注册中心服务端的注册事件，并将注册成功的服务端保存起来。
+- [x] 支持服务注册与发现
 
-- [x] 给服务端发送普通消息、服务端上线下线消息。
+- [x] 支持给服务端发送普通消息以及服务端上线下线消息
 
-- [x] 在给服务端发送消息时提供多种负载均衡机制和容错机制供开发者使用
+- [x] 客户端提供多种负载均衡机制供开发者使用，默认提供的负载均衡策略有随机权重、一致性哈希、最少活跃且支持用户拓展，
 
+- [x] 客户端提供多种容错机制供开发者使用，默认提供的容错机制有故障转移模式、失败重试调用模式、广播调用模式且支持用户自定义拓展
+
+- [x] 默认提供 Grpc-Netty 通信方式，且支持用户拓展
+
+- [x] 默认提供 Zookeeper 和 Nacos 做服务注册与发现，且支持用户拓展
 
 ## 快速开始
 
-### 1. 添加 Maven 依赖
+### 客户端（open-rpc-client）
+
+#### 1. 添加 Maven 依赖
 
 ```xml
 <dependency>
@@ -41,7 +46,7 @@
 </dependency>
 ```
 
-### 2. 在启动类上添加 @EnableOpenRpcClient 注解
+#### 2. 在启动类上添加 @EnableOpenRpcClient 注解
 
 ```java
 @EnableOpenRpcClient
@@ -54,7 +59,7 @@ public class JobDashboardApplication {
 }
 ```
 
-### 3. 配置服务名称
+#### 3. 配置服务名称
 
 ```yaml
 com:
@@ -64,7 +69,7 @@ com:
         server-name: open-job-services
 ```
 
-### 4. 给服务端发送消息
+#### 4. 给服务端发送消息
 
 节选自 Open-Job
 
@@ -115,39 +120,9 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 }
 ```
 
-## 扩展示例
+### 服务端（open-rpc-server）
 
-### 1. 扩展服务发现（ServiceDiscovery）
-
-实现 ServiceDiscovery  接口
-
-### 2. 扩展负载均衡机制（LoadBalance）
-
-实现 LoadBalance 接口
-
-### 3. 扩展容错机制（ClusterInvoker）
-
-实现 ClusterInvoker 接口
-
-### 4. 扩展生成唯一请求 ID（RequestIdGenerator）
-
-实现 RequestIdGenerator 接口
-
-### 5. 扩展客户端存储方式（InstanceStore）
-
-实现 InstanceStore 接口
-
-# 客户端（open-rpc-server）
-
-## 功能
-
-- [x] 服务端向注册中心注册功能
-
-- [x] 接收客户端发来的消息并做相应处理
-
-## 快速开始
-
-### 1. 添加 Maven 依赖
+#### 1. 添加 Maven 依赖
 
 ```xml
 <dependency>
@@ -157,7 +132,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 </dependency>
 ```
 
-### 2. 在启动类上添加 @EnableOpenRpcServer 注解
+#### 2. 在启动类上添加 @EnableOpenRpcServer 注解
 
 ```java
 @EnableOpenRpcServer
@@ -170,7 +145,7 @@ public class JobServerApplication {
 }
 ```
 
-### 3. 配置 Grpc 服务端地址和端口、服务名称
+#### 3. 配置 Grpc 服务端地址和端口、服务名称
 
 ```yaml
 com:
@@ -182,7 +157,7 @@ com:
         server-name: open-job-services
 ```
 
-### 4. 接收客户端发来的消息进行处理
+#### 4. 接收客户端发来的消息进行处理
 
 注入 MessageProcess 接口的实现覆盖系统默认的 DefaultMessageProcess
 
@@ -219,21 +194,47 @@ public class JobMessageProcessor implements MessageProcess {
 }
 ```
 
-## 扩展示例
 
-### 1. 扩展服务端注册方式（RegistryService）
+## 自定义拓展示例
+
+### 客户端（open-rpc-client）
+
+#### 1. 扩展服务发现（ServiceDiscovery）
+
+实现 ServiceDiscovery  接口
+
+#### 2. 扩展负载均衡机制（LoadBalance）
+
+实现 LoadBalance 接口
+
+#### 3. 扩展容错机制（ClusterInvoker）
+
+实现 ClusterInvoker 接口
+
+#### 4. 扩展生成唯一请求 ID（RequestIdGenerator）
+
+实现 RequestIdGenerator 接口
+
+#### 5. 扩展客户端存储方式（InstanceStore）
+
+实现 InstanceStore 接口
+
+### 服务端（open-rpc-server）
+
+#### 1. 扩展服务端注册方式（RegistryService）
 
 实现 RegistryService 接口
 
-### 1. 自定义消息处理逻辑（MessageProcess）
+#### 1. 自定义消息处理逻辑（MessageProcess）
 
 实现 MessageProcess 接口
+
 
 ## 注意点
 
 1. 系统默认客户端和服务端使用的注册中心是 Nacos，注意客户端与服务端使用的注册中心类型须一致，也就是说如果客户端使用 Nacos 作为注册中心，那服务端也需要使用 Nacos 作为注册中心。
 
-## 如果使用 Nacos 作为注册中心
+### 如果使用 Nacos 作为注册中心
 
 1. 需要添加如下 maven 依赖
 
@@ -262,7 +263,7 @@ public class SpringWebMvcConfig {
 }
 ```
 
-## 如果使用 Zookeeper 作为注册中心
+### 如果使用 Zookeeper 作为注册中心
 
 1. 需要添加如下 maven 依赖
 
@@ -296,31 +297,33 @@ public class SpringWebMvcConfig {
 }
 ```
 
-## 1.0.1 版本更新说明
+## 版本更新说明
+
+### 1.0.1 版本更新说明
 
 1. 对 client 响应的消息
 
 2. 修复了故障转移模式 bug
 
-## 1.0.2 版本更新说明
+### 1.0.2 版本更新说明
 
 修复版本 bug
 
-## 1.0.3 版本更新说明
+### 1.0.3 版本更新说明
 
 1. 项目重构，
 
 2. 在 grpc 通信的基础上增加 netty 通信方式
 
-## 1.0.4 版本更新说明
+### 1.0.4 版本更新说明
 
 1. 增加版权
 
-## 1.0.6 版本更新说明
+### 1.0.6 版本更新说明
 
 1. 支持应用隔离
 
-## 1.0.7 版本更新说明
+### 1.0.7 版本更新说明
 
 1. 优化异常
 
@@ -328,20 +331,20 @@ public class SpringWebMvcConfig {
 
 3. 响应及异常新增  serverId 字段
 
-## 1.0.8 版本更新说明
+### 1.0.8 版本更新说明
 
 1. 加载应用默认采用从配置文件中读取
 
-## 1.0.9 版本更新说明
+### 1.0.9 版本更新说明
 
 1. 服务端采用异步处理请求
 
-## 1.1.0 版本更新说明
+### 1.1.0 版本更新说明
 
 1. 去掉了上个版本的自定义业务线程池
 
 2. 增加了带回调的 rpc 调用方法
 
-# 最后
+## 最后
 
 欢迎使用，欢迎交流，欢迎 star
