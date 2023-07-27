@@ -20,9 +20,9 @@ package com.saucesubfresh.rpc.core.enums;
  */
 public enum PacketType {
 
-    REGISTER(0, true), DEREGISTER(1, true),
+    REGISTER(0, true), DEREGISTER(1, true), PING(2, true), PONG(3, true),
 
-    MESSAGE(1), PING(2), PONG(3),
+    MESSAGE(1),
 
     ;
 
@@ -41,6 +41,10 @@ public enum PacketType {
 
     public int getValue() {
         return value;
+    }
+
+    public boolean isInner(){
+        return inner;
     }
 
     public static PacketType valueOf(int value) {

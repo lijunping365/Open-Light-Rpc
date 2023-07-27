@@ -15,11 +15,8 @@
  */
 package com.saucesubfresh.rpc.server.process;
 
-import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
-import com.saucesubfresh.rpc.server.callback.ProcessCallback;
-
-import java.util.function.Consumer;
+import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
+import com.saucesubfresh.rpc.server.callback.ResponseWriter;
 
 /**
  * @author lijunping on 2022/1/19
@@ -28,9 +25,8 @@ public interface MessageProcess {
 
     /**
      * 处理消息
-     * @param message
-     * @param responseBody
+     * @param request
      * @param callback
      */
-    void process(Message message, MessageResponseBody responseBody, ProcessCallback callback);
+    void process(MessageRequest request, ResponseWriter callback);
 }

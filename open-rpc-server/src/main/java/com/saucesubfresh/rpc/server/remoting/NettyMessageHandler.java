@@ -15,19 +15,11 @@
  */
 package com.saucesubfresh.rpc.server.remoting;
 
-import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.enums.PacketType;
-import com.saucesubfresh.rpc.core.enums.ResponseStatus;
-import com.saucesubfresh.rpc.core.exception.UnSupportMessageException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
-import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
-import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
-import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -44,39 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequest> implements MessageHandler{
 
     private final MessageProcess messageProcess;
-    private final ServerConfiguration configuration;
-    private final RegistryService registryService;
 
-    public NettyMessageHandler(MessageProcess messageProcess, ServerConfiguration configuration, RegistryService registryService) {
+    public NettyMessageHandler(MessageProcess messageProcess) {
         this.messageProcess = messageProcess;
-        this.configuration = configuration;
-        this.registryService = registryService;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageRequest request) throws Exception {
-        String requestJsonBody = request.getBody();
-        MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
-        Message message = requestBody.getMessage();
-        PacketType command = message.getCommand();
-        MessageResponseBody responseBody = new MessageResponseBody();
-        responseBody.setRequestId(requestBody.getRequestId());
-        responseBody.setServerId(requestBody.getServerId());
-
-        if (command == PacketType.MESSAGE){
-            messageProcess.process(message, responseBody, (t) -> writeResponse(t, ctx));
-            return;
-        }
-
-        try {
-            handlerMessage(command, responseBody);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            responseBody.setMsg(e.getMessage());
-            responseBody.setStatus(ResponseStatus.ERROR);
-        } finally {
-            writeResponse(responseBody, ctx);
-        }
+        messageProcess.process(request, (t) -> writeResponse(t, ctx));
     }
 
     @Override
@@ -94,22 +61,6 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.close();
         super.channelInactive(ctx);
-    }
-
-    private void handlerMessage(PacketType command, MessageResponseBody responseBody){
-        switch (command){
-            case REGISTER:
-                registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                break;
-            case DEREGISTER:
-                registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                break;
-            case PING:
-                responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
-                break;
-            default:
-                throw new UnSupportMessageException("UnSupport message packet" + command);
-        }
     }
 
     private void writeResponse(MessageResponseBody responseBody, ChannelHandlerContext ctx){

@@ -18,7 +18,7 @@ package com.saucesubfresh.rpc.server.callback;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 @FunctionalInterface
-public interface ProcessCallback {
+public interface ResponseWriter {
     /**
      * 响应数据
      * @param responseBody
