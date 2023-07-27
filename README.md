@@ -345,6 +345,10 @@ public class SpringWebMvcConfig {
 
 2. 增加了带回调的 rpc 调用方法
 
+### 1.2.0 版本更新说明
+
+1. 服务端消息处理优化
+
 ## 最后
 
 欢迎使用，欢迎交流，欢迎 star
