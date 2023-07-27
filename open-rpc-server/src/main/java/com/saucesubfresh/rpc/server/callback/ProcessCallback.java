@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.rpc.server.process;
+package com.saucesubfresh.rpc.server.callback;
 
-import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
-import com.saucesubfresh.rpc.server.callback.ProcessCallback;
 
-import java.util.function.Consumer;
-
-/**
- * @author lijunping on 2022/1/19
- */
-public interface MessageProcess {
-
+@FunctionalInterface
+public interface ProcessCallback {
     /**
-     * 处理消息
-     * @param message
+     * 响应数据
      * @param responseBody
-     * @param callback
      */
-    void process(Message message, MessageResponseBody responseBody, ProcessCallback callback);
+    void write(MessageResponseBody responseBody);
 }
