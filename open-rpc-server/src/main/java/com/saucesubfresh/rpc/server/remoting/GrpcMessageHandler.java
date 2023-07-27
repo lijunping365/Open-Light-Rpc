@@ -53,17 +53,14 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
-
         MessageResponseBody responseBody = new MessageResponseBody();
         responseBody.setServerId(requestBody.getServerId());
         responseBody.setRequestId(requestBody.getRequestId());
-
 
         if (command == PacketType.MESSAGE){
             messageProcess.process(message, responseBody, (t) -> writeResponse(t, responseObserver));
             return;
         }
-
 
         try {
             handlerMessage(command);

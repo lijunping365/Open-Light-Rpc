@@ -55,13 +55,13 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageRequest request) throws Exception {
-        MessageResponseBody responseBody = new MessageResponseBody();
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
-        responseBody.setRequestId(requestBody.getRequestId());
-        responseBody.setServerId(requestBody.getServerId());
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
+        MessageResponseBody responseBody = new MessageResponseBody();
+        responseBody.setRequestId(requestBody.getRequestId());
+        responseBody.setServerId(requestBody.getServerId());
 
         if (command == PacketType.MESSAGE){
             messageProcess.process(message, responseBody, (t) -> writeResponse(t, ctx));
