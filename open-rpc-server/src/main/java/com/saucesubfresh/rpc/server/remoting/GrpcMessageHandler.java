@@ -49,37 +49,50 @@ public class GrpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
 
     @Override
     public void messageProcessing(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
-        MessageResponseBody responseBody = new MessageResponseBody();
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
+
+        MessageResponseBody responseBody = new MessageResponseBody();
+        responseBody.setServerId(requestBody.getServerId());
+        responseBody.setRequestId(requestBody.getRequestId());
+
+
+        if (command == PacketType.MESSAGE){
+            messageProcess.process(message, responseBody, (t) -> writeResponse(t, responseObserver));
+            return;
+        }
+
+
         try {
-            switch (command){
-                case REGISTER:
-                    registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case DEREGISTER:
-                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case MESSAGE:
-                    byte[] body = messageProcess.process(message);
-                    responseBody.setBody(body);
-                    break;
-                default:
-                    throw new UnSupportMessageException("UnSupport message packet" + command);
-            }
+            handlerMessage(command);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             responseBody.setMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
-            responseBody.setServerId(requestBody.getServerId());
-            responseBody.setRequestId(requestBody.getRequestId());
-            String responseJsonBody = JSON.toJSON(responseBody);
-            MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
-            responseObserver.onNext(messageResponse);
-            responseObserver.onCompleted();
+            writeResponse(responseBody, responseObserver);
         }
+    }
+
+    private void handlerMessage(PacketType command){
+        switch (command){
+            case REGISTER:
+                registryService.register(configuration.getServerAddress(), configuration.getServerPort());
+                break;
+            case DEREGISTER:
+                registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
+                break;
+            default:
+                throw new UnSupportMessageException("UnSupport message packet" + command);
+        }
+    }
+
+    private void writeResponse(MessageResponseBody responseBody, StreamObserver<MessageResponse> responseObserver){
+        String responseJsonBody = JSON.toJSON(responseBody);
+        MessageResponse messageResponse = MessageResponse.newBuilder().setBody(responseJsonBody).build();
+        responseObserver.onNext(messageResponse);
+        responseObserver.onCompleted();
     }
 }

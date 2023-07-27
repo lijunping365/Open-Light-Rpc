@@ -16,8 +16,11 @@
 package com.saucesubfresh.rpc.server.process;
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Consumer;
 
 /**
  * @author lijunping on 2022/3/18
@@ -25,9 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultMessageProcess implements MessageProcess{
 
+
     @Override
-    public byte[] process(Message message) {
+    public void process(Message message, MessageResponseBody responseBody, Consumer<MessageResponseBody> consumer) {
         log.info("收到的消息是 {}", JSON.toJSON(message));
-        return null;
     }
 }

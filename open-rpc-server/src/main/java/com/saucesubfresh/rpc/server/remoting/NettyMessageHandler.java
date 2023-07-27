@@ -62,32 +62,20 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
         responseBody.setServerId(requestBody.getServerId());
         Message message = requestBody.getMessage();
         PacketType command = message.getCommand();
+
+        if (command == PacketType.MESSAGE){
+            messageProcess.process(message, responseBody, (t) -> writeResponse(t, ctx));
+            return;
+        }
+
         try {
-            switch (command){
-                case REGISTER:
-                    registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case DEREGISTER:
-                    registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                    break;
-                case MESSAGE:
-                    byte[] body = messageProcess.process(message);
-                    responseBody.setBody(body);
-                    break;
-                case PING:
-                    responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
-                    break;
-                default:
-                    throw new UnSupportMessageException("UnSupport message packet" + command);
-            }
+            handlerMessage(command, responseBody);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             responseBody.setMsg(e.getMessage());
             responseBody.setStatus(ResponseStatus.ERROR);
         } finally {
-            String responseJsonBody = JSON.toJSON(responseBody);
-            MessageResponse response = MessageResponse.newBuilder().setBody(responseJsonBody).build();
-            ctx.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> log.info("Send response for request " + requestBody.getRequestId()));
+            writeResponse(responseBody, ctx);
         }
     }
 
@@ -106,5 +94,27 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.close();
         super.channelInactive(ctx);
+    }
+
+    private void handlerMessage(PacketType command, MessageResponseBody responseBody){
+        switch (command){
+            case REGISTER:
+                registryService.register(configuration.getServerAddress(), configuration.getServerPort());
+                break;
+            case DEREGISTER:
+                registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
+                break;
+            case PING:
+                responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
+                break;
+            default:
+                throw new UnSupportMessageException("UnSupport message packet" + command);
+        }
+    }
+
+    private void writeResponse(MessageResponseBody responseBody, ChannelHandlerContext ctx){
+        String responseJsonBody = JSON.toJSON(responseBody);
+        MessageResponse response = MessageResponse.newBuilder().setBody(responseJsonBody).build();
+        ctx.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> log.info("Send response for request " + responseBody.getRequestId()));
     }
 }

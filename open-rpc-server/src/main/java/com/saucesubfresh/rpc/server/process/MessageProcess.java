@@ -16,6 +16,9 @@
 package com.saucesubfresh.rpc.server.process;
 
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
+
+import java.util.function.Consumer;
 
 /**
  * @author lijunping on 2022/1/19
@@ -26,5 +29,5 @@ public interface MessageProcess {
      * 处理消息
      * @param message 消息
      */
-    byte[] process(Message message);
+    void process(Message message, MessageResponseBody responseBody, Consumer<MessageResponseBody> consumer);
 }
