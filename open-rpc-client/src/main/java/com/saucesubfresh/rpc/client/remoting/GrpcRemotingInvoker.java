@@ -29,6 +29,7 @@ import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -50,11 +51,27 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         String serverId = serverInformation.getServerId();
         ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
         try {
-            MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
+            MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
             final String random = requestIdGenerator.generate();
             MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
             String requestJsonBody = JSON.toJSON(requestBody);
-            MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());
+            MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+            messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {
+                @Override
+                public void onNext(MessageResponse messageResponse) {
+
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onCompleted() {
+
+                }
+            });
             return JSON.parse(response.getBody(), MessageResponseBody.class);
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
