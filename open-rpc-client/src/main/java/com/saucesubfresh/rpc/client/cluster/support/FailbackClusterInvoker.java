@@ -81,8 +81,7 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
         int currentTimes = 0;
         while (!success) {
             try {
-                MessageResponseBody response = remotingInvoker.invoke(message, serverInformation);
-                callback.onResponse(response);
+                remotingInvoker.invokeAsync(message, serverInformation, callback);
                 success = true;
             }catch (RpcException e){
                 log.error(e.getMessage(), e);

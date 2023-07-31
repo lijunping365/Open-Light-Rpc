@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -41,5 +42,5 @@ public interface RemotingInvoker {
      * @param serverInformation
      * @throws RpcException
      */
-    void invokeAsync(Message message, ServerInformation serverInformation, ResponseReader responseReader) throws RpcException;
+    void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException;
 }

@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.remoting;
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
@@ -76,7 +77,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
     }
 
     @Override
-    public void invokeAsync(Message message, ServerInformation serverInformation, ResponseReader responseReader) throws RpcException {
+    public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
         String serverId = serverInformation.getServerId();
         ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
         MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
@@ -90,7 +91,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
                 @Override
                 public void onNext(MessageResponse response) {
                     MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-                    responseReader.read(responseBody);
+                    callback.onResponse(responseBody);
                 }
 
                 @Override

@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.remoting;
 
+import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
@@ -79,7 +80,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
     }
 
     @Override
-    public void invokeAsync(Message message, ServerInformation serverInformation, ResponseReader responseReader) throws RpcException {
+    public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
@@ -93,7 +94,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
             channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) channelFuture -> {
                 if (channelFuture.isSuccess()) {
                     MessageResponseBody responseBody = completableFuture.get();
-                    responseReader.read(responseBody);
+                    callback.onResponse(responseBody);
                 }else {
                     completableFuture.completeExceptionally(channelFuture.cause());
                     log.error("Send failed:", channelFuture.cause());
