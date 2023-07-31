@@ -43,9 +43,8 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
         ServerInformation serverInformation = super.select(message, servers);
-        super.callback(message, serverInformation, callback);
         boolean success = false;
         int maxTimes = configuration.getRetryTimes();
         int currentTimes = 0;
@@ -72,5 +71,35 @@ public class FailbackClusterInvoker extends AbstractClusterInvoker {
             }
         }
         return response;
+    }
+
+    @Override
+    protected void doInvokeAsync(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+        ServerInformation serverInformation = super.select(message, servers);
+        boolean success = false;
+        int maxTimes = configuration.getRetryTimes();
+        int currentTimes = 0;
+        while (!success) {
+            try {
+                MessageResponseBody response = remotingInvoker.invoke(message, serverInformation);
+                callback.onResponse(response);
+                success = true;
+            }catch (RpcException e){
+                log.error(e.getMessage(), e);
+            }
+            if (!success) {
+                currentTimes++;
+                if (currentTimes > maxTimes) {
+                    throw new FailbackException(serverInformation.getServerId(),
+                            "The number of invoke retries reaches the upper limit, " +
+                                    "the maximum number of times：" + maxTimes);
+                }
+                try {
+                    Thread.sleep(configuration.getRetryIntervalMilliSeconds());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

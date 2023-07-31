@@ -29,16 +29,16 @@ import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 public interface ClusterInvoker {
 
     /**
-     * 给服务端发送消息
+     * 同步调用
      * @param message 消息体
      * @throws RpcException
      */
     MessageResponseBody invoke(Message message) throws RpcException;
 
     /**
-     * 给服务端发送消息并且有回调
+     * 异步调用
      * @param message 消息体
      * @throws RpcException
      */
-    MessageResponseBody invokeWithCallback(Message message, CallCallback callback) throws RpcException;
+    void invokeAsync(Message message, CallCallback callback) throws RpcException;
 }

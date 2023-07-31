@@ -17,14 +17,14 @@ package com.saucesubfresh.rpc.client.callback;
 
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 @FunctionalInterface
 public interface CallCallback {
 
     /**
      * 在触发 rpc 之前的回调
-     * @param message
-     * @param serverInformation
+     * @param responseBody
      */
-    void onCall(Message message, ServerInformation serverInformation);
+    void onResponse(MessageResponseBody responseBody);
 }

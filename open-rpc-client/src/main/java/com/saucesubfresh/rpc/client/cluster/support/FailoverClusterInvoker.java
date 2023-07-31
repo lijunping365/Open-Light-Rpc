@@ -45,9 +45,8 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
     }
 
     @Override
-    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+    protected MessageResponseBody doInvoke(Message message, List<ServerInformation> servers) throws RpcException {
         ServerInformation serverInformation = super.select(message, servers);
-        super.callback(message, serverInformation, callback);
         MessageResponseBody response;
         try {
             response = remotingInvoker.invoke(message, serverInformation);
@@ -56,16 +55,30 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             if (CollectionUtils.isEmpty(servers)){
                 throw new FailoverException(serverInformation.getServerId(), e.getMessage());
             }
-            response = invoke(message, servers, callback);
+            response = invoke(message, servers);
         }
         return response;
     }
 
-    private MessageResponseBody invoke(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException{
+    @Override
+    protected void doInvokeAsync(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException {
+        ServerInformation serverInformation = super.select(message, servers);
+        try {
+            MessageResponseBody response = remotingInvoker.invoke(message, serverInformation);
+            callback.onResponse(response);
+        } catch (RpcException e){
+            servers.remove(serverInformation);
+            if (CollectionUtils.isEmpty(servers)){
+                throw new FailoverException(serverInformation.getServerId(), e.getMessage());
+            }
+            invokeAsync(message, servers, callback);
+        }
+    }
+
+    private MessageResponseBody invoke(Message message, List<ServerInformation> servers) throws RpcException{
         RpcException ex = null;
         MessageResponseBody response = null;
         for (ServerInformation serverInformation : servers) {
-            super.callback(message, serverInformation, callback);
             try {
                 response = remotingInvoker.invoke(message, serverInformation);
                 break;
@@ -77,5 +90,21 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             throw new FailoverException(servers.get(servers.size() -1).getServerId(), ex.getMessage());
         }
         return response;
+    }
+
+    private void invokeAsync(Message message, List<ServerInformation> servers, CallCallback callback) throws RpcException{
+        RpcException ex = null;
+        for (ServerInformation serverInformation : servers) {
+            try {
+                MessageResponseBody response = remotingInvoker.invoke(message, serverInformation);
+                callback.onResponse(response);
+                break;
+            }catch (RpcException e){
+                ex = e;
+            }
+        }
+        if (ex != null){
+            throw new FailoverException(servers.get(servers.size() -1).getServerId(), ex.getMessage());
+        }
     }
 }
