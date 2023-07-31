@@ -58,6 +58,7 @@ public class NettyClient implements RpcClient{
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .handler(new ChildChannelHandler());
         return bootstrap;
     }

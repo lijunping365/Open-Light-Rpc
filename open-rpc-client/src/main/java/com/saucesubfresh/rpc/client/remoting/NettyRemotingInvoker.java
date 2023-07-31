@@ -16,7 +16,6 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.client.callback.CallCallback;
-import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
@@ -27,11 +26,9 @@ import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -50,46 +47,34 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
+        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
-        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
+        MessageRequest messageRequest = buildRequest(serverId, message, random);
+        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
-        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        String requestJsonBody = JSON.toJSON(requestBody);
-        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
-
         try {
             channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) future -> {
                 if (!future.isSuccess()) {
                     completableFuture.completeExceptionally(future.cause());
-                    log.error("Send failed:", future.cause());
                 }
             });
             return completableFuture.get();
         } catch (Exception e) {
-            InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
-            log.error("flush error {}", socketAddress.getAddress().getHostAddress());
-            if (!channel.isActive() && !channel.isOpen() && !channel.isWritable()) {
-                channel.close();
-                NettyClientChannelManager.removeChannel(serverId);
-                log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
-            }
-            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message", serverId));
+            handlerException(serverId, channel, e);
+            String msg = String.format("To the Server: %s, exception when sending a message, cause by: %s", serverId, e.getMessage());
+            throw new RemoteInvokeException(serverId, msg);
         }
     }
 
     @Override
     public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
-        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         String serverId = serverInformation.getServerId();
-        final String random = requestIdGenerator.generate();
         Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
+        final String random = requestIdGenerator.generate();
+        MessageRequest messageRequest = buildRequest(serverId, message, random);
+        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
-        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        String requestJsonBody = JSON.toJSON(requestBody);
-        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
-
         try {
             channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) channelFuture -> {
                 if (channelFuture.isSuccess()) {
@@ -97,20 +82,27 @@ public class NettyRemotingInvoker implements RemotingInvoker {
                     callback.onResponse(responseBody);
                 }else {
                     completableFuture.completeExceptionally(channelFuture.cause());
-                    log.error("Send failed:", channelFuture.cause());
                 }
             });
         } catch (Exception e) {
-            InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
-            log.error("flush error {}", socketAddress.getAddress().getHostAddress());
-            if (!channel.isActive() && !channel.isOpen() && !channel.isWritable()) {
-                channel.close();
-                NettyClientChannelManager.removeChannel(serverId);
-                log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
-            }
-            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message", serverId));
+            handlerException(serverId, channel, e);
+            String msg = String.format("To the Server: %s, exception when sending a message, cause by: %s", serverId, e.getMessage());
+            throw new RemoteInvokeException(serverId, msg);
         }
     }
 
-    private void doInvoke(){}
+    private MessageRequest buildRequest(String serverId, Message message, String random){
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        String requestJsonBody = JSON.toJSON(requestBody);
+        return MessageRequest.newBuilder().setBody(requestJsonBody).build();
+    }
+
+    private void handlerException(String serverId, Channel channel, Exception e){
+        log.error("To the server {}, occur exception {}", serverId, e.getMessage());
+        if (!channel.isActive() && !channel.isOpen() && !channel.isWritable()) {
+            channel.close();
+            NettyClientChannelManager.removeChannel(serverId);
+            log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
+        }
+    }
 }
