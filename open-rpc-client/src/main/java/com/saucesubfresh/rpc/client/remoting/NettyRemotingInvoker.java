@@ -50,7 +50,9 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
-        MessageRequest messageRequest = buildRequest(serverId, message, random);
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        String requestJsonBody = JSON.toJSON(requestBody);
+        MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(requestJsonBody).build();
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
         try {
@@ -69,10 +71,11 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
-        String serverId = serverInformation.getServerId();
         Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
+        String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
-        MessageRequest messageRequest = buildRequest(serverId, message, random);
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
         try {
@@ -89,12 +92,6 @@ public class NettyRemotingInvoker implements RemotingInvoker {
             String msg = String.format("To the Server: %s, exception when sending a message, cause by: %s", serverId, e.getMessage());
             throw new RemoteInvokeException(serverId, msg);
         }
-    }
-
-    private MessageRequest buildRequest(String serverId, Message message, String random){
-        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        String requestJsonBody = JSON.toJSON(requestBody);
-        return MessageRequest.newBuilder().setBody(requestJsonBody).build();
     }
 
     private void handlerException(String serverId, Channel channel, Exception e){

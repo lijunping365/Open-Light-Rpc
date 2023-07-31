@@ -15,15 +15,13 @@
  */
 package com.saucesubfresh.rpc.client.callback;
 
-import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 
 @FunctionalInterface
 public interface CallCallback {
 
     /**
-     * 在触发 rpc 之前的回调
+     * 响应回调
      * @param responseBody
      */
     void onResponse(MessageResponseBody responseBody);
