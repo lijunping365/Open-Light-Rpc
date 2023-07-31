@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.remoting;
 
+import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -50,21 +51,51 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         String serverId = serverInformation.getServerId();
         ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
+        MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
+        final String random = requestIdGenerator.generate();
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        String requestJsonBody = JSON.toJSON(requestBody);
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+
         try {
-            MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
-            final String random = requestIdGenerator.generate();
-            MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-            String requestJsonBody = JSON.toJSON(requestBody);
-            MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+            MessageResponse response = messageClientStub.messageProcessing(messageRequest);
+            return JSON.parse(response.getBody(), MessageResponseBody.class);
+        } catch (StatusRuntimeException e) {
+            Status.Code code = e.getStatus().getCode();
+            log.error("To the Server: {}, exception when sending a message, Status Code: {}", serverId, code);
+            if (Status.Code.UNAVAILABLE == code) {
+                channel.shutdown();
+                GrpcClientChannelManager.removeChannel(serverId);
+                log.error("The Server is unavailable, shutdown channel and the cached channel is deleted.");
+            }
+            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message, Status Code: %s", serverId, code));
+        } catch (Exception e) {
+            channel.shutdown();
+            throw new RemoteInvokeException(serverId, String.format("To the Server: %s, exception when sending a message", serverId));
+        }
+    }
+
+    @Override
+    public void invokeAsync(Message message, ServerInformation serverInformation, ResponseReader responseReader) throws RpcException {
+        String serverId = serverInformation.getServerId();
+        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
+        MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
+        final String random = requestIdGenerator.generate();
+        MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        String requestJsonBody = JSON.toJSON(requestBody);
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+
+        try {
             messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {
                 @Override
-                public void onNext(MessageResponse messageResponse) {
-
+                public void onNext(MessageResponse response) {
+                    MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
+                    responseReader.read(responseBody);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-
+                    log.error(throwable.getMessage(), throwable);
                 }
 
                 @Override
@@ -72,7 +103,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
                 }
             });
-            return JSON.parse(response.getBody(), MessageResponseBody.class);
+
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
             log.error("To the Server: {}, exception when sending a message, Status Code: {}", serverId, code);

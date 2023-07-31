@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 
+import com.saucesubfresh.rpc.client.callback.ResponseReader;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
@@ -27,10 +28,18 @@ import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 public interface RemotingInvoker {
 
     /**
-     * 该接口是给系统调用的
+     * 同步调用
      * @param message
      * @param serverInformation
      * @throws RpcException
      */
     MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException;
+
+    /**
+     * 异步调用
+     * @param message
+     * @param serverInformation
+     * @throws RpcException
+     */
+    void invokeAsync(Message message, ServerInformation serverInformation, ResponseReader responseReader) throws RpcException;
 }
