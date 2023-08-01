@@ -353,6 +353,8 @@ public class SpringWebMvcConfig {
 
 1. 增加异步调用方法，增大并发性能
 
+2. 新增了请求拦截器
+
 ## 最后
 
 欢迎使用，欢迎交流，欢迎 star
