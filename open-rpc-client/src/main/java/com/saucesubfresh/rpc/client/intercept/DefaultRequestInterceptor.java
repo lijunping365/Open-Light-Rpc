@@ -20,10 +20,10 @@ import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 /**
  * @author lijunping on 2022/08/01
  */
-public interface ClientInterceptor {
+public class DefaultRequestInterceptor implements RequestInterceptor {
 
-    /**
-     * 请求拦截器
-     */
-    void intercept(MessageRequestBody messageRequestBody);
+    @Override
+    public void intercept(MessageRequestBody messageRequestBody) {
+
+    }
 }
