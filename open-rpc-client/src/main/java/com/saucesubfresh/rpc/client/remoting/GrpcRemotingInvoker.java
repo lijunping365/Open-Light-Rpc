@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.client.callback.CallCallback;
+import com.saucesubfresh.rpc.client.intercept.ClientInterceptor;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
@@ -40,10 +41,12 @@ import lombok.extern.slf4j.Slf4j;
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
     private final RpcClient rpcClient;
+    private final ClientInterceptor clientInterceptor;
     private final RequestIdGenerator requestIdGenerator;
 
-    public GrpcRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator) {
+    public GrpcRemotingInvoker(RpcClient rpcClient, ClientInterceptor clientInterceptor, RequestIdGenerator requestIdGenerator) {
         this.rpcClient = rpcClient;
+        this.clientInterceptor = clientInterceptor;
         this.requestIdGenerator = requestIdGenerator;
     }
 
@@ -56,6 +59,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
         String requestJsonBody = JSON.toJSON(requestBody);
         MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+        clientInterceptor.intercept(requestBody);
 
         try {
             MessageResponse response = messageClientStub.messageProcessing(messageRequest);
@@ -78,8 +82,8 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        String requestJsonBody = JSON.toJSON(requestBody);
-        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(requestJsonBody).build();
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
+        clientInterceptor.intercept(requestBody);
 
         try {
             messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {
