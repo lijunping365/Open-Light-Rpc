@@ -89,7 +89,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
                 @Override
                 public void onNext(MessageResponse response) {
                     MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-                    callback.onResponse(responseBody);
+                    callback.onCompleted(responseBody);
                 }
 
                 @Override

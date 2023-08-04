@@ -24,5 +24,5 @@ public interface CallCallback {
      * 响应回调
      * @param responseBody
      */
-    void onResponse(MessageResponseBody responseBody);
+    void onCompleted(MessageResponseBody responseBody);
 }
