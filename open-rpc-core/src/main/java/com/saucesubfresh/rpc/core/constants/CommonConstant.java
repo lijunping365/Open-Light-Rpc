@@ -35,6 +35,9 @@ public interface CommonConstant {
   int MAX_LENGTH = 4 * 1024 * 1024;
 
 
+  String CALLBACK_KEY = "callbackKey";
+
+
   public static final class Symbol {
     private Symbol() {
     }
