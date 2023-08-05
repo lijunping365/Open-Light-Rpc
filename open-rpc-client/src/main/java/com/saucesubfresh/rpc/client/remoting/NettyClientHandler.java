@@ -15,9 +15,7 @@
  */
 package com.saucesubfresh.rpc.client.remoting;
 
-import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.PacketType;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
@@ -28,7 +26,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,15 +44,11 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageRespo
             log.info("Receive beat-pong from {}", ctx.channel().remoteAddress());
             return;
         }
-
-        Object o = ctx.channel().attr(AttributeKey.valueOf(CommonConstant.CALLBACK_KEY)).get();
-        if (o != null) {
-            CallCallback callback = (CallCallback) o;
-            callback.onCompleted(responseBody);
-            return;
+        try {
+            NettyUnprocessedRequests.complete(responseBody);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
         }
-
-        NettyUnprocessedRequests.complete(responseBody);
     }
 
     @Override

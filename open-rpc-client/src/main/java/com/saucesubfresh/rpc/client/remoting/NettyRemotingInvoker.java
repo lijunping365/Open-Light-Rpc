@@ -19,7 +19,6 @@ import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.intercept.RequestInterceptor;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
@@ -29,7 +28,6 @@ import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
@@ -83,9 +81,23 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
         MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         requestInterceptor.intercept(requestBody);
-        channel.attr(AttributeKey.valueOf(CommonConstant.CALLBACK_KEY)).set(callback);
+        CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
+        NettyUnprocessedRequests.put(random, completableFuture);
         try {
-            channel.writeAndFlush(messageRequest);
+            channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) channelFuture -> {
+                if (channelFuture.isSuccess()) {
+                    completableFuture.whenComplete((responseBody, throwable) -> {
+                        if (throwable == null){
+                            callback.onCompleted(responseBody);
+                        }
+                    }).exceptionally(e->{
+                        log.error(e.getMessage(), e);
+                        throw new RemoteInvokeException(serverId, e.getMessage());
+                    });
+                }else {
+                    completableFuture.completeExceptionally(channelFuture.cause());
+                }
+            });
         } catch (Exception e) {
             handlerException(serverId, channel, e);
             String msg = String.format("To the Server: %s, exception when sending a message, cause by: %s", serverId, e.getMessage());
