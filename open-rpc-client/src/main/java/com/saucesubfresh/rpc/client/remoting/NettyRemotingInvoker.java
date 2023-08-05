@@ -94,7 +94,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
                         log.error(e.getMessage(), e);
                         throw new RemoteInvokeException(serverId, e.getMessage());
                     });
-                }else {
+                } else {
                     completableFuture.completeExceptionally(channelFuture.cause());
                 }
             });
