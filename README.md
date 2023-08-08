@@ -77,51 +77,32 @@ com:
 
 #### 4. 给服务端发送消息
 
-节选自 Open-Job
+节选自 Open-Job 代码片段，该代码仅为示例。
 
 ```java
 @Slf4j
 @Component
-public class ScheduleJobExecutor implements ScheduleTaskExecutor{
+public class OpenJobClientServiceImpl implements OpenJobClientService{
 
-    private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvoker clusterInvoker;
-    private final OpenJobMapper openJobMapper;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvoker clusterInvoker, OpenJobMapper openJobMapper) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    public OpenJobClientServiceImpl(ClusterInvoker clusterInvoker) {
         this.clusterInvoker = clusterInvoker;
-        this.openJobMapper = openJobMapper;
     }
 
     @Override
-    public void execute(List<Long> taskList){
-        List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
-        if (CollectionUtils.isEmpty(jobList)){
-            return;
-        }
-        // 1 组装任务
-        List<Message> messages = jobList.stream().map(e->{
-            MessageBody messageBody = new MessageBody();
-            messageBody.setHandlerName(e.getHandlerName());
-            messageBody.setParams(e.getParams());
-            byte[] serializeData = SerializationUtils.serialize(messageBody);
-            Message message = new Message();
-            message.setMsgId(String.valueOf(e.getId()));
-            message.setBody(serializeData);
-            return message;
-        }).collect(Collectors.toList());
+    public void invoke(Long jobId) {
+        Message message = new Message();
+        message.setMsgId(String.valueOf(jobId));
+        message.setNamespace(serverName);
 
-        // 2 分发任务
-        messages.forEach(message->{
-            String cause = null;
-            try {
-                clusterInvoker.invoke(message);
-            }catch (RpcException e){
-                cause = e.getMessage();
-            }
-            createLog(Long.parseLong(message.getMsgId()), cause);
-        });
+        try {
+            clusterInvoker.invokeAsync(message, (response) -> {
+                // TODO
+            });
+        } catch (RpcException ex){
+            // TODO
+        }
     }
 }
 ```
@@ -165,37 +146,44 @@ com:
 
 #### 4. 接收客户端发来的消息进行处理
 
-注入 MessageProcess 接口的实现覆盖系统默认的 DefaultMessageProcess
-
 节选自 Open-Job
 
 ```java
 @Slf4j
 @Component
-public class JobMessageProcessor implements MessageProcess {
+public class JobMessageProcessor extends AbstractMessageProcess {
 
-    private final JobHandlerCollector jobHandlerCollector;
+    private final JobHandlerRegister jobHandlerRegister;
+    private final JobThreadRepository jobThreadRepository;
 
-    public JobMessageProcessor(JobHandlerCollector jobHandlerCollector) {
-        this.jobHandlerCollector = jobHandlerCollector;
+    public JobMessageProcessor(RegistryService registryService,
+                               ServerConfiguration configuration,
+                               JobHandlerRegister jobHandlerRegister,
+                               JobThreadRepository jobThreadRepository) {
+        super(configuration, registryService);
+        this.jobHandlerRegister = jobHandlerRegister;
+        this.jobThreadRepository = jobThreadRepository;
     }
 
     @Override
-    public byte[] process(Message message) {
+    public void doProcess(Message message, MessageResponseBody responseBody, ResponseWriter responseWriter) {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
-        String handlerName = messageBody.getHandlerName();
-        OpenJobHandler openJobHandler = jobHandlerCollector.getJobHandler(handlerName);
-        if (ObjectUtils.isEmpty(openJobHandler)) {
-            throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
+        CommandEnum command = CommandEnum.of(messageBody.getCommand());
+        if (command == CommandEnum.SCHEDULE){
+            handlerSchedule(messageBody, responseBody, responseWriter);
+            return;
         }
+
         try {
-            openJobHandler.handler(messageBody.getParams());
-        } catch (Exception e) {
+            handlerMessage(messageBody, command, responseBody);
+        } catch (Exception e){
             log.error(e.getMessage(), e);
-            throw new RpcException("JobHandlerName: " + handlerName + ", execute exception:" + e.getMessage());
+            responseBody.setMsg(e.getMessage());
+            responseBody.setStatus(ResponseStatus.ERROR);
+        } finally {
+            responseWriter.write(responseBody);
         }
-        return null;
     }
 }
 ```
