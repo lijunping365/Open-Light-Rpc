@@ -1,7 +1,7 @@
 # Open-Light-Rpc
 
 <p align="center">
-轻量级rpc框架，客户端与服务端通信采用 Grpc-Netty 通信方式
+轻量级，高性能rpc框架，客户端与服务端通信采用 Grpc-Netty 通信方式
 </p>
 
 <p align="center">
@@ -17,6 +17,12 @@
      <img alt="github" src="https://img.shields.io/github/stars/lijunping365/Open-Light-Rpc" >
   </a>
 </p>
+
+## 链接
+
+* [官网地址](https://openbytecode.com/)
+* [文档地址](https://openbytecode.com/starter/open-light-rpc/docs/)
+* [官方讨论地址](https://openbytecode.com/community/)
 
 ## 功能
 
@@ -42,7 +48,7 @@
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-client</artifactId>
-    <version>1.0.4</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -128,7 +134,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-server</artifactId>
-    <version>1.0.4</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
