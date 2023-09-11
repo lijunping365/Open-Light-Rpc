@@ -34,17 +34,6 @@ import java.util.TreeMap;
  */
 public class RandomWeightedLoadBalance extends AbstractLoadBalance {
 
-    /**
-     * lookup client load-balanced address
-     * Lookup according to random weight admin address
-     * get firstKey by {@link SortedMap#tailMap(Object)}
-     *
-     *
-     * @param message
-     * @param clients message pipe bind clients
-     * @return Load-balanced {@link ServerInformation}
-     * @throws RpcException message pipe exception
-     */
     @Override
     public ServerInformation doSelect(Message message, List<ServerInformation> clients) throws RpcException {
         TreeMap<Double, ServerInformation> nodes = new TreeMap<>();

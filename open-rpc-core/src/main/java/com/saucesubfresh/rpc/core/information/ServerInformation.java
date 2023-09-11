@@ -41,7 +41,7 @@ public class ServerInformation {
     @Setter
     private long onlineTime;
     /**
-     * this client status
+     * this server status
      */
     @Setter
     private Status status;
