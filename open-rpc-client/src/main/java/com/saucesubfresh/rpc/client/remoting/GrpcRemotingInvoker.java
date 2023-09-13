@@ -57,8 +57,8 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         requestInterceptor.intercept(requestBody);
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
 
         try {
             MessageResponse response = messageClientStub.messageProcessing(messageRequest);
@@ -81,8 +81,8 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         requestInterceptor.intercept(requestBody);
+        MessageRequest messageRequest = MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
 
         try {
             messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {

@@ -54,9 +54,9 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
+        requestInterceptor.intercept(requestBody);
         String requestJsonBody = JSON.toJSON(requestBody);
         MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(requestJsonBody).build();
-        requestInterceptor.intercept(requestBody);
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
         try {
@@ -79,8 +79,8 @@ public class NettyRemotingInvoker implements RemotingInvoker {
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
-        MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         requestInterceptor.intercept(requestBody);
+        MessageRequest messageRequest =  MessageRequest.newBuilder().setBody(JSON.toJSON(requestBody)).build();
         CompletableFuture<MessageResponseBody> completableFuture = new CompletableFuture<>();
         NettyUnprocessedRequests.put(random, completableFuture);
         try {
