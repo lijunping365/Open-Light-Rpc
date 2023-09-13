@@ -88,8 +88,10 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {
                 @Override
                 public void onNext(MessageResponse response) {
-                    MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
-                    callback.onCompleted(responseBody);
+                    if (callback != null){
+                        MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
+                        callback.onCompleted(responseBody);
+                    }
                 }
 
                 @Override

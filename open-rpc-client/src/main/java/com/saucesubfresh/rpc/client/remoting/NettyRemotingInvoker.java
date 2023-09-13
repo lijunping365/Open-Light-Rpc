@@ -87,7 +87,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
             channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) channelFuture -> {
                 if (channelFuture.isSuccess()) {
                     completableFuture.whenComplete((responseBody, throwable) -> {
-                        if (throwable == null){
+                        if (throwable == null && callback != null){
                             callback.onCompleted(responseBody);
                         }
                     }).exceptionally(e->{
