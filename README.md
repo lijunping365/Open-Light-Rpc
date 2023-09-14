@@ -357,6 +357,10 @@ public class SpringWebMvcConfig {
 
 1. 修复异步调用回调函数为空 bug
 
+### 1.4.0 版本更新说明
+
+1. 新增了响应拦截器
+
 ## 最后
 
 欢迎使用，欢迎交流，欢迎 star
