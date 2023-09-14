@@ -353,6 +353,10 @@ public class SpringWebMvcConfig {
 
 2. 新增了请求拦截器
 
+### 1.3.1 版本更新说明
+
+1. 修复异步调用回调函数为空 bug
+
 ## 最后
 
 欢迎使用，欢迎交流，欢迎 star
