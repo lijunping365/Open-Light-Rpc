@@ -22,8 +22,10 @@ import com.saucesubfresh.rpc.client.cluster.ClusterInvoker;
 import com.saucesubfresh.rpc.client.cluster.support.FailoverClusterInvoker;
 import com.saucesubfresh.rpc.client.discovery.ServiceDiscovery;
 import com.saucesubfresh.rpc.client.discovery.support.NacosServiceDiscovery;
+import com.saucesubfresh.rpc.client.intercept.DefaultResponseInterceptor;
 import com.saucesubfresh.rpc.client.intercept.RequestInterceptor;
 import com.saucesubfresh.rpc.client.intercept.DefaultRequestInterceptor;
+import com.saucesubfresh.rpc.client.intercept.ResponseInterceptor;
 import com.saucesubfresh.rpc.client.loadbalance.LoadBalance;
 import com.saucesubfresh.rpc.client.loadbalance.support.ConsistentHashLoadBalance;
 import com.saucesubfresh.rpc.client.manager.DefaultInstanceManager;
@@ -78,10 +80,17 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public ResponseInterceptor responseInterceptor(){
+        return new DefaultResponseInterceptor();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public RemotingInvoker remotingInvoker(RpcClient client,
+                                           RequestIdGenerator requestIdGenerator,
                                            RequestInterceptor requestInterceptor,
-                                           RequestIdGenerator requestIdGenerator){
-        return new GrpcRemotingInvoker(client, requestInterceptor, requestIdGenerator);
+                                           ResponseInterceptor responseInterceptor){
+        return new GrpcRemotingInvoker(client, requestIdGenerator, requestInterceptor, responseInterceptor);
     }
 
     @Bean

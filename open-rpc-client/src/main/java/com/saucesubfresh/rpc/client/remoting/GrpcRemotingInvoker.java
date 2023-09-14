@@ -17,6 +17,7 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.intercept.RequestInterceptor;
+import com.saucesubfresh.rpc.client.intercept.ResponseInterceptor;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
@@ -41,13 +42,15 @@ import lombok.extern.slf4j.Slf4j;
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
     private final RpcClient rpcClient;
-    private final RequestInterceptor requestInterceptor;
     private final RequestIdGenerator requestIdGenerator;
+    private final RequestInterceptor requestInterceptor;
+    private final ResponseInterceptor responseInterceptor;
 
-    public GrpcRemotingInvoker(RpcClient rpcClient, RequestInterceptor requestInterceptor, RequestIdGenerator requestIdGenerator) {
+    public GrpcRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
         this.rpcClient = rpcClient;
         this.requestInterceptor = requestInterceptor;
         this.requestIdGenerator = requestIdGenerator;
+        this.responseInterceptor = responseInterceptor;
     }
 
     @Override
@@ -62,7 +65,9 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
 
         try {
             MessageResponse response = messageClientStub.messageProcessing(messageRequest);
-            return JSON.parse(response.getBody(), MessageResponseBody.class);
+            MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
+            responseInterceptor.intercept(requestBody, responseBody);
+            return responseBody;
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
             handlerException(serverId, channel, code);
@@ -88,8 +93,9 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             messageServiceStub.messageProcessing(messageRequest, new StreamObserver<MessageResponse>() {
                 @Override
                 public void onNext(MessageResponse response) {
+                    MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
+                    responseInterceptor.intercept(requestBody, responseBody);
                     if (callback != null){
-                        MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
                         callback.onCompleted(responseBody);
                     }
                 }

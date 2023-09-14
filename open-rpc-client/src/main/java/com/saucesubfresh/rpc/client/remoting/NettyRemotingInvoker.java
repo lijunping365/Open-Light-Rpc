@@ -17,6 +17,7 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import com.saucesubfresh.rpc.client.callback.CallCallback;
 import com.saucesubfresh.rpc.client.intercept.RequestInterceptor;
+import com.saucesubfresh.rpc.client.intercept.ResponseInterceptor;
 import com.saucesubfresh.rpc.client.random.RequestIdGenerator;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RemoteInvokeException;
@@ -39,13 +40,15 @@ import java.util.concurrent.CompletableFuture;
 public class NettyRemotingInvoker implements RemotingInvoker {
 
     private final RpcClient rpcClient;
-    private final RequestInterceptor requestInterceptor;
     private final RequestIdGenerator requestIdGenerator;
+    private final RequestInterceptor requestInterceptor;
+    private final ResponseInterceptor responseInterceptor;
 
-    public NettyRemotingInvoker(RpcClient rpcClient, RequestInterceptor requestInterceptor, RequestIdGenerator requestIdGenerator) {
+    public NettyRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
         this.rpcClient = rpcClient;
         this.requestInterceptor = requestInterceptor;
         this.requestIdGenerator = requestIdGenerator;
+        this.responseInterceptor = responseInterceptor;
     }
 
     @Override
@@ -65,7 +68,9 @@ public class NettyRemotingInvoker implements RemotingInvoker {
                     completableFuture.completeExceptionally(future.cause());
                 }
             });
-            return completableFuture.get();
+            MessageResponseBody responseBody = completableFuture.get();
+            responseInterceptor.intercept(requestBody, responseBody);
+            return responseBody;
         } catch (Exception e) {
             handlerException(serverId, channel, e);
             String msg = String.format("To the Server: %s, exception when sending a message, cause by: %s", serverId, e.getMessage());
@@ -87,6 +92,8 @@ public class NettyRemotingInvoker implements RemotingInvoker {
             channel.writeAndFlush(messageRequest).addListener((ChannelFutureListener) channelFuture -> {
                 if (channelFuture.isSuccess()) {
                     completableFuture.whenComplete((responseBody, throwable) -> {
+                        responseInterceptor.intercept(requestBody, responseBody);
+                    }).whenComplete((responseBody, throwable) -> {
                         if (throwable == null && callback != null){
                             callback.onCompleted(responseBody);
                         }
