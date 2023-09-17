@@ -17,15 +17,42 @@ package com.saucesubfresh.rpc.client.remoting;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lijunping on 2022/8/23
  */
-public class GrpcClient implements RpcClient{
+@Slf4j
+public class GrpcClient extends AbstractRemotingClient {
 
     public ManagedChannel connect(String address, int port){
         return ManagedChannelBuilder.forAddress(address, port)
                 .usePlaintext()
                 .build();
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void shutdown() {
+        ConcurrentMap<String, ManagedChannel> serverChannel = GrpcClientChannelManager.getServerChannel();
+        if (serverChannel.size() == 0) {
+            return;
+        }
+
+        for (Map.Entry<String, ManagedChannel> item: serverChannel.entrySet()) {
+            try {
+                item.getValue().shutdown();
+                GrpcClientChannelManager.removeChannel(item.getKey());
+            }catch (Exception e){
+                log.error("ManagedChannel shutdown exception, ", e);
+            }
+        }
     }
 }

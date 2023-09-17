@@ -37,7 +37,7 @@ import com.saucesubfresh.rpc.client.random.support.SequenceRequestIdGenerator;
 import com.saucesubfresh.rpc.client.remoting.GrpcClient;
 import com.saucesubfresh.rpc.client.remoting.GrpcRemotingInvoker;
 import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
-import com.saucesubfresh.rpc.client.remoting.RpcClient;
+import com.saucesubfresh.rpc.client.remoting.RemotingClient;
 import com.saucesubfresh.rpc.client.store.InstanceStore;
 import com.saucesubfresh.rpc.client.store.support.LocalInstanceStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -68,7 +68,7 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RpcClient client(){
+    public RemotingClient remotingClient(){
         return new GrpcClient();
     }
 
@@ -86,11 +86,11 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RemotingInvoker remotingInvoker(RpcClient client,
+    public RemotingInvoker remotingInvoker(RemotingClient remotingClient,
                                            RequestIdGenerator requestIdGenerator,
                                            RequestInterceptor requestInterceptor,
                                            ResponseInterceptor responseInterceptor){
-        return new GrpcRemotingInvoker(client, requestIdGenerator, requestInterceptor, responseInterceptor);
+        return new GrpcRemotingInvoker(remotingClient, requestIdGenerator, requestInterceptor, responseInterceptor);
     }
 
     @Bean

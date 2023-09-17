@@ -56,7 +56,7 @@ public class GrpcClientChannelManager {
             SERVER_CHANNEL.put(serverId, channel);
             return channel;
         }catch (Exception e){
-            log.error("Failed to connect to the server {}", serverId);
+            log.error("Failed to connect to the server {}, and exception is {}", serverId, e);
             throw new ConnectNetworkException(serverId, "Failed to connect to the server:" + serverId);
         }
     }
@@ -68,5 +68,14 @@ public class GrpcClientChannelManager {
      */
     public static void removeChannel(String serverId) {
         SERVER_CHANNEL.remove(serverId);
+    }
+
+    /**
+     * Get all serverChannel
+     *
+     * @return serverChannel
+     */
+    public static ConcurrentMap<String, ManagedChannel> getServerChannel() {
+        return SERVER_CHANNEL;
     }
 }

@@ -60,8 +60,8 @@ public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RpcServer server(MessageHandler messageHandler,
-                            ServerConfiguration configuration){
+    public RemotingServer remotingServer(MessageHandler messageHandler,
+                                         ServerConfiguration configuration){
         return new GrpcServer(configuration, messageHandler);
     }
 }
