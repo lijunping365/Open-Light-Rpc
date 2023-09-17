@@ -21,6 +21,7 @@ import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageResponse;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
+import com.saucesubfresh.rpc.server.hook.ShutdownHook;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -45,7 +46,8 @@ public class NettyServer extends AbstractRemotingServer {
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup selectorGroup;
 
-    public NettyServer(MessageHandler messageHandler, ServerConfiguration configuration) {
+    public NettyServer(ShutdownHook shutdownHook, MessageHandler messageHandler, ServerConfiguration configuration) {
+        super(shutdownHook);
         this.messageHandler = messageHandler;
         this.configuration = configuration;
         this.serverBootstrap = new ServerBootstrap();

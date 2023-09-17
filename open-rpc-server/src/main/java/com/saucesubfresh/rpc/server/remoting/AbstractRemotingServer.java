@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.rpc.server.remoting;
 
+import com.saucesubfresh.rpc.server.hook.ShutdownHook;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -27,6 +28,12 @@ import java.util.concurrent.Executors;
 public abstract class AbstractRemotingServer implements RemotingServer, InitializingBean, DisposableBean {
     private static final ExecutorService SERVER_START_EXECUTOR = Executors.newSingleThreadExecutor();
 
+    private final ShutdownHook shutdownHook;
+
+    protected AbstractRemotingServer(ShutdownHook shutdownHook) {
+        this.shutdownHook = shutdownHook;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         SERVER_START_EXECUTOR.execute(this::start);
@@ -34,6 +41,7 @@ public abstract class AbstractRemotingServer implements RemotingServer, Initiali
 
     @Override
     public void destroy() throws Exception {
+        shutdownHook.beforeShutdown();
         this.shutdown();
         SERVER_START_EXECUTOR.shutdown();
     }

@@ -16,6 +16,7 @@
 package com.saucesubfresh.rpc.server.remoting;
 
 import com.saucesubfresh.rpc.server.ServerConfiguration;
+import com.saucesubfresh.rpc.server.hook.ShutdownHook;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -33,7 +34,8 @@ public class GrpcServer extends AbstractRemotingServer {
     private final MessageHandler messageHandler;
     private final ServerConfiguration configuration;
 
-    public GrpcServer(ServerConfiguration configuration, MessageHandler messageHandler){
+    public GrpcServer(ShutdownHook shutdownHook, ServerConfiguration configuration, MessageHandler messageHandler){
+        super(shutdownHook);
         this.configuration = configuration;
         this.messageHandler = messageHandler;
         this.rpcServer = buildServer();

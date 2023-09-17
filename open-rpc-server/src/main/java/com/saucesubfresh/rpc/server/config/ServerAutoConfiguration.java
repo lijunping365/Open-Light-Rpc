@@ -18,6 +18,8 @@ package com.saucesubfresh.rpc.server.config;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.annotation.EnableOpenRpcServer;
+import com.saucesubfresh.rpc.server.hook.DefaultShutdownHook;
+import com.saucesubfresh.rpc.server.hook.ShutdownHook;
 import com.saucesubfresh.rpc.server.registry.support.NacosRegistryService;
 import com.saucesubfresh.rpc.server.remoting.*;
 import com.saucesubfresh.rpc.server.process.DefaultMessageProcess;
@@ -60,8 +62,15 @@ public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RemotingServer remotingServer(MessageHandler messageHandler,
+    public ShutdownHook shutdownHook(){
+        return new DefaultShutdownHook();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RemotingServer remotingServer(ShutdownHook shutdownHook,
+                                         MessageHandler messageHandler,
                                          ServerConfiguration configuration){
-        return new GrpcServer(configuration, messageHandler);
+        return new GrpcServer(shutdownHook, configuration, messageHandler);
     }
 }
