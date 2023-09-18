@@ -33,7 +33,9 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -43,16 +45,18 @@ import java.util.concurrent.TimeUnit;
  * @author lijunping 2022-06-08 07:25
  */
 @Slf4j
-public class NettyClient implements RpcClient{
+public class NettyClient extends AbstractRemotingClient {
+
     private final Bootstrap bootstrap;
+    private final EventLoopGroup group;
 
     public NettyClient() {
-        this.bootstrap = initBootstrap();
+        this.bootstrap = new Bootstrap();
+        this.group = new NioEventLoopGroup(2);
     }
 
-    public Bootstrap initBootstrap(){
-        EventLoopGroup group = new NioEventLoopGroup(2);
-        Bootstrap bootstrap = new Bootstrap();
+    @Override
+    public void start() {
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
@@ -60,7 +64,29 @@ public class NettyClient implements RpcClient{
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .handler(new ChildChannelHandler());
-        return bootstrap;
+    }
+
+    @Override
+    public void shutdown() {
+        try {
+            group.shutdownGracefully();
+        } catch (Exception e) {
+            log.error("NettyServer shutdown exception, ", e);
+        }
+
+        ConcurrentMap<String, Channel> serverChannel = NettyClientChannelManager.getServerChannel();
+        if (serverChannel.size() == 0) {
+            return;
+        }
+
+        for (Map.Entry<String, Channel> item: serverChannel.entrySet()) {
+            try {
+                item.getValue().closeFuture();
+                GrpcClientChannelManager.removeChannel(item.getKey());
+            }catch (Exception e){
+                log.error("Channel close exception, ", e);
+            }
+        }
     }
 
     /**

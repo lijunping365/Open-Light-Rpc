@@ -41,13 +41,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
-    private final RpcClient rpcClient;
+    private final RemotingClient remotingClient;
     private final RequestIdGenerator requestIdGenerator;
     private final RequestInterceptor requestInterceptor;
     private final ResponseInterceptor responseInterceptor;
 
-    public GrpcRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
-        this.rpcClient = rpcClient;
+    public GrpcRemotingInvoker(RemotingClient remotingClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
+        this.remotingClient = remotingClient;
         this.requestInterceptor = requestInterceptor;
         this.requestIdGenerator = requestIdGenerator;
         this.responseInterceptor = responseInterceptor;
@@ -56,7 +56,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
         String serverId = serverInformation.getServerId();
-        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
+        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) remotingClient, serverInformation);
         MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
@@ -82,7 +82,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
     @Override
     public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
         String serverId = serverInformation.getServerId();
-        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) rpcClient, serverInformation);
+        ManagedChannel channel = GrpcClientChannelManager.establishChannel((GrpcClient) remotingClient, serverInformation);
         MessageServiceGrpc.MessageServiceStub messageServiceStub = MessageServiceGrpc.newStub(channel);
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);

@@ -52,7 +52,7 @@
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-client</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
@@ -119,7 +119,7 @@ public class OpenJobClientServiceImpl implements OpenJobClientService{
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-server</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
@@ -347,7 +347,7 @@ public class SpringWebMvcConfig {
 
 1. 重构了服务端的请求处理，在处理请求时新增了钩子函数，便于请求的异步处理
 
-### 1.4.0 版本更新说明
+### 1.5.0 版本更新说明
 
 1. 增加异步调用方法，增大并发性能
 
@@ -360,6 +360,12 @@ public class SpringWebMvcConfig {
 ### 1.4.0 版本更新说明
 
 1. 新增了响应拦截器
+
+### 1.5.0 版本更新说明
+
+1. 客户端和服务端新增启动和停止函数
+
+2. 服务端新增服务停止钩子函数，用于在服务停止前执行某些操作
 
 ## 最后
 

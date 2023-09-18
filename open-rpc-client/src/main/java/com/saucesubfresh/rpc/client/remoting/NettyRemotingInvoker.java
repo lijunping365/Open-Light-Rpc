@@ -39,13 +39,13 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class NettyRemotingInvoker implements RemotingInvoker {
 
-    private final RpcClient rpcClient;
+    private final RemotingClient remotingClient;
     private final RequestIdGenerator requestIdGenerator;
     private final RequestInterceptor requestInterceptor;
     private final ResponseInterceptor responseInterceptor;
 
-    public NettyRemotingInvoker(RpcClient rpcClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
-        this.rpcClient = rpcClient;
+    public NettyRemotingInvoker(RemotingClient remotingClient, RequestIdGenerator requestIdGenerator, RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
+        this.remotingClient = remotingClient;
         this.requestInterceptor = requestInterceptor;
         this.requestIdGenerator = requestIdGenerator;
         this.responseInterceptor = responseInterceptor;
@@ -53,7 +53,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public MessageResponseBody invoke(Message message, ServerInformation serverInformation) throws RpcException {
-        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
+        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) remotingClient, serverInformation);
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);
@@ -80,7 +80,7 @@ public class NettyRemotingInvoker implements RemotingInvoker {
 
     @Override
     public void invokeAsync(Message message, ServerInformation serverInformation, CallCallback callback) throws RpcException {
-        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) rpcClient, serverInformation);
+        Channel channel = NettyClientChannelManager.establishChannel((NettyClient) remotingClient, serverInformation);
         String serverId = serverInformation.getServerId();
         final String random = requestIdGenerator.generate();
         MessageRequestBody requestBody = new MessageRequestBody().setServerId(serverId).setMessage(message).setRequestId(random);

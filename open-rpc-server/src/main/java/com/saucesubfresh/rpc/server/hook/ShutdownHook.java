@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.rpc.server.remoting;
+package com.saucesubfresh.rpc.server.hook;
 
 /**
- * @author lijunping on 2022/8/23
+ * @author lijunping on 2023/09/17
  */
-public interface RpcServer {
+public interface ShutdownHook {
+
+    void beforeShutdown();
 }
