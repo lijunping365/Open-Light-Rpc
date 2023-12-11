@@ -24,9 +24,7 @@ import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
 import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
-import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.callback.ResponseWriter;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,14 +32,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public abstract class AbstractMessageProcess implements MessageProcess{
-
-    private final ServerConfiguration configuration;
-    private final RegistryService registryService;
-
-    protected AbstractMessageProcess(ServerConfiguration configuration, RegistryService registryService) {
-        this.configuration = configuration;
-        this.registryService = registryService;
-    }
 
     @Override
     public void process(MessageRequest request, ResponseWriter responseWriter) {
@@ -72,12 +62,6 @@ public abstract class AbstractMessageProcess implements MessageProcess{
 
     private void handlerInnerMessage(PacketType command, MessageResponseBody responseBody){
         switch (command){
-            case REGISTER:
-                registryService.register(configuration.getServerAddress(), configuration.getServerPort());
-                break;
-            case DEREGISTER:
-                registryService.deRegister(configuration.getServerAddress(), configuration.getServerPort());
-                break;
             case PING:
                 responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
                 break;

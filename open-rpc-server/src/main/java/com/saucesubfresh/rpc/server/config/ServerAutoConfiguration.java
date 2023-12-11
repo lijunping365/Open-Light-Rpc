@@ -15,16 +15,13 @@
  */
 package com.saucesubfresh.rpc.server.config;
 
-import com.alibaba.nacos.api.naming.NamingService;
 import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.annotation.EnableOpenRpcServer;
 import com.saucesubfresh.rpc.server.hook.DefaultShutdownHook;
 import com.saucesubfresh.rpc.server.hook.ShutdownHook;
-import com.saucesubfresh.rpc.server.registry.support.NacosRegistryService;
 import com.saucesubfresh.rpc.server.remoting.*;
 import com.saucesubfresh.rpc.server.process.DefaultMessageProcess;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,17 +38,8 @@ public class ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(NamingService.class)
-    public RegistryService registryService(NamingService namingService,
-                                           ServerConfiguration configuration){
-        return new NacosRegistryService(namingService, configuration);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public MessageProcess messageProcess(RegistryService registryService,
-                                         ServerConfiguration configuration){
-        return new DefaultMessageProcess(configuration, registryService);
+    public MessageProcess messageProcess(){
+        return new DefaultMessageProcess();
     }
 
     @Bean

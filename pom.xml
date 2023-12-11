@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>Open-Light-Rpc</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -57,13 +57,6 @@
 
         <!-- grpc -->
         <grpc.version>1.45.0</grpc.version>
-        <!-- nacos -->
-        <nacos.version>2.0.4</nacos.version>
-        <!-- zookeeper -->
-        <zookeeper.version>3.7.0</zookeeper.version>
-        <zkclient.version>0.11</zkclient.version>
-        <!-- redisson -->
-        <redisson.version>3.15.3</redisson.version>
         <!-- protostuff -->
         <protostuff.version>1.7.4</protostuff.version>
     </properties>
@@ -116,26 +109,6 @@
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-stub</artifactId>
                 <version>${grpc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>${zookeeper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.101tec</groupId>
-                <artifactId>zkclient</artifactId>
-                <version>${zkclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson</artifactId>
-                <version>${redisson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -20,7 +20,7 @@ package com.saucesubfresh.rpc.core.enums;
  */
 public enum PacketType {
 
-    REGISTER(0, true), DEREGISTER(1, true), PING(2, true), PONG(3, true),
+    PING(2, true), PONG(3, true),
 
     MESSAGE(1),
 

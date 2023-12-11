@@ -18,9 +18,7 @@ package com.saucesubfresh.rpc.server.process;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
-import com.saucesubfresh.rpc.server.ServerConfiguration;
 import com.saucesubfresh.rpc.server.callback.ResponseWriter;
-import com.saucesubfresh.rpc.server.registry.RegistryService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,10 +26,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class DefaultMessageProcess extends AbstractMessageProcess{
-
-    public DefaultMessageProcess(ServerConfiguration configuration, RegistryService registryService) {
-        super(configuration, registryService);
-    }
 
     @Override
     protected void doProcess(Message message, MessageResponseBody responseBody, ResponseWriter responseWriter) {
