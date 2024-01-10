@@ -24,6 +24,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -61,6 +62,16 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<MessageRequ
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.close();
         super.channelInactive(ctx);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            ctx.channel().close(); // close if idle
+            log.debug("netty server close an idle channel.");
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
     }
 
     private void writeResponse(MessageResponseBody responseBody, ChannelHandlerContext ctx){

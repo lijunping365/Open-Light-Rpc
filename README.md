@@ -373,7 +373,9 @@ public class SpringWebMvcConfig {
 
 2. 组件去掉了负载均衡与服务容错相关功能
 
-3. 修复了已知 bug
+3. netty 心跳处理简化
+
+4. 修复了已知 bug
 
 该组件只提供核心的通信功能，支持 Grpc 和 Netty 两种方式。
 

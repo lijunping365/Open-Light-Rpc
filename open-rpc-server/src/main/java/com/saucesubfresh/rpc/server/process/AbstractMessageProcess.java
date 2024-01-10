@@ -16,14 +16,10 @@
 package com.saucesubfresh.rpc.server.process;
 
 import com.saucesubfresh.rpc.core.Message;
-import com.saucesubfresh.rpc.core.enums.PacketType;
-import com.saucesubfresh.rpc.core.enums.ResponseStatus;
-import com.saucesubfresh.rpc.core.exception.UnSupportMessageException;
 import com.saucesubfresh.rpc.core.grpc.proto.MessageRequest;
 import com.saucesubfresh.rpc.core.transport.MessageRequestBody;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.core.utils.json.JSON;
-import com.saucesubfresh.rpc.core.utils.serialize.ProtostuffUtils;
 import com.saucesubfresh.rpc.server.callback.ResponseWriter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,36 +34,12 @@ public abstract class AbstractMessageProcess implements MessageProcess{
         String requestJsonBody = request.getBody();
         MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
         Message message = requestBody.getMessage();
-        PacketType command = message.getCommand();
-
         MessageResponseBody responseBody = new MessageResponseBody();
         responseBody.setServerId(requestBody.getServerId());
         responseBody.setRequestId(requestBody.getRequestId());
 
-        if (!command.isInner()){
-            doProcess(message, responseBody, responseWriter);
-            return;
-        }
-
-        try {
-            handlerInnerMessage(command, responseBody);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            responseBody.setMsg(e.getMessage());
-            responseBody.setStatus(ResponseStatus.ERROR);
-        } finally {
-            responseWriter.write(responseBody);
-        }
-    }
-
-    private void handlerInnerMessage(PacketType command, MessageResponseBody responseBody){
-        switch (command){
-            case PING:
-                responseBody.setBody(ProtostuffUtils.serialize(PacketType.PONG.name()));
-                break;
-            default:
-                throw new UnSupportMessageException("UnSupport message packet" + command);
-        }
+        // process message
+        doProcess(message, responseBody, responseWriter);
     }
 
     protected abstract void doProcess(Message message, MessageResponseBody responseBody, ResponseWriter responseWriter);

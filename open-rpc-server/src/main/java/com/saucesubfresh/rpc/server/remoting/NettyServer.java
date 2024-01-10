@@ -32,7 +32,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lijunping on 2022/6/8
@@ -97,6 +100,7 @@ public class NettyServer extends AbstractRemotingServer {
         protected void initChannel(SocketChannel channel) {
             ByteBuf delimiter = Unpooled.copiedBuffer(CommonConstant.DELIMITER.getBytes());
             ChannelPipeline cp = channel.pipeline();
+            cp.addLast(new IdleStateHandler(0, 0, 30 * 3, TimeUnit.SECONDS));
             cp.addLast(new DelimiterBasedFrameDecoder(CommonConstant.MAX_LENGTH, delimiter));
             cp.addLast(new MsgDecoder(MessageRequest.class));
             cp.addLast(new MsgEncoder(MessageResponse.class));
