@@ -46,7 +46,7 @@
         <resource.delimiter>@</resource.delimiter>
         <java.version>1.8</java.version>
 
-        <spring-boot.version>2.6.6</spring-boot.version>
+        <spring-boot.version>2.7.1</spring-boot.version>
         <lombok.version>1.18.16</lombok.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -56,7 +56,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 
         <!-- grpc -->
-        <grpc.version>1.45.0</grpc.version>
+        <grpc.version>1.60.0</grpc.version>
         <!-- protostuff -->
         <protostuff.version>1.7.4</protostuff.version>
     </properties>
