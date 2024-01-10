@@ -82,7 +82,7 @@ public class NettyClient extends AbstractRemotingClient {
         for (Map.Entry<String, Channel> item: serverChannel.entrySet()) {
             try {
                 item.getValue().closeFuture();
-                GrpcClientChannelManager.removeChannel(item.getKey());
+                NettyClientChannelManager.removeChannel(item.getKey());
             }catch (Exception e){
                 log.error("Channel close exception, ", e);
             }
