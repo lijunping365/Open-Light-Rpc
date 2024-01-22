@@ -379,15 +379,13 @@ public class SpringWebMvcConfig {
 
 该组件只提供核心的通信功能，支持 Grpc 和 Netty 两种方式。
 
-### 2.0.1 版本更新说明
+### 2.1.0 版本更新说明
 
 1. 新增服务注册组件，提供 Nacos 和 Zookeeper 两种方式，默认使用 Nacos
 
 2. 新增服务发现组件，提供 Nacos 和 Zookeeper 两种方式，默认使用 Nacos
 
 3. 新增负载均衡组件
-
-该组件只提供核心的通信功能，支持 Grpc 和 Netty 两种方式。
 
 ## 最后
 
