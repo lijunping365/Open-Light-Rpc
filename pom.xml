@@ -18,6 +18,7 @@
         <module>open-rpc-client</module>
         <module>open-rpc-registry</module>
         <module>open-rpc-discovery</module>
+        <module>open-rpc-loadbalance</module>
     </modules>
 
     <licenses>
