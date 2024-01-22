@@ -16,6 +16,8 @@
         <module>open-rpc-core</module>
         <module>open-rpc-server</module>
         <module>open-rpc-client</module>
+        <module>open-rpc-registry</module>
+        <module>open-rpc-discovery</module>
     </modules>
 
     <licenses>
