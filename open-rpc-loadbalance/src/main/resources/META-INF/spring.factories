@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.saucesubfresh.rpc.loadbalance.LoadbalanceAutoConfiguration
+ com.openbytecode.rpc.loadbalance.LoadbalanceAutoConfiguration

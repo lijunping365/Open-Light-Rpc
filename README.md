@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://search.maven.org/search?q=g:com.saucesubfresh%20a:open-rpc-*">
+  <a href="https://search.maven.org/search?q=g:com.openbytecode%20a:open-rpc-*">
     <img alt="maven" src="https://img.shields.io/github/v/release/lijunping365/Open-Light-Rpc?include_prereleases&logo=Open-Light-Rpc&style=plastic">
   </a>
 
@@ -50,7 +50,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.saucesubfresh</groupId>
+    <groupId>com.openbytecode</groupId>
     <artifactId>open-rpc-client</artifactId>
     <version>1.5.0</version>
 </dependency>
@@ -73,7 +73,7 @@ public class JobDashboardApplication {
 
 ```yaml
 com:
-  saucesubfresh:
+  openbytecode:
     rpc:
       client:
         server-name: open-job-services
@@ -117,7 +117,7 @@ public class OpenJobClientServiceImpl implements OpenJobClientService{
 
 ```xml
 <dependency>
-    <groupId>com.saucesubfresh</groupId>
+    <groupId>com.openbytecode</groupId>
     <artifactId>open-rpc-server</artifactId>
     <version>1.5.0</version>
 </dependency>
@@ -140,7 +140,7 @@ public class JobServerApplication {
 
 ```yaml
 com:
-  saucesubfresh:
+  openbytecode:
     rpc:
       server:
         server-address: 127.0.0.1

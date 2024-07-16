@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.saucesubfresh.rpc.discovery.DiscoveryAutoConfiguration
+ com.openbytecode.rpc.discovery.DiscoveryAutoConfiguration
